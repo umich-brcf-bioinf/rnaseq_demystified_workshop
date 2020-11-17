@@ -39,15 +39,16 @@ First, we'll review the key parts of Rstudio, specifically:
 
 ## Using Rmarkdown & navigating directories
 
-Today we'll be using a series of Rmarkdown files that should have been included in the course materials. To open the file for the first module today, we'll want to navigate to the same project directory we used yesterday. 
+Today we'll be using a series of [Rmarkdown](https://rmarkdown.rstudio.com/) files that should have been included in the course materials. To open the file for the first module today, we'll want to navigate to the same project directory we used yesterday, which can be done using the file viewer within Rstudio. 
 
 *Add example of project directory?*
 
 After opening the file, we'll review how Rmarkdown files mix both text and executable code blocks:
 
-```{r RCodeBlock }
+```{r RCodeBlock, eval = FALSE}
 # comments are for our reference
-echo("This is a command")
+getwd() # execute this command
+
 ```
 
 
@@ -62,7 +63,6 @@ To follow best practices as discussed by [Nobel,2009](https://journals.plos.org/
 
 ## Helpful resources
 
-*[R resources from Software/Data Carpentries]()
 *[Rmarkdown cheatsheet](https://rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)  
 
 # Interacting with the Console
@@ -71,11 +71,58 @@ To ensure that we have a record of our commands, it is better to write all comma
 
 ## Key R syntax review
 
-### Variable names & assignments
+For a more extensive introduction to R syntax, there are many resources available. We drew on [Data Carpentry](https://datacarpentry.org/R-genomics/00-before-we-start.html) for these materials and also recommend the [Software Carpentry](https://swcarpentry.github.io/r-novice-gapminder/) materials for a more extensive overview of the R programming language.
+
+### Functions
+
+We already used a function when reviewing the Rmarkdown code blocks. These are built in capablities of R or capabilities that have been added to our session with supplementary packages. 
+
+Functions have a specific pattern and usually get one or more inputs called *arguments*. If the argument alters the way the function operates, it is often called an *option*. Some functions can take multiple arguements but may have defaults to fall back on if no specific argument or option is given.
+
+```{r Functions, eval = FALSE}
+print() # does this work?
+print("this is an argument")
+
+round(3.14159) # how many digits do we get?
+
+```
+
+### Object names & assignments
+
+Objects are strings that act as place holders for any type of data. R has some restrictions for naming objects:    
+* Cannot start with numbers
+* Cannot include dashes
+* Cannot have spaces   
+* Should not be identical to a named function    
+* Dots & underscores will work but are better to avoid    
+
+```{r Objects, eval = FALSE}
+3 + 7 
+Mars  <- "planet"
+Number <- 3 + 7 # can also use a `=`
+Mars <- "red"
+
+### check the values here ###
+
+```
+
+Objects maintain their assignment unless reassigned or removed from the session environment. 
 
 ### Vectors and data types
 
-### Functions
+There are a few different data types that we will be working with when analyzing RNA-seq data. We'll review vectors and what they can store first.
+
+```{r DataTypes, eval = FALSE}
+VectorExString <- c("MFG1, MFG2, MFG3")
+VectorExNumeric <- c(4, 5, 6)
+VectorExLogical()
+
+### get an overview of what's stored in each vector with the function `str()` ###
+
+### How can we convert strings to factors? ###
+
+```
+
 
 ### Reading in count data
 
