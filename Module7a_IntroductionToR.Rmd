@@ -1,5 +1,5 @@
 ---
-title: "RNA-seq Demystified, Day 2 - Module 7a: Introduction to R/Rstudio "
+title: "Day 2 - Module 7a: Introduction to R/Rstudio "
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:
@@ -20,7 +20,7 @@ output:
     }
 </style>
 
-> # Module Objectives    
+> # Objectives    
 > * Shared understanding of R/RStudio environment & packages    
 > * Import and review count tables    
 > * Understand how to find help
@@ -91,9 +91,9 @@ round(3.14159, 2) # how many digits do we get?
 ### Object names & assignments
 
 Objects are strings that act as place holders for any type of data. R has some restrictions for naming objects:    
-* Cannot start with numbers
-* Cannot include dashes
-* Cannot have spaces   
+* Cannot start with numbers   
+* Cannot include dashes   
+* Cannot have spaces    
 * Should not be identical to a named function    
 * Dots & underscores will work but are better to avoid    
 
@@ -118,7 +118,7 @@ VectorExString <- c("MFG1, MFG2, MFG3")
 VectorExNumeric <- c(4, 5, 6)
 VectorExLogical <- c(TRUE, FALSE, FALSE)
 
-### get an overview of what's stored in each vector with the function `str()` ###
+### get an overview of each vector with the function `str()` ###
 
 ### How can we convert strings to factors? ###
 
@@ -166,7 +166,7 @@ Rstudio has some built in help resources.
 ?dim
 ```
 
-# Checking package installations
+# Check package installations
 
 Before ending this module, load the libraries we'll need to use for the next module. *will need to update with any additional packages*
 ```{r Modules, eval=FALSE}
