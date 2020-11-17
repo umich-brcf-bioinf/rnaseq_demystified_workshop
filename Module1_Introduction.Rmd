@@ -24,7 +24,7 @@ render('Module1_Introduction.Rmd')
     - chromatin accessibility and binding,
     - DNA methylation, and
     - single-cell experiments.
-- We also provide letters of support for grants.
+- We also provide letters of support for grant proposals.
 
 ## Who are your instructors?
 
@@ -52,7 +52,7 @@ render('Module1_Introduction.Rmd')
 
 ## Getting Help (Don't worry about it!)
 
-- [DISCUSS] Raise your hand (screenshot?).
+- [DISCUSS] Raise your hand (Add screenshot here).
 - A helper will contact you, and, if needed, you can go to a breakout room.
 
 ## Feedback with the yes/no flag
@@ -63,8 +63,8 @@ render('Module1_Introduction.Rmd')
 ## Etherpad
 
 - [DISCUSS] Under what scenarios did we envision using this again?
-    - Code updates?
-    - ...?
+    - Code corrections
+    - Collaborative notes for group work
 
 ## Mute or Chaos
 
@@ -75,4 +75,4 @@ render('Module1_Introduction.Rmd')
 ## Breaking Digital Ice
 
 - We're all going to be transported into randomized breakout rooms to see what that's like.
-- Introduce yourself. Tell the others what you hope to learn from the course.
+- Introduce yourself. Tell the others in your breakout room what you hope to learn from the course.
