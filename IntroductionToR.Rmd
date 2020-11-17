@@ -1,5 +1,5 @@
 ---
-title: "RNA-seq Demystified: Day X"
+title: "RNA-seq Demystified, Day 2 - Session 7a: Introduction to R/Rstudio "
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:
@@ -20,6 +20,69 @@ output:
     }
 </style>
 
-# Introduction to R
+> # Module Objectives    
+> * Shared understanding of R/RStudio environment & packages    
+> * Import and review count tables    
+> * Understand how to find help
 
-## 
+# Using RStudio
+
+Our goal for any analysis is to do it in a way where it can be easily and exactly replicated, i.e. following standards for "reproducible research". Rstudio has great tools to facilitate this process and is freely available, just like the underlying programming language (R). 
+
+First, we'll review the key parts of Rstudio, specifically:   
+* Console   
+* Scripts    
+* Environments    
+* File/Plots Viewer    
+
+*Add diagram of Rstudio here?*
+
+## Using Rmarkdown & navigating directories
+
+Today we'll be using a series of Rmarkdown files that should have been included in the course materials. To open the file for the first module today, we'll want to navigate to the same project directory we used yesterday. 
+
+*Add example of project directory?*
+
+After opening the file, we'll review how Rmarkdown files mix both text and executable code blocks:
+
+```{r RCodeBlock }
+# comments are for our reference
+echo("This is a command")
+```
+
+
+## Best practices for file organization
+
+To follow best practices as discussed by [Nobel,2009](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000424) for file organization for bioinformatics/computational projects, we will need to make sure there are separate storage locations for:  
+* Raw data   
+* Code   
+* Output files    
+
+*Add diagram from Noble PLOS paper* 
+
+## Helpful resources
+
+*[R resources from Software/Data Carpentries]()
+*[Rmarkdown cheatsheet](https://rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)  
+
+# Interacting with the Console
+
+To ensure that we have a record of our commands, it is better to write all commands within our '.Rmd' file and send the command to the console instead of directly entering them. **Ctrl-Enter** is a standard shortcut in Rstudio to send the current line (or selected lines) to the console. If you see an `>`, then R has executed the command. If you see a `+`, this means that the command is not complete and R is waiting (usually for a `)`).
+
+## Key R syntax review
+
+### Variable names & assignments
+
+### Vectors and data types
+
+### Functions
+
+### Reading in count data
+
+### Data tables
+
+### Getting help within Rstudio
+
+
+# Checking package installations
+
