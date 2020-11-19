@@ -1,15 +1,15 @@
 # Table of Contents
 
-- [What is Conda?]
-- [Installing Miniconda3]
-- [Testing the Installation]
-- [Creating a Workshop Environment]
-- [Entering and Exiting an Environment]
-- [Extras]
+- [What is Conda?](#what-is-conda)
+- [Installing Miniconda3](#installing-miniconda3)
+- [Testing the Installation](#testing-the-installation)
+- [Creating a Workshop Environment](#creating-a-workshop-environment)
+- [Entering and Exiting an Environment](#entering-and-exiting-an-environment)
+- [Extras](#extras)
 
 # What is Conda?
 
-Conda (aka Miniconda3 aka Anaconda) is a software package manager that enables users to quickly and easily install many programs for bioinformatics analysis, among other things. A conda **environment** can be thought of as a workspace that has specific tools loaded in it. Perhaps a good analogy are different rooms in a research lab. Different rooms can be stocked with different tools to accomplish a task. We'll pick this analogy up after we install and test conda.
+Conda (aka Miniconda3 aka Anaconda) is a software package manager that enables users to quickly and easily install many programs for bioinformatics analysis, among other things. A conda **environment** can be thought of as a workspace that has specific tools loaded in it. Perhaps a good analogy are different rooms in a research lab. Different rooms can be stocked with different tools to accomplish a task. We'll pick this analogy up after we install and test `conda`.
 
 # Installing Miniconda3
 
@@ -24,12 +24,12 @@ Once the installer downloads, open it and follow the instructions to install.
 
 # Testing the Installation
 
-Let's test the installation by opening a bash shell.
+Let's test the installation by opening a `bash` shell.
 
 - For Windows that means ... I don't know right now?
 - For macOS that means opening the Terminal.
 
-Once we're in a bash shell, type:
+Once we're in a `bash` shell, type:
 
 ```
 conda --version
@@ -43,13 +43,13 @@ conda 4.8.3
 
 # Creating a Workshop Environment
 
-Picking up the analogy of rooms in a research lab to think about conda environments, we need to stock the room with the correct tools. We do this with the `conda install` command. After the full command, we'll explain what each part means.
+Picking up the analogy of rooms in a research lab to think about `conda` environments, we need to stock the room with the correct tools. We do this with the `conda install` command. After the full command, we'll explain what each part means.
 
 ```
 conda create --name workshop --channel bioconda --channel conda-forge fastqc=0.11.9 multiqc=1.9 STAR=2.7.6a rsem=1.3.3
 ```
 
-When conda prompts you as to whether or not to proceed, say Yes.
+When `conda` prompts you as to whether or not to proceed, say Yes.
 
 ## Breaking Down the Command
 
@@ -57,14 +57,14 @@ We have used the "long flags" which give a better indication of all the options 
 
 - `conda create`: The command to create an environment.
 - `--name`: The name of the environment. This should be unique, and you can see what other environments you have with `conda env list`.
-- `--channel`: Conda has different channels depending on the type of software. For bioinformatics software two of the most common channels are `bioconda` and `conda-forge`.
+- `--channel`: `conda` has different channels depending on the type of software. For bioinformatics software two of the most common channels are `bioconda` and `conda-forge`.
 - `fastqc=0.11.9 ...`: The name of the software packages we want to install and the specific version. By default conda will install the latest version, but it's good to get in the habit of specifying a version for your reference. Any number of packages can be installed at once by separating them with spaces.
 
 # Entering and Exiting an Environment
 
 Again, picking up the analogy of rooms in a research lab, in order to use the microscope you have to enter the room with it. The idea is the same with `conda`.
 
-To enter the conda environment we just installed, we do:
+To enter the `conda` environment we just installed, we do:
 
 ```
 conda activate workshop
