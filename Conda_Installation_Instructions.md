@@ -24,12 +24,12 @@ Once the installer downloads, open it and follow the instructions to install.
 
 # Testing the Installation
 
-Let's test the installation by opening a `bash` shell.
+Let's test the installation by opening a shell.
 
 - For Windows that means ... I don't know right now?
 - For macOS that means opening the Terminal.
 
-Once we're in a `bash` shell, type:
+Once we're in a shell, type:
 
 ```
 conda --version
