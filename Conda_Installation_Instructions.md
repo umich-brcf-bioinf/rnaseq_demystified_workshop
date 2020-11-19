@@ -9,7 +9,7 @@
 
 # What is Conda?
 
-Conda (aka Miniconda3 aka Anaconda) is a software package manager that enables users to quickly and easily install many programs for bioinformatics analysis, among other things. A conda **environment** can be thought of as a workspace that has specific tools loaded in it. Perhaps a good analogy are different rooms in a research lab. Different rooms can be stocked with different tools to accomplish a task. We'll pick this analogy up after we install and test `conda`.
+Conda (aka Miniconda3 aka Anaconda) is a software package manager that enables users to quickly and easily install many programs for bioinformatics analysis, among other things. A conda environment can be thought of as a workspace that has specific tools loaded in it. Perhaps a good analogy are different rooms in a research lab. Different rooms can be stocked with different tools to accomplish different tasks. We'll pick this analogy up after we install and test `conda`.
 
 # Installing Miniconda3
 
