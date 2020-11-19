@@ -62,9 +62,7 @@ We have used the "long flags" which give a better indication of all the options 
 
 # Entering and Exiting an Environment
 
-Again, picking up the analogy of rooms in a research lab, in order to use the microscope you have to enter the room with it. The idea is the same with `conda`.
-
-To enter the `conda` environment we just installed, we do:
+Again, picking up the analogy of rooms in a research lab, in order to use the microscope you have to enter the room with it. The idea is the same with `conda`. To enter the `conda` environment we just installed, we do:
 
 ```
 conda activate workshop
@@ -88,13 +86,13 @@ Should show you where `fastqc` is installed:
 /Users/rcavalca/opt/miniconda3/envs/workshop/bin/fastqc
 ```
 
-Now when we're done using the software in the environment--or when we're done using the microscope--we leave the room and turn off the lights.
+Now when we're done with the environment--or when we're done using the microscope--we leave the room and turn off the lights.
 
 ```
 conda deactivate
 ```
 
-Just to drive the point home that the tools in that environment are no longer available to us, try:
+To drive the point home that the tools in that environment are no longer available to us, try:
 
 ```
 which fastqc
@@ -105,6 +103,8 @@ You should see the following, which means that we've left the workshop environme
 ```
 fastqc not found
 ```
+
+Also note that the `(workshop)` prefix on the shell prompt has gone away.
 
 # Extras
 
