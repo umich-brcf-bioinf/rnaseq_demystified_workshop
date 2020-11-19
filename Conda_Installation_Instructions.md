@@ -57,7 +57,7 @@ We have used the "long flags" which give a better indication of all the options 
 
 - `conda create`: The command to create an environment.
 - `--name`: The unique name of the environment. You can see what other environments you have with `conda env list`.
-- `--channel`: `conda` has different channels depending on the type of software. For bioinformatics software two of the most common channels are `bioconda` and `conda-forge`.
+- `--channel`: `conda` has different channels depending on the type of software. The two most common channels for bioinformatics software are `bioconda` and `conda-forge`.
 - `fastqc=0.11.9 ...`: The name of the software packages we want to install and the specific version. By default conda will install the latest version, but it's good to get in the habit of specifying a version for your reference. Any number of packages can be installed at once by separating them with spaces.
 
 # Entering and Exiting an Environment
