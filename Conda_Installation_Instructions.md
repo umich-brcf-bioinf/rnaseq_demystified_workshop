@@ -13,7 +13,7 @@ This document guides you through the installation of software necessary to parti
 
 # What is Conda?
 
-Software is complex and installing it can be tricky. Conda (aka Miniconda aka Anaconda) is a software package manager that enables users to quickly and easily install many programs for bioinformatics analysis, among other things. 
+Software is complex and installing it can be tricky. Conda (aka Miniconda aka Anaconda) is a software package manager that enables users to quickly and easily install many programs for bioinformatics analysis, among other things.
 
 A conda environment can be thought of as a workspace that has specific tools loaded in it. Perhaps a good analogy are different rooms in a research lab. Different rooms can be stocked with different tools to accomplish different tasks. We'll pick this analogy up after we install and test `conda`.
 
@@ -56,7 +56,7 @@ Picking up the analogy of rooms in a research lab to think about `conda` environ
 ```
 conda create --name workshop \
     --yes \
-    --channel bioconda \ 
+    --channel bioconda \
     --channel conda-forge \
     fastqc=0.11.9 multiqc=1.9 STAR=2.7.6a rsem=1.3.3
 ```
@@ -83,13 +83,13 @@ Again, picking up the analogy of rooms in a research lab, in order to use the mi
 conda activate workshop
 ```
 
-Note that activating the workshop environemnt added `(workshop)` to the front of your shell prompt (your shell prompt be somewhat different - that's ok):
+Note that activating the workshop environemnt added `(workshop)` to the front of your shell prompt (your shell prompt may be somewhat different - that's ok):
 
 ```
 (workshop) rcavalca@x86_64-apple-darwin13 rnaseq_demystified_workshop %
 ```
 
-The command `which` let's us see that the software tools we put in the environment are available; specifically is shows us the path to where that program is installed. Execute this command to see where `fastqc` is installed:
+The command `which` let's us see that the software tools we put in the environment are available; specifically it shows us the path to where that program is installed. Execute this command to see where `fastqc` is installed:
 
 ```
 which fastqc
