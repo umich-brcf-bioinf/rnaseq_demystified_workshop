@@ -1,0 +1,62 @@
+---
+title: "Day 2 - Module 8a: DESeq2 Initialization"
+author: "UM Bioinformatics Core"
+date: "`r Sys.Date()`"
+output:
+        html_document:
+            theme: readable
+            toc: true
+            toc_depth: 4
+            toc_float: true
+            number_sections: true
+            fig_caption: true
+            keep_md: true
+---
+
+<!--- Allow the page to be wider --->
+<style>
+    body .main-container {
+        max-width: 1200px;
+    }
+</style>
+
+> # Objectives    
+> * Familiarity with Bioconductor "Tool Set"    
+> * Understanding of what DESeq2 does & why it is widely used for differential expression comparisons   
+
+# Introduction to Bioconductor    
+
+[Bioconductor](https://www.bioconductor.org/) provides open source software for the "analysis and comprehension of high-throughput genomic data", primarily through packages written in R and by . We will use a few tools that are available through Bioconductor for our analysis and highly recommend checking out [more about Bioconductor](https://www.bioconductor.org/about/), including their standards for documentation, workflow examples, and annotation resources. 
+
+
+# DESeq2: Tool for Differential Gene Expression analysis
+*TODO:Doublecheck if goals for RNA-seq were discussed on Day1*
+As *previously discussed*, a common goal for RNA-seq experiments is to determine which genes are expressed at different levels between conditions. To accomplish this goal, we need to test for differential expression, using statistical approaches that are appropriate for the type of patterns we expect from biological data. To learn more about statistical testing and RNA-seq data, a good resource is this [EdX lecture by Rafael Irizarry](https://www.youtube.com/watch?v=HK7WKsL3c2w&feature=youtu.be) or this [lecture by Kasper Hansen](https://www.youtube.com/watch?v=C8RNvWu7pAw) *TODO:Review/Edit general resources for RNA-seq/stats*
+
+## DESeq2 Documentation   
+
+## DESeq2 Benchmarking & Alternative Tools
+
+
+# DESeq2 Initialization
+
+## Read in count data
+
+### Generate matrix
+
+### Initial filtering
+
+## Generate Phenotype matrix
+
+## Making model choices
+
+## Creating DESeq2 object
+
+
+# Count normalizations
+
+
+# Model fitting 
+
+# Resources used:
+* https://hbctraining.github.io/DGE_workshop/lessons/01_DGE_setup_and_overview.html
