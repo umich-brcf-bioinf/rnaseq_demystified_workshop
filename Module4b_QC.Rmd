@@ -198,46 +198,60 @@ Note, we have broken up the `fastq` command over multiple lines to make it more 
 
 The results of FastQC are presented as a web-page with different sections. I'll now open the reports for R1 of the good and bad examples, and we'll walk through them.
 
-#### Basic Statistics
+REWORK THIS TO SHOW GOOD AND BAD WITHIN EACH SECTION. Do we need to use reports from what we ran? What if we just used the examples from Babraham?
+
+### Basic Statistics
 
 This section tells us the file the report is for, the quality encoding, how many sequences were analyzed, how many are determined to be "poor quality", their lengths, and overall GC content.
 
-#### Per base sequence quality
+### Per base sequence quality
 
 The graph indicates the base calling quality for each base in the read. The green, yellow, and red sections of the graph are suggestive.
 
-#### Per tile sequence quality
+### Per tile sequence quality
 
 The heatmap summarizes read qualities for reads in the tiles on the flow cell. This will indicate if a cluster of reads failed. (DISCUSS: Check wording)
 
-#### Per sequence quality scores
+### Per sequence quality scores
 
 This is a cumulative distribution of quality scores over all base pairs over all reads.
 
-#### Per base sequence content
+### Per base sequence content
 
 In a reasonably complex library, we should see a fairly even distribution of ACGTs.
 
 There are sequencing cases where this particular graph is not meaningful. For instance, in bisulfite-converted libraries such as Whole Genome Bisulfite Sequencing to determine DNA methylation, we would expect to see far fewer C's and more T's.
 
-#### Per sequence GC content
+### Per sequence GC content
 
 In a typical RNA-seq experiment, we expect the GC distribution to be more or less normally distributed with a mean GC content between 45-50%.
 
 Similarly, WGBS is an example where the GC content of the reads will fail because of the nature of the sequencing.
 
-#### Per base N content
+### Per base N content
 
 This is an indication that the sequencer couldn't determine which base is at a particular position in a read. (DISCUSS: When might this go haywire?)
 
-#### Sequence duplication levels
+### Sequence duplication levels
 
 This graph indicates how serious sequence duplication is. For example, if the library was low complexity and PCR introduced many many duplicates, you might see that as a spike in this graph.
 
-#### Overrepresented sequences
+### Overrepresented sequences
 
 This table gives actual sequences which are overrepresented (i.e. appear in the spikes of the graph above), along with how many times that sequence occurs and what it might be attributed to. Often is there is adapter sequence in the reads (next and last FastQC module), you will see the attribution in this table.
 
 #### Adapter content
 
 Adapter content can show up in reads if the read fragments are very short (e.g. small RNA sequencing, or a subset of fragments in ATAC-seq).
+
+# MultiQC
+
+INSERT STUFF HERE
+
+# Discussion
+
+## What does good QC mean?
+
+At this stage, it simply means that RNA quality, library preparation, and sequencing seem to have been successful. It **does not** indicate that there are differentially expressed genes between groups.
+
+## What does bad QC mean?
