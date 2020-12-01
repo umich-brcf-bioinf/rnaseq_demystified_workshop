@@ -20,7 +20,7 @@ output:
     }
 </style>
 
-> # Objectives    
+> # Objectives     
 > * Familiarity with Bioconductor "Tool Set"    
 > * Understanding of what DESeq2 does & why it is widely used for differential expression comparisons   
 
@@ -28,35 +28,148 @@ output:
 
 [Bioconductor](https://www.bioconductor.org/) provides open source software for the "analysis and comprehension of high-throughput genomic data", primarily through packages written in R and by . We will use a few tools that are available through Bioconductor for our analysis and highly recommend checking out [more about Bioconductor](https://www.bioconductor.org/about/), including their standards for documentation, workflow examples, and annotation resources. 
 
+# Tools for Differential Gene Expression analysis
 
-# DESeq2: Tool for Differential Gene Expression analysis
 *TODO:Doublecheck if goals for RNA-seq were discussed on Day1*
-As *previously discussed*, a common goal for RNA-seq experiments is to determine which genes are expressed at different levels between conditions. To accomplish this goal, we need to test for differential expression, using statistical approaches that are appropriate for the type of patterns we expect from biological data. To learn more about statistical testing and RNA-seq data, a good resource is this [EdX lecture by Rafael Irizarry](https://www.youtube.com/watch?v=HK7WKsL3c2w&feature=youtu.be) or this [lecture by Kasper Hansen](https://www.youtube.com/watch?v=C8RNvWu7pAw) *TODO:Review/Edit general resources for RNA-seq/stats*
+As *previously discussed*, a common goal for RNA-seq experiments is to determine which genes are expressed at different levels between conditions. To accomplish this goal, we need to test for differential expression, using statistical approaches that are appropriate for the type of data we expect from biological data. 
+
+While there are several tools that can be used for differential expression comparisons, we use [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html) in our analysis today. DESeq2 one of two tools, along with [EdgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html), considered ['best practice'](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-91) for differential expression, as both tools use similar methods that account for the distributions we expect to see for RNA-seq and are fairly stringent.
+
+> To learn more about statistical testing and what distributions best model the behavior of RNA-seq data, a good resource is this [EdX lecture by Rafael Irizarry](https://www.youtube.com/watch?v=HK7WKsL3c2w&feature=youtu.be) or this [lecture by Kasper Hansen](https://www.youtube.com/watch?v=C8RNvWu7pAw) *TODO:Review/Edit general resources for RNA-seq/stats*   
+
+You should already have DESeq2 installed, so we can load the library into our R session now. To do that we'll use the `library` function in a new line in our R file and send the command to the console. 
+```{r LoadDESeq2, message = FALSE}
+library(DESeq2)
+```
+
+Now we have access to information about DESeq2 within Rstudio. We can check out this out using the `?` operator.
+```{r CheckDocumentaion}
+?`DESeq2-package`
+```
+
+## DESeq2 assumptions and requirements
+
+A key consideration for RNA-Seq data is that a vast number of RNAs are represented and therefore the probability of counting a particular trasncript is small. In addition, we expect that the mean expression of any given gene is less than the variance (or spread) of expression across different samples.
+
+Since variance is a key to both the statistical test and normalization approach used in DESeq2, if you try to compare treamtment groups with less than **two** replicates, DESeq2 will give you an error. 
+
+So how do we determine what kind of sample "counts" as a replicate?    
+
+* **Biological replicates** are independently generated samples representing the same treatment group (i.e. RNA isolated from the kidneys of different mice)    
+* **Technical replicates** are generated from *the same* sample, but with technical steps replicates(i.e. two RNA preps from the same mouse kidney)
+
+For most experiments biological variance is much greater than technical variance, especially if [best practices](https://www.txgen.tamu.edu/faq/rna-isolation-best-practices/) for [quality RNA isolation](https://www.biocompare.com/Bench-Tips/128790-Four-Tips-for-Perfecting-RNA-Isolation/) are followed (including DNase treatment!).
+
+> If you are working with cell lines and would like more detail about replicates for *in vitro* studies, this [archived page](https://web-archive-org.proxy.lib.umich.edu/web/20170807192514/http://www.labstats.net:80/articles/cell_culture_n.html) could be helpful.
+
+A question we are frequently asked is "How many replicates do I need?". *TODO: How much detail to add here *
+
+*"More often than not, there is much more going on with your data than what you are anticipating. Genes that vary in expression level between samples is a consequence of not only the experimental variables of interest but also due to extraneous sources. The goal of differential expression analysis to determine the relative role of these effects, and to separate the “interesting” from the “uninteresting”."* () technical vs experimental impacts image?
+
+A related aspect is how much to consider sequencing depth versus additional replicates. This figure shared by Illumina is helpful to understand the relative importance of sequencing depth and replicate number. 
+*Add reps vs depth image here*
+
+Generally, sequencing depth is important for accurately measuring genes that are expressed at different abundances. For the human and mouse genomes, the general recommendation is 30-40 million reads per sample if measuring the ~20,000  protein-coding genes (i.e.: polyA library prep) to measure both highly expressed (common) and more lowly expresssed (rarer) transcripts. *TODO: Do we discuss library prep options on Day1??* However, as the image above shows, replicates make a bigger impact on detecting differentially expressed genes (DEGs)
+
+DESeq2 has some additional requirments, including the type of data expected as an input, which we will discuss later.
 
 ## DESeq2 Documentation   
 
-## DESeq2 Benchmarking & Alternative Tools
+Since DESeq2 is both a [Bioconductor](https://www.bioconductor.org/help/package-vignettes/) tool and widely used by the bioinformatics community, there is extensive [documentation](https://bioconductor.org/packages/3.12/bioc/manuals/DESeq2/man/DESeq2.pdf) available, including [vignettes](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html#preparing-count-matrices) that walk through options for analysis in greater detail than we will cover here.
 
 
 # DESeq2 Initialization
 
+To walk through the differential gene expression (DGE) workflow we use in the Core, we'll be starting with a count matrix from a RNA-Seq dataset that is described in [Kenny PJ et al, Cell Rep 2014](http://www.ncbi.nlm.nih.gov/pubmed/25464849). The scientific context for this analysis is that the authors were investigating interactions between genes involved in Fragile X syndrome, a disease where there is aberrant prodcution of the FMRP protein. One gene of interest, MOV10 is a putative RNA helicase that associates with FMRP in the microRNA processing pathway.
+
+For the experiment in Kenny et al, HEK293F cellswere either transfected with a MOV10 transgene, or siRNA to knock down Mov10 expression, or non-specific (irrelevant) siRNA before RNA was isolated and sequenced. This resulted in 3 conditions "Mov10 oe" (over expression), "Mov10 kd" (knock down) and "Irrelevant kd", respectively. We'll look at how many replicates were generated for each condition and what comparisons shouldbe made after we load the data. *TODO: Add context later, used hg19, EdgeR, TMM normalization*   
+
+> After we walk through the workflow, try to comparing the [RNA-Seq methods reported in the paper](https://ars-els-cdn-com.proxy.lib.umich.edu/content/image/1-s2.0-S2211124714009231-mmc1.pdf) to what we did today. Is any information is missing from the methods that would be needed to reproduce their analysis? Did the different tools used for DGE impact in the overall findings?
+
 ## Read in count data
 
-### Generate matrix
+Another key assumption for DESeq2 is that the analysis will start with non-normalized 
 
-### Initial filtering
+To begin our analysis, we need to read in the **raw** count data, which should have been included in the class materials. This table is similar to what would have been generated through the alignment procedure that we worked through yesterday.
 
-## Generate Phenotype matrix
+To read in raw count table we'll use the 'read.table()' function.
+```{r ReadInCounts}
+data <- read.table("./Day2Data/Mov10_full_counts.txt", header = TRUE, row.names = 1)
+```
+
+You should now see `GeneCounts` in the "Environment" tab on the right side of your Rstudio window. Let's take a look at the table.
+```{r LookatCounts}
+head(data) #OR
+View(data) #OR
+str(data)
+```
+
+We can see that the column names of the table match the expected experimental samples and the rows names look like gene symbols. In addition, we see whole numbers as values in the table. This is very important as the model used by DESeq2 to test for significance assumes count data, i.e. the number of reads that align to each gene, which must be integer values. *TODO: Add count normalization content since reference here* We'll discuss later a few normalizations that can be helpful for us to understand how much a gene is expressed within or between samples, but that **should not** be used as inputs for DESeq2.
+
+*TODO: Check what example count table results Raymond shows for Day 1/if can pull in as example here* If we think back to the 'expected_counts' RSEM output, the values are *not* integers (due to how the alignment tool resolves reads that map to multiple locuses). Since DESeq2 requires whole numbers, if we try to use the RSEM ouputs without rounding the estimated counts to a whole number first, DESeq2 will give us an error.
+
+> *Note*: The package `tximport` is [recommended by the DESeq2 authors](https://support.bioconductor.org/p/90672/) to read in the RSEM expected_counts, as this package allows for the average transcript length per gene to be used in the DGE analysis.
+
+## Generate Sample Information Table
+
+Our next step will be to describe the samples so that we make the proper comparisons. The first step is to look at the sample names from the count table. 
+```{r ColumnNames}
+colnames(data)
+```
+
+We'll use the csample names as a starting point to fill in our sample information table. 
+```{r SampleInfo1}
+meta <- data.frame("samples"=colnames(data))
+meta
+```
+Sample names are fairly informative so can use as starting point. For most sequencing data generated from large sequencing centers like the AGC, the sample names will likely be less informative so will need to be matched with sample information from submission or experimental notes.
+
+Next, we'll fill in appropriate labels for the treatment groups - making them simple but informative. 
+```{r SampleInfo2}
+meta$condition <- factor(c(rep(c("Mov.KD"), 2), rep(c("Mov.OE"), 3), rep(c("Irrel"), 3)), levels = c("Mov.KD", "Mov.OE", "Irrel")) ## levels = c(Case, Control); Control should be last.
+
+```
+Notice that we set the levels such that the control group is in the last position. This is important for setting the Control group as the denominator in our comparisons. 
+
+Next, we'll reorganize the table so it has the shape we need - sample names as the row names for each condition.
+```{r SampleInfo3}
+row.names(meta) # check the row names
+row.names(meta) <- meta$samples # set the row names to be the sample names
+meta$samples <- NULL # clear the same name column since isnt needed
+```
+
+Before we proceed, we need to make sure that the sample labels (column names) in the count table match the sample information table (row names), including the order. If not, then we will either see an error, or worse we risk making comparisons between the wrong groups of samples. 
+```{r CheckSampleInfos}
+all(colnames(data) %in% rownames(meta)) #OR?
+all(colnames(data) == rownames(meta))
+```
 
 ## Making model choices
 
 ## Creating DESeq2 object
 
+## Pre-filtering
+
+While not necessary, pre-filtering the count table to exclude genes that were poorly measures helps to not only reduce the size of the DESeq2 object, but also gives you a sense of *TODO: Complete filtering explaination, based on http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering*
+```{r PreFilter}
+keep <- rowSums(counts(dds)) >= 10
+dds <- dds[keep,]
+```
 
 # Count normalizations
 
 
 # Model fitting 
 
-# Resources used:
-* https://hbctraining.github.io/DGE_workshop/lessons/01_DGE_setup_and_overview.html
+
+
+# Key Terms:    
+> * *DGE*: Differential Gene Expression 
+> * *DEGs*: Differentially Expressed Genes (DEGs)
+
+# Resources used:    
+* HBC DGE setup: https://hbctraining.github.io/DGE_workshop/lessons/01_DGE_setup_and_overview.html   
+* HBC Count Normalization: https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html
+* DESeq2 standard vignette: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html 
+* DESeq2 beginners vignette: https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf    
+* Bioconductor RNA-seq Workflows: https://www.bioconductor.org/help/course-materials/2015/LearnBioconductorFeb2015/B02.1_RNASeq.html
