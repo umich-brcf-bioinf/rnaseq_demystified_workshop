@@ -1,5 +1,5 @@
 ---
-title: "Day 2 - Module 8a: DESeq2 Initialization"
+title: "Day 2 - Module 8: DESeq2 Initialization"
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:
@@ -60,7 +60,7 @@ So how do we determine what kind of sample "counts" as a replicate?
 
 For most experiments biological variance is much greater than technical variance, especially if [best practices](https://www.txgen.tamu.edu/faq/rna-isolation-best-practices/) for [quality RNA isolation](https://www.biocompare.com/Bench-Tips/128790-Four-Tips-for-Perfecting-RNA-Isolation/) are followed (including DNase treatment!).
 
-> If you are working with cell lines and would like more detail about replicates for *in vitro* studies, this [archived page](https://web-archive-org.proxy.lib.umich.edu/web/20170807192514/http://www.labstats.net:80/articles/cell_culture_n.html) could be helpful.
+> **Note**: If you are working with cell lines and would like more detail about replicates for *in vitro* studies, this [archived page](https://web-archive-org.proxy.lib.umich.edu/web/20170807192514/http://www.labstats.net:80/articles/cell_culture_n.html) could be helpful.
 
 A question we are frequently asked is "How many replicates do I need?". *TODO: How much detail to add here *
 
@@ -80,11 +80,11 @@ Since DESeq2 is both a [Bioconductor](https://www.bioconductor.org/help/package-
 
 # DESeq2 Initialization
 
-To walk through the differential gene expression (DGE) workflow we use in the Core, we'll be starting with a count matrix from a RNA-Seq dataset that is described in [Kenny PJ et al, Cell Rep 2014](http://www.ncbi.nlm.nih.gov/pubmed/25464849). The scientific context for this analysis is that the authors were investigating interactions between genes involved in Fragile X syndrome, a disease where there is aberrant prodcution of the FMRP protein. One gene of interest, MOV10 is a putative RNA helicase that associates with FMRP in the microRNA processing pathway.
+To walk through the differential expression (DE) workflow we use in the Core, we'll be starting with a count matrix from a RNA-Seq dataset that is described in [Kenny PJ et al, Cell Rep 2014](http://www.ncbi.nlm.nih.gov/pubmed/25464849). The scientific context for this analysis is that the authors were investigating interactions between genes involved in Fragile X syndrome, a disease where there is aberrant prodcution of the FMRP protein. One gene of interest, MOV10 is a putative RNA helicase that associates with FMRP in the microRNA processing pathway.
 
 For the experiment in Kenny et al, HEK293F cellswere either transfected with a MOV10 transgene, or siRNA to knock down Mov10 expression, or non-specific (irrelevant) siRNA before RNA was isolated and sequenced. This resulted in 3 conditions "Mov10 oe" (over expression), "Mov10 kd" (knock down) and "Irrelevant kd", respectively. We'll look at how many replicates were generated for each condition and what comparisons shouldbe made after we load the data. *TODO: Add context later, used hg19, EdgeR, TMM normalization*   
 
-> After we walk through the workflow, try to comparing the [RNA-Seq methods reported in the paper](https://ars-els-cdn-com.proxy.lib.umich.edu/content/image/1-s2.0-S2211124714009231-mmc1.pdf) to what we did today. Is any information is missing from the methods that would be needed to reproduce their analysis? Did the different tools used for DGE impact in the overall findings?
+> After we walk through the workflow, try to comparing the [RNA-Seq methods reported in the paper](https://ars-els-cdn-com.proxy.lib.umich.edu/content/image/1-s2.0-S2211124714009231-mmc1.pdf) to what we did today. Is any information is missing from the methods that would be needed to reproduce their analysis? Did the different tools used for DE impact in the overall findings?
 
 ## Read in count data
 
@@ -108,7 +108,9 @@ We can see that the column names of the table match the expected experimental sa
 
 *TODO: Check what example count table results Raymond shows for Day 1/if can pull in as example here* If we think back to the 'expected_counts' RSEM output, the values are *not* integers (due to how the alignment tool resolves reads that map to multiple locuses). Since DESeq2 requires whole numbers, if we try to use the RSEM ouputs without rounding the estimated counts to a whole number first, DESeq2 will give us an error.
 
-> *Note*: The package `tximport` is [recommended by the DESeq2 authors](https://support.bioconductor.org/p/90672/) to read in the RSEM expected_counts, as this package allows for the average transcript length per gene to be used in the DGE analysis.
+> **Note**: The package `tximport` is [recommended by the DESeq2 authors](https://support.bioconductor.org/p/90672/) to read in the RSEM expected_counts, as this package allows for the average transcript length per gene to be used in the DE analysis.
+
+> **RNA-seq versus Microarray data**: With [higher sensitivity, greater flexiblity, and decreasing cost](https://www.illumina.com/science/technology/next-generation-sequencing/microarray-rna-seq-comparison.html), sequencing has largely replaced microarray assays for measuring gene expression. A key difference between the platforms is that microarrays measure intensities and are therefore *continous* data while the count data from sequencing is *discrete*. A more detailed comparison between microarrays and sequencing technologies/analysis is outlined in [the online materials for Penn State's STAT555 course](https://online.stat.psu.edu/stat555/node/30/). 
 
 ## Generate Sample Information Table
 
@@ -117,7 +119,7 @@ Our next step will be to describe the samples so that we make the proper compari
 colnames(data)
 ```
 
-We'll use the csample names as a starting point to fill in our sample information table. 
+We'll use the sample names as a starting point to fill in our sample information table. 
 ```{r SampleInfo1}
 meta <- data.frame("samples"=colnames(data))
 meta
@@ -131,22 +133,50 @@ meta$condition <- factor(c(rep(c("Mov.KD"), 2), rep(c("Mov.OE"), 3), rep(c("Irre
 ```
 Notice that we set the levels such that the control group is in the last position. This is important for setting the Control group as the denominator in our comparisons. 
 
+In this case, there aren't known [**covariates**](https://methods-sagepub-com.proxy.lib.umich.edu/reference/encyc-of-research-design/n85.xml) to include in the sample table. However, if there are additional attributes of the samples that may impact the DE comparisons, like sex, date of collection, or patient of origin, these should be added as [additional columns](https://support.bioconductor.org/p/75309/) in the sample information table. 
+
 Next, we'll reorganize the table so it has the shape we need - sample names as the row names for each condition.
 ```{r SampleInfo3}
 row.names(meta) # check the row names
 row.names(meta) <- meta$samples # set the row names to be the sample names
-meta$samples <- NULL # clear the same name column since isnt needed
+meta$samples <- NULL # clear the sample name column since isnt needed
 ```
 
-Before we proceed, we need to make sure that the sample labels (column names) in the count table match the sample information table (row names), including the order. If not, then we will either see an error, or worse we risk making comparisons between the wrong groups of samples. 
+Before we proceed, we need to make sure that the sample labels (column names) in the count table match the sample information table (row names), including the order. 
 ```{r CheckSampleInfos}
 all(colnames(data) %in% rownames(meta)) #OR?
 all(colnames(data) == rownames(meta))
 ```
+If the sample labels, then we will see an error and need to correct the labels prior to proceeding. Checking the sample information table is extremely important to ensure that the correct samples are grouped together for comparisons. 
+
+## Creating DESeq2 object
+
+Bioconductor software packages often define and use a custom class within R for storing data in a way that better fits expectations around biological data. *TODO:Add figure of SummairizedExperiemnt frompage 6 of https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf or https://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html*  These custom data structures have pre-specified data slots, which hold specific types/classes of data and therefore can be more easily accessed by functions from the same package.
+
+We'll start by creating the DESeqDataSet and then we can talk more about key parts of this object. 
+
+To create the DESeqDataSet we need two things we already have: count matrix and the "meta" sample data table. To complete the DESeqDataSet, we will also need to specify a **design formula**.
+
+```{r DESeq2Object}
+## Create DESeq object, line by line
+dds <- DESeqDataSetFromMatrix(countData = data, 
+                              colData = meta, 
+                              design = ~ condition)
+```
+
+The design formula specifies column(s) in the metadata table and how they should be used in the analysis. For our dataset we only have one column we are interested in, that is `condition`. This column has three factor levels, which tells DESeq2 that for each gene we want to evaluate gene expression change with respect to these different levels.
+
+If we look at the `dds` object now, we can see how our data is organized.
+```{r DESeq2ObjectCheck, message = FALSE}
+str(dds)
+```
+Right now, there are quite a few "empty" slots that will be filled in when we proceed with the model fitting. Before we do that, let's discuss how to make model choices.
 
 ## Making model choices
 
-## Creating DESeq2 object
+When deciding on the model to specify for the DESeq2 object, 
+
+[Including **covariates** in a DESeq2 model](https://support.bioconductor.org/p/98700/)
 
 ## Pre-filtering
 
@@ -164,8 +194,10 @@ dds <- dds[keep,]
 
 
 # Key Terms:    
-> * *DGE*: Differential Gene Expression 
-> * *DEGs*: Differentially Expressed Genes (DEGs)
+> * *DE*: Differential Expression 
+> * *DEGs*: Differentially Expressed Genes (DEGs)    
+> * *Covariates*: Additional sample attributes that should be accounted for in DE comparisons
+> * *Design Formula*: 
 
 # Resources used:    
 * HBC DGE setup: https://hbctraining.github.io/DGE_workshop/lessons/01_DGE_setup_and_overview.html   
