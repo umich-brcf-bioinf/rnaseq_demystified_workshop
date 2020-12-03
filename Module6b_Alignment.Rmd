@@ -1,0 +1,31 @@
+---
+title: "Day 1 - Module 6b: Alignment"
+author: "UM Bioinformatics Core"
+date: "`r Sys.Date()`"
+output:
+    html_document:
+        theme: readable
+        toc: true
+        toc_depth: 4
+        toc_float: true
+        number_sections: true
+        fig_caption: true
+        keep_md: true
+---
+
+# Notes oon STAR
+
+- Algorithmic details to mention (or not):
+    - MMP, maximal mappable prefix
+    - Suffix arrays
+- Fig 1 of [STAR](https://academic.oup.com/bioinformatics/article/29/1/15/272537) shows how the algorithm naturally allows for mismatches or even for polyA tails / adapter sequence.
+
+# Notes on RSEM
+
+- RSEM aims to deal with the problem of reads mapping to multiple genes / isoforms.
+- No reference required, just a set of transcripts (GTF?).
+- Requirements of alignments from aligner:
+    - First, and most critically, aligners must be configured to report all valid alignments of a read, and not just a single "best" alignment.
+    - Second, we recommend that aligners be configured so that only matches and mismatches within a short prefix (a "seed") of each read be considered when determining valid alignments.
+        - The idea is to allow RSEM to decide which alignments are most likely to be correct, rather than giving the aligner this responsibility.
+- RSEM has non-integer values because of the duplicative nature of genes/isoforms
