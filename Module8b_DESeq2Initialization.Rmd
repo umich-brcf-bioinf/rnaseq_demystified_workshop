@@ -20,6 +20,10 @@ output:
     }
 </style>
 
+> # Objectives    
+> * Import and process count data    
+> * Understand possible confounding factors when comparing raw gene counts    
+> * Understand the impact of batches or additional covariates     
 
 # DESeq2 Initialization
 
@@ -150,6 +154,15 @@ dds_batch <- DESeqDataSetFromMatrix(countData = data,
                               design = ~ batch + condition)
 ```
 Notice that the error indicates that variables in the design formula "are linear combinations" which means that batch and condition are correlated and the function is unable to fill in a required 'slot' in the DESeq2 object. So if batches are not balanced by including both case and controls then we cannot attempt to control for those technical effects through statistical modeling.
+
+## Pre-filtering
+
+While not necessary, pre-filtering the count table to exclude genes that were poorly measures helps to not only reduce the size of the DESeq2 object, but also gives you a sense of how many genes were measured at the sequencing depth chosen for your experiment. *TODO: Complete filtering explaination, based on http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering*
+```{r PreFilter}
+keep <- rowSums(counts(dds)) >= 1
+dds <- dds[keep,]
+```
+
 
 ---
 

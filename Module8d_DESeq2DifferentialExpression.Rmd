@@ -1,5 +1,5 @@
 ---
-title: "Day 2 - Module 8c: DESeq2 Differential Expression"
+title: "Day 2 - Module 8d: DESeq2 Differential Expression"
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:
@@ -20,14 +20,9 @@ output:
     }
 </style>
 
-
-## Pre-filtering
-
-While not necessary, pre-filtering the count table to exclude genes that were poorly measures helps to not only reduce the size of the DESeq2 object, but also gives you a sense of how many genes were measured at the sequencing depth chosen for your experiment. *TODO: Complete filtering explaination, based on http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pre-filtering*
-```{r PreFilter}
-keep <- rowSums(counts(dds)) >= 1
-dds <- dds[keep,]
-```
+> # Objectives   
+> * Understand indivudal samples versus groups for comaprisons
+> * Execute model fitting for differential expression comparisons
 
 # Count normalizations
 
