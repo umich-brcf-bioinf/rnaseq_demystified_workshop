@@ -1,0 +1,190 @@
+---
+title: "Day 2 - Module 9a: Sample Visualizations"
+author: "UM Bioinformatics Core"
+date: "`r Sys.Date()`"
+output:
+        html_document:
+            theme: readable
+            toc: true
+            toc_depth: 4
+            toc_float: true
+            number_sections: true
+            fig_caption: true
+            keep_md: true
+---
+
+<!--- Allow the page to be wider --->
+<style>
+    body .main-container {
+        max-width: 1200px;
+    }
+</style>
+
+
+> # Objectives 
+> * Generate common QC visualizations   
+> * Understand how to interpret QC visualizations    
+> * Understand when to revise the model used in the DESeq2 initialization    
+> * Understand the pitfalls of post-hoc analysis     
+> * Describe the causes and implications of batch effect or other QC issues in an RNA-Seq experiment     
+
+# Sample Visualizatons for Quality Control     
+
+Yesterday we discussed aspects of quality control assessment at the sequencing data level. Today we will outline sample-level and gene level quality controlto determine what we should expect from our downstream differential expression comparisons.
+
+To do this, we will assess the similarity of our samples by using principal component analysis (PCA) and hierarchical clustering methods. This will allow us to determine how well patterns in the data fits our expectations from the experiments design and possible sources of variation in the dataset.
+
+### Plot Setup
+
+We'll need to load in some additional libraries before plotting.
+```{r LoadLibraries}
+library(ggplot2)
+library(tidyr)
+library('ggrepel', character.only=TRUE)
+library('pheatmap', character.only=TRUE)
+library('RColorBrewer', character.only=TRUE)
+```
+
+Next, we'll follow best practices and create new directories to organize our output figures.
+```{r Setupdirectory}
+# system("mkdir ./Figures") # create output folder if not already generated
+# system("mkdir ./Figures/ByComparisons") # create output folder if not already generated
+plotPath = "./Figures/BySamples/"
+```
+
+## Count boxplots
+
+Next, we'll look at our distributions of raw and normalized counts. First, we need to set up some tables and add the relevant annotations. *TODO: Create plotting code file for learners to copy & paste from?*
+```{r RawCountsSetup}
+## setup for raw counts
+pdata = data.frame(colData(dds))
+mat = as.matrix(assay(dds))
+title = 'Raw counts'
+y_label = 'log2(counts)'
+
+# create annotationn table for raw plots
+annot_df = data.frame(
+    sample = row.names(pdata),
+    Group = factor(pdata[, "condition"]),
+    row.names = row.names(pdata),
+    stringsAsFactors = F
+)
+
+# join counts and annotation table
+tidy_mat = tidyr::gather(as_tibble(mat), key = 'sample', value = 'counts') %>%
+    left_join(annot_df, by = 'sample')
+```
+
+Once we set up 
+```{r BoxplotsRaw}
+box_plot = ggplot(tidy_mat, aes(x = sample, y = log2(counts), fill = Group)) +
+    geom_boxplot(notch = TRUE) +
+    labs(
+        title = title,
+        x = '',
+        y = y_label) +
+    theme_bw() + theme(axis.text.x = element_text(angle = 90))
+ggsave(filename = paste0(plotPath, "BoxPlot_Mov10_raw.pdf"), plot = box_plot, height = 8, width = 8, dpi = 300)
+```
+
+
+```{r BoxplotsNorm}
+## rlog counts
+pdata = data.frame(colData(rld))
+mat = as.matrix(assay(rld))
+title = 'Rlog normalized counts'
+y_label = 'rlog(counts)'
+
+annot_df = data.frame(
+    sample = row.names(pdata),
+    Group = factor(pdata[, "condition"]),
+    row.names = row.names(pdata),
+    stringsAsFactors = F
+)
+
+tidy_mat = tidyr::gather(as_tibble(mat), key = 'sample', value = 'counts') %>%
+    left_join(annot_df, by = 'sample')
+
+box_plot = ggplot(tidy_mat, aes(x = sample, y = counts, fill = Group)) +
+    geom_boxplot(notch = TRUE) +
+    labs(
+        title = title,
+        x = '',
+        y = y_label) +
+    theme_bw() + theme(axis.text.x = element_text(angle = 90))
+ggsave(filename = paste0(plotPath, "BoxPlot_Mov10_rlog.pdf"), plot = box_plot, height = 8, width = 8, dpi = 300)
+```
+
+## Heatmaps
+
+Using code from legacy Watermelon pipeline to generate 'pretty' heatmaps. 
+```{r PrettyHeatmps}
+#heatmap with top 500 variant or expressed genes, rlog normalized data
+colors <- colorRampPalette(brewer.pal(9, 'Blues'))(255)
+select <- order(rowVars(assay(rld)), decreasing=TRUE)[1:500]
+df <- data.frame(Group = colData(rld)[,c('condition')], row.names = rownames(colData(dds)))
+pdf(file = paste0(plotPath,'Heatmap_TopVar_', Comparison, '.pdf'), onefile = FALSE, width=10, height=20)
+pheatmap(assay(rld)[select,], scale="row",  cluster_rows=TRUE, show_rownames=FALSE, cluster_cols=TRUE, annotation_col=df, fontsize = 7, las = 2, fontsize_row = 7, color = colors, main = '500 Top Variably Expressed Genes Heatmap')
+dev.off()
+
+select <- order(rowMeans(assay(rld)), decreasing=TRUE)[1:500]
+df <- data.frame(Group = colData(rld)[,c('condition')], row.names = rownames(colData(dds)))
+pdf(file = paste0(plotPath,'Heatmap_TopExp_', Comparison, '.pdf'), onefile = FALSE, width=10, height=20)
+p <- pheatmap(assay(rld)[select,], scale="row",  cluster_rows=TRUE, show_rownames=FALSE, cluster_cols=TRUE, annotation_col=df, fontsize = 7, las = 2, fontsize_row = 7, color = colors, main = '500 Top Expressed Genes Heatmap')
+p
+dev.off()
+
+#embed example plot (TopExp)
+p
+```
+
+## PCA
+
+
+
+First, plot PCA for QC purposes. Code is modified from legacy Watermelon pipeline.
+```{r PCA}
+
+pdf(file = paste0(plotPath, 'PCAplot_All_', Comparison, '.pdf'), onefile = TRUE)
+#PCA plot for Rlog-Normalized counts for all samples
+CombinatoricGroup <- factor(coldata$condition)
+SampleName <- factor(row.names(coldata))
+p.all <- plotPCA(rld, intgroup = c('condition'))
+gp <- ggplot(p.all$data, aes(x = PC1, y = PC2, color = SampleName, shape = CombinatoricGroup)) + xlab(p.all$labels[2]) + ylab(p.all$labels[1]) + scale_shape_manual(values=1:nlevels(CombinatoricGroup), name = 'Combinatoric Group') + geom_point(size=2) + ggtitle(label = as.character('All samples Rlog-Normalized')) + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=guide_legend(nrow=12, title = 'Sample'), legend.key = element_rect(size = 1), legend.key.size = unit(0, 'cm')) + theme_classic(base_size = 10) + theme(legend.margin=margin(t = 0, unit='mm'))
+plot(gp)
+
+#PCA for Depth-Normalized counts for all samples
+DNC <- SummarizedExperiment(log2(counts(dds, normalized = TRUE)), colData=colData(dds))
+p.DNC <- plotPCA(DESeqTransform(DNC), intgroup = 'condition')
+gpDNC <- ggplot(p.DNC$data, aes(x = PC1, y = PC2, color = SampleName, shape = CombinatoricGroup)) + xlab(p.DNC$labels[2]) + ylab(p.DNC$labels[1]) + scale_shape_manual(values=1:nlevels(CombinatoricGroup), name = 'Combinatoric Group') + geom_point(size=2) + ggtitle(label = as.character('All samples Depth-Normalized')) + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=guide_legend(nrow=12, title = 'Sample'), legend.key = element_rect(size = 1), legend.key.size = unit(0, 'cm')) + theme_classic(base_size = 10) + theme(legend.margin=margin(t = 0, unit='mm'))
+plot(gpDNC)
+
+#PCA for Raw counts for all samples
+RC <- SummarizedExperiment(log2(counts(dds, normalized = FALSE)), colData=colData(dds))
+p.RC <- plotPCA(DESeqTransform(RC), intgroup = 'condition')
+gpRC <- ggplot(p.RC$data, aes(x = PC1, y = PC2, color = SampleName, shape = CombinatoricGroup)) + xlab(p.RC$labels[2]) + ylab(p.RC$labels[1]) + scale_shape_manual(values=1:nlevels(CombinatoricGroup), name = 'Combinatoric Group') + geom_point(size=2) + ggtitle(label = as.character('All samples Raw')) + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=guide_legend(nrow=12, title = 'Sample'), legend.key = element_rect(size = 1), legend.key.size = unit(0, 'cm')) + theme_classic(base_size = 10) + theme(legend.margin=margin(t = 0, unit='mm'))
+plot(gpRC)
+
+dev.off()
+
+# embedd example of plot (rlog only)
+plot(gp)
+```
+
+### Detecting batch effects/confounders
+
+[Batch effects example](http://www.molmine.com/magma/global_analysis/batch_effect.html)
+
+### When to remove samples or update the design formula
+
+---
+
+# Sources Used:    
+* HBC QC tutorial: https://hbctraining.github.io/DGE_workshop/lessons/03_DGE_QC_analysis.html    
+* 
+
+
+# Session Info:
+```{r SessionInfo}
+sessionInfo()
+```

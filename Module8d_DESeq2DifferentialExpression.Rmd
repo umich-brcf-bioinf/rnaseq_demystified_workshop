@@ -27,17 +27,20 @@ output:
 # Count normalizations
 
 *TODO: How much were count normalizations discussed in STAR/RSEM section?*
-*As discussed previously*, count normalization is very important for comparing the expression of a gene between samples and/or between genes within the same sample. 
+*As  previously mentioned*, count normalization is very important for comparing the expression of a gene between samples and/or between genes within the same sample. 
 
 Since counts of mapped reads for each gene is proportional to the expression of RNA in addition to many “uninteresting” other factors, normalization is the process of scaling raw count values to account for the “uninteresting” factors and ensure expression levels are more comparable. 
 
 > **Note**: The beginning of [this tutorial](https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html) has a helpful illustration of factors considered, as well as a detailed comparison of different normalization approaches and their best uses. 
 
-DESeq2 has an [internal normalization process](*TODO:Add reference to DESeq2 normalization process*) that uses the median of ratios method to normalize for sequencing depth and RNA composition prior to differential expression comparisons. However for data exploration and visualizations, it is important to generate an independently normalized count object. 
+DESeq2 has an [internal normalization process](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106) that uses the median of ratios method to normalize for sequencing depth and RNA composition prior to differential expression comparisons. However for data exploration and visualizations, it is helpful to generate an object of independently normalized counts. 
 
-For downstream quality control visualization, we will use the [rlog transformation]() to moderate the variance across the mean. The rlog transformation of the normalized counts is only necessary for these visualization methods during this quality assessment. We will not be using these tranformed counts downstream, as again, DESeq2 .
+For downstream quality control visualization, we will use the [rlog transformation](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#count-data-transformations), which produces log2 scale data that has also been normalized to overall library size as well as variance across genes at different mean expression levels. 
+
+The rlog transformation of the normalized counts is only necessary for these visualization methods during this quality assessment. We we set `blind=TRUE` the transformation is blind to the sample information we specified in the design formula.
 ```{r CountNorm}
-rld <- rlog(dds, blind = FALSE)
+rld <- rlog(dds, blind = TRUE)
+head(assay(rld), 3)
 ```
 
 # Model fitting 
