@@ -1,5 +1,5 @@
 ---
-title: "Day 1 - Module 2a: The Unix Shell"
+title: "Introduction to UNIX Shell"
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:

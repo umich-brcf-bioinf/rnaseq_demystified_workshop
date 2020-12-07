@@ -1,5 +1,5 @@
 ---
-title: "Day 1 - Module 6a: Reference Genomes"
+title: "Reference Genomes"
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:
@@ -23,7 +23,7 @@ In the library preparation step we prepared our samples for sequencing. This inv
 
 In order for analysis to proceed, we have to take the many millions of sequenced fragments and map them back to the genome / transcriptome. This will allow us to quantify the expression of genes, and investigate differential expression. First, we need something to map **onto**.
 
-# What is in a reference genome?
+# Reference Genome Basics
 
 A reference genome represents our collective understanding of the genomic sequence of an organism. It is important to note that they are not necessarily complete (e.g. determining the sequence around centromeres is difficult), and they are the ongoing product of the work of many researchers. That fact is illustrated by the notion of reference genome builds (e.g. hg19 and hg38).
 
@@ -47,7 +47,7 @@ TTTATCTTTAGGCGGTATGCACTTTTAACAGTCACCCCCCAACTAACACA
 ...
 ```
 
-The genomic sequence is stored in a [FASTA](https://en.wikipedia.org/wiki/FASTA_format) file. These files are similar to FASTQ files in that they store sequence information, but their format is different, as you may have already noticed. FASTA files have only two types of lines: descriptions and sequences. Description lines begin with `>` and often denote chromosomes (as above). The description lines can have more formatting (as described [here](https://en.wikipedia.org/wiki/FASTA_format#NCBI_identifiers)). The sequence lines generally contain ACGTs as well as Ns to indicate unknown sequence (see [here](https://en.wikipedia.org/wiki/FASTA_format#Sequence_representation) for detailed code).
+The genomic sequence is stored in a [FASTA](https://en.wikipedia.org/wiki/FASTA_format) file. These files are similar to FASTQ files in that they store sequence information, but their format is a little different, as you may have already noticed. FASTA files have only two types of lines: descriptions and sequences. Description lines begin with `>` and can denote chromosomes (as above), scaffolds, or any length of genomic sequence. The description lines can have more formatting (as described [here](https://en.wikipedia.org/wiki/FASTA_format#NCBI_identifiers)). The sequence lines generally contain ACGTs as well as Ns to indicate unknown sequence (see [here](https://en.wikipedia.org/wiki/FASTA_format#Sequence_representation) for a detailed breakdown of the IUPAC code).
 
 ## Gene Model
 
@@ -58,12 +58,7 @@ chr1	unknown	exon	11874	12227	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; tran
 chr1	unknown	exon	12613	12721	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; transcript_id "NR_046018"; tss_id "TSS16932";
 chr1	unknown	exon	13221	14409	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; transcript_id "NR_046018"; tss_id "TSS16932";
 chr1	unknown	exon	14362	14829	.	-	.	gene_id "WASH7P"; gene_name "WASH7P"; transcript_id "NR_024540"; tss_id "TSS8568";
-chr1	unknown	exon	14970	15038	.	-	.	gene_id "WASH7P"; gene_name "WASH7P"; transcript_id "NR_024540"; tss_id "TSS8568";
-chr1	unknown	exon	15796	15947	.	-	.	gene_id "WASH7P"; gene_name "WASH7P"; transcript_id "NR_024540"; tss_id "TSS8568";
-chr1	unknown	exon	16607	16765	.	-	.	gene_id "WASH7P"; gene_name "WASH7P"; transcript_id "NR_024540"; tss_id "TSS8568";
-chr1	unknown	exon	16858	17055	.	-	.	gene_id "WASH7P"; gene_name "WASH7P"; transcript_id "NR_024540"; tss_id "TSS8568";
-chr1	unknown	exon	17233	17368	.	-	.	gene_id "WASH7P"; gene_name "WASH7P"; transcript_id "NR_024540"; tss_id "TSS8568";
-chr1	unknown	exon	17369	17436	.	-	.	gene_id "MIR6859-3"; gene_name "MIR6859-3"; transcript_id "NR_107063_2"; tss_id "TSS25677";
+...
 ```
 
 At a glance we observe the following information:
@@ -77,7 +72,7 @@ In short, the GTF file encodes the gene and isoform structure for the genome, al
 
 Some notes about GTF files:
 
-- Depending on where a reference genome comes from, the gene and transcript IDs can look different. In the example above we see the gene IDs are gene symbols and the transcript IDs are RefSeq IDs from the RefSeq Consortium. GTF files from ENSEMBL or NCBI may have different identifiers (some examples are below).
+- Depending on where a reference genome comes from, the gene and transcript IDs can look different. In the example above we see the gene IDs are gene symbols and the transcript IDs are RefSeq IDs from the RefSeq Consortium. GTF files from ENSEMBL or NCBI will have different identifiers (some examples are below).
 - Each line of a GTF is a "feature". Features can be repeated as in the case where an exon belongs to many transcripts.
 
 The GTF file format can result in files that look quite different from one another. Here is an example of a GTF file for the hg38 genome using ENSEMBL identifiers:
@@ -87,10 +82,23 @@ KN196472.1	HAVANA	exon	14223	14535	.	-	.	exon_id "ENSE00003761344.1"; exon_numbe
 KN196472.1	HAVANA	transcript	14223	14535	.	-	.	gene_id "ENSG00000281764.1"; gene_name "RP11-399E6.2"; gene_status "KNOWN"; gene_type "processed_pseudogene"; havana_gene "OTTHUMG00000005711.2"; havana_transcript "OTTHUMT00000015628.2"; level "2"; ont "PGO:0000004"; tag "basic"; transcript_id "ENST00000630776.1"; transcript_name "RP11-399E6.2-001"; transcript_status "KNOWN"; transcript_type "processed_pseudogene"; tss_id "TSS131252";
 ```
 
-Note that the structure is similar, i.e. tab-delimited fields, but there is additional information included:
+Note that the structure is similar, i.e. tab-delimited fields in the same order, but some things look a bit different:
 
 - The chromosomes use a different identifier.
 - The second column indicates which genome annotation algorithm is responsible for the assignment (HAVANA is one such).
 - The last field contains much more information about the feature than the RefSeq example we first saw.
 
+# Gene Identifiers
+
+In your experience you may have noticed that there are many ways to identify genes:
+
+- Symbols such as TP53
+- Entrez IDs such as 7157
+- Ensembl IDs such as ENSG00000141510
+- RefSeq mRNA IDs such as NM_000546
+
+Each of the above refers to the *same* gene.
+
 # Where to get a reference genome?
+
+Illumina provides a number of genomes for various organisms through their [iGenomes portal](https://support.illumina.com/sequencing/sequencing_software/igenome.html) which can be used for most experiments.
