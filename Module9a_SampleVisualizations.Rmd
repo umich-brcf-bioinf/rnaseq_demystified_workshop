@@ -145,8 +145,9 @@ dev.off()
 p
 ```
 
-The columns are the samples, clustered by similarity of expression of the top 500 most expressed genes. The rows are genes, clusted by similarity of expression. The colors
+The columns are the samples, clustered by similarity of rlog normalized expression of the top 500 most expressed genes. The rows are genes, clusted by similarity of expression.    
 
+The colors are scaled by the 'distance' between the rows of the input data 
 *TODO: Add additional plotting code to supplemental code file as follow up/take home work*
 ```{r SampleHeatmaps}
 #heatmap of normalized data, sample distibution matrix
@@ -162,6 +163,8 @@ pheatmap(sampleDistMatrix,
 dev.off()
 
 ```
+
+> **Note**: Heatmaps are helpful visualizations, especially for sharing an overview of your RNA-seq data. However, the why and how to use them properly can be confusing, such as outlined in [this post](https://www.biostars.org/p/230115/). 
 
 *TODO: Add additional plotting code to supplemental code file as follow up/take home work*
 ```{r TopExpHeatmaps}
