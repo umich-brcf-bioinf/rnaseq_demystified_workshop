@@ -54,7 +54,7 @@ plotPath = "./Figures/BySamples/"
 
 ## Count boxplots
 
-Next, we'll look at our distributions of raw and normalized counts. First, we need to set up some tables and add the relevant annotations. *TODO: Create plotting code file for learners to copy & paste from?*
+Next, we'll look at our distributions of raw and normalized counts. First, we need to set up some tables and labels. *TODO: Create plotting code file for learners to copy & paste from?*
 ```{r RawCountsSetup}
 ## setup for raw counts
 pdata = data.frame(colData(dds))
@@ -62,6 +62,10 @@ mat = as.matrix(assay(dds))
 title = 'Raw counts'
 y_label = 'log2(counts)'
 
+```
+
+Then, we'll add the relevant annotations to the count table. 
+```{r Annotations}
 # create annotationn table for raw plots
 annot_df = data.frame(
     sample = row.names(pdata),
@@ -75,7 +79,7 @@ tidy_mat = tidyr::gather(as_tibble(mat), key = 'sample', value = 'counts') %>%
     left_join(annot_df, by = 'sample')
 ```
 
-Once we set up 
+Once we set up the input data, we can plot the raw counts for our samples. 
 ```{r BoxplotsRaw}
 box_plot = ggplot(tidy_mat, aes(x = sample, y = log2(counts), fill = Group)) +
     geom_boxplot(notch = TRUE) +
@@ -87,8 +91,8 @@ box_plot = ggplot(tidy_mat, aes(x = sample, y = log2(counts), fill = Group)) +
 ggsave(filename = paste0(plotPath, "BoxPlot_Mov10_raw.pdf"), plot = box_plot, height = 8, width = 8, dpi = 300)
 ```
 
-
-```{r BoxplotsNorm}
+*TODO: How much to explain second plot or put as supplemental code?*
+```{r BoxplotsRlog}
 ## rlog counts
 pdata = data.frame(colData(rld))
 mat = as.matrix(assay(rld))
@@ -115,20 +119,23 @@ box_plot = ggplot(tidy_mat, aes(x = sample, y = counts, fill = Group)) +
 ggsave(filename = paste0(plotPath, "BoxPlot_Mov10_rlog.pdf"), plot = box_plot, height = 8, width = 8, dpi = 300)
 ```
 
+
 ## Heatmaps
 
-Using code from legacy Watermelon pipeline to generate 'pretty' heatmaps. 
-```{r PrettyHeatmps}
+Next, we'll generate a heatmap of the top expressed genes across all samples. First, we'll set our color palette using a tool called [Color Brewer](https://www.r-graph-gallery.com/38-rcolorbrewers-palettes.html). 
+```{r ChooseColors}
 #heatmap with top 500 variant or expressed genes, rlog normalized data
 colors <- colorRampPalette(brewer.pal(9, 'Blues'))(255)
-select <- order(rowVars(assay(rld)), decreasing=TRUE)[1:500]
-df <- data.frame(Group = colData(rld)[,c('condition')], row.names = rownames(colData(dds)))
-pdf(file = paste0(plotPath,'Heatmap_TopVar_', Comparison, '.pdf'), onefile = FALSE, width=10, height=20)
-pheatmap(assay(rld)[select,], scale="row",  cluster_rows=TRUE, show_rownames=FALSE, cluster_cols=TRUE, annotation_col=df, fontsize = 7, las = 2, fontsize_row = 7, color = colors, main = '500 Top Variably Expressed Genes Heatmap')
-dev.off()
+```
 
+First, we'll select the top expressed genes across all samples. 
+```{r TopExpression}
 select <- order(rowMeans(assay(rld)), decreasing=TRUE)[1:500]
 df <- data.frame(Group = colData(rld)[,c('condition')], row.names = rownames(colData(dds)))
+```
+
+Next, we'll set up a PDF file and plot our heatmap. Saving the plot as an object allows us to view the figure in our session. 
+```{r GeneratePrettyheatmap}
 pdf(file = paste0(plotPath,'Heatmap_TopExp_', Comparison, '.pdf'), onefile = FALSE, width=10, height=20)
 p <- pheatmap(assay(rld)[select,], scale="row",  cluster_rows=TRUE, show_rownames=FALSE, cluster_cols=TRUE, annotation_col=df, fontsize = 7, las = 2, fontsize_row = 7, color = colors, main = '500 Top Expressed Genes Heatmap')
 p
@@ -138,9 +145,37 @@ dev.off()
 p
 ```
 
+The columns are the samples, clustered by similarity of expression of the top 500 most expressed genes. The rows are genes, clusted by similarity of expression. The colors
+
+*TODO: Add additional plotting code to supplemental code file as follow up/take home work*
+```{r SampleHeatmaps}
+#heatmap of normalized data, sample distibution matrix
+sampleDists <- dist(t(assay(rld))) #vst normalized data
+sampleDistMatrix <- as.matrix(sampleDists)
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette(rev(brewer.pal(9, 'Blues')))(255)
+pdf(file = paste0(plotPath,'Heatmap_Dispersions_', Comparison, '.pdf'), onefile = FALSE)
+pheatmap(sampleDistMatrix, 
+         clustering_distance_rows=sampleDists,
+         clustering_distance_cols=sampleDists,
+         col=colors)
+dev.off()
+
+```
+
+*TODO: Add additional plotting code to supplemental code file as follow up/take home work*
+```{r TopExpHeatmaps}
+colors <- colorRampPalette(brewer.pal(9, 'Blues'))(255)
+
+select <- order(rowVars(assay(rld)), decreasing=TRUE)[1:500]
+df <- data.frame(Group = colData(rld)[,c('condition')], row.names = rownames(colData(dds)))
+pdf(file = paste0(plotPath,'Heatmap_TopVar_', Comparison, '.pdf'), onefile = FALSE, width=10, height=20)
+pheatmap(assay(rld)[select,], scale="row",  cluster_rows=TRUE, show_rownames=FALSE, cluster_cols=TRUE, annotation_col=df, fontsize = 7, las = 2, fontsize_row = 7, color = colors, main = '500 Top Variably Expressed Genes Heatmap')
+dev.off()
+
+```
+
 ## PCA
-
-
 
 First, plot PCA for QC purposes. Code is modified from legacy Watermelon pipeline.
 ```{r PCA}
@@ -181,7 +216,8 @@ plot(gp)
 
 # Sources Used:    
 * HBC QC tutorial: https://hbctraining.github.io/DGE_workshop/lessons/03_DGE_QC_analysis.html    
-* 
+* Detailed Heatmap tutorial from Galaxy: https://training.galaxyproject.org/training-material/topics/transcriptomics/tutorials/rna-seq-viz-with-heatmap2/tutorial.html
+
 
 
 # Session Info:
