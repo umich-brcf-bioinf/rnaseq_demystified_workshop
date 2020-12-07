@@ -1,5 +1,5 @@
 ---
-title: "Day 1 - Module 6b: Alignment"
+title: "Alignment and Gene Quantification"
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:
@@ -13,7 +13,7 @@ output:
         keep_md: true
 ---
 
-# Notes oon STAR
+# Notes on STAR
 
 - Algorithmic details to mention (or not):
     - MMP, maximal mappable prefix

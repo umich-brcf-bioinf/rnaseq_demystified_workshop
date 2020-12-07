@@ -1,5 +1,5 @@
 ---
-title: "Day 1 - Module 4b: Quality Control"
+title: "Quality Control of Raw Reads"
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:
@@ -25,9 +25,48 @@ render('Module2a_UNIXShell.Rmd')
     }
 </style>
 
+# FASTQ Files
+
+The files representing the raw sequenced reads are called FASTQ files. There is one for each sample, and one for each read pair (usually denoted by an `R1` and `R2` in the name). FASTQ files are simply text files with a particular structure. To see that structure, let's have a look at an example FASTQ that you downloaded as part of the workshop material.
+
+```
+$ cd workshop_data/fastqs
+
+$ head -4 good_example_R1.fastq
+```
+
+In the above command, `head` is a UNIX command that lets us see the top lines of a file, in this case we've specified the top 4 lines (`-4`), but by default it's the top 10 lines.
+
+The result is:
+
+```
+@A00437:266:HVFMYDSXX:1:1101:1181:1000 1:N:0:AGCCTATC+TGCGTAAC
+TTTATTGTTGATGGTTATTTTTTGTTTATGGTTATTTTGTGTTTATGGTTATTTTTTGTTTATGGTTATTTTTTATTGATGGTTATTTTTTGTTTATGGTT
++
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:FFFFFFFFFFFFFFFFFF
+```
+
+When we said earlier that FASTQ files have a particular structure, we mean that each read contains four lines of information:
+
+- Line 1 gives the read information, often including the sequencer and flowcell used, as well as the barcode for the sample.
+- Line 2 gives the actual sequence, the ACGTs.
+- Line 3 is a separator `+`.
+- Line 4 is the Illumina per-base quality scoring coding. This is referred to as PHRED33.
+
+## Base Quality Scores
+
+It's important to note that the 4th line is not intended to be read by humans. Instead, as we'll see shortly, there are programs that convert the encoding to a numerical score which we interpret.
+
+A historical note, you may see programs refer to PHRED33 and PHRED64 scoring systems. The older PHRED64 scoring system is based on a different encoding and was used by older sequencers. It is safe to assume that any new data you receive from AGC is PHRED33. (DISCUSS: Say something about older SRA data? Is it usually indicated in the accession that a PHRED64 was used?)
+
+## Paired-end FASTQs
+
+When paired-end sequencing is performed, we briefly mentioned that read pairs are separated into `R1` files and `R2` files. These files will always have the same number of lines, and the quadruplets correspond to the same read. That is, the first 4 lines of each file refer to one read pair. As we will see later, aligners require that this pairing not be disturbed.
+
+
 # Initial Quality Assessment
 
-The first quality assessment is done on the FASTQ files. For this, we use a tool called FastQC ([link](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)). Essentially it takes in the first 100,000 reads of a FASTQ file and calculates the following, and outputs a report.
+The first quality assessment is done on the FASTQ files. For this, we use a tool called FastQC ([link](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)). Essentially, it takes the first hundred thousand reads of a FASTQ file, calculates various metrics, and outputs a report.
 
 - Read quality score per base (by interpreting the PHRED33 scores)
 - Per tile sequencing quality (related to sequencing clusters on the flowcell)
@@ -36,7 +75,7 @@ The first quality assessment is done on the FASTQ files. For this, we use a tool
 - Adapter content
 - Overrepresented sequences
 
-## Running FastQC
+# Running FastQC
 
 Let's make our first use of the `conda` environment that we created in setting up for the workshop. In this environment is the `fastqc` program.
 
@@ -246,12 +285,25 @@ Adapter content can show up in reads if the read fragments are very short (e.g. 
 
 # MultiQC
 
-INSERT STUFF HERE
+FastQC is a great tool, and its reports are fairly intuitive to look through. But imagine you have 20 samples that you've sequenced. You'd have to look at each report for each sample, and keep track of things you noticed in previous samples to notice any possible trends. It would be much easier to look at all the FastQC reports compiled into a single report. [MultiQC](https://multiqc.info/) is a tool that does exactly this.
 
-# Discussion
+MultiQC is a simple to run tool that will look for output from many Bioinformatics tools and aggregate them into a single report.
+
+```
+$ cd /path/to/analysis_dir
+$ multiqc .
+```
+
+The result is an HTML document just like FastQC. [Here](https://multiqc.info/examples/rna-seq/multiqc_report.html) is an example from a typical RNA-seq pipeline.
+
+# Acting on QC
 
 ## What does good QC mean?
 
 At this stage, it simply means that RNA quality, library preparation, and sequencing seem to have been successful. It **does not** indicate that there are differentially expressed genes between groups.
 
 ## What does bad QC mean?
+
+Failing QC metrics can indicate something wrong with the initial RNA quality (RIN scores), library preparation, or the sequencer. It can be difficult to isolate the source from just the QC.
+
+However, not all bad QC means that a sample or entire sequencing run has to be scrapped.
