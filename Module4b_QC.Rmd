@@ -25,48 +25,82 @@ render('Module2a_UNIXShell.Rmd')
     }
 </style>
 
-# FASTQ Files
+# Differential Expression Workflow
 
-The files representing the raw sequenced reads are called FASTQ files. There is one for each sample, and one for each read pair (usually denoted by an `R1` and `R2` in the name). FASTQ files are simply text files with a particular structure. To see that structure, let's have a look at an example FASTQ that you downloaded as part of the workshop material.
+As a reminder, our overall differential expression workflow is shown below. In this lesson, we will go over the bold part of the workflow.
 
-```
-$ cd workshop_data/fastqs
+| Step | Task |
+| :--: | ---- |
+| 1 | Experimental Design |
+| 2 | Biological Samples / Library Preparation |
+| 3 | Sequence Reads |
+| **4** | **Assess Quality of Raw Reads** |
+| 5 | Splice-aware Mapping to Genome |
+| 6 | Count reads associated with genes |
+| 7 | Test for DE Genes |
 
-$ head -4 good_example_R1.fastq
-```
+# Data Types
 
-In the above command, `head` is a UNIX command that lets us see the top lines of a file, in this case we've specified the top 4 lines (`-4`), but by default it's the top 10 lines.
+Analysis of RNA-seq data requires the use of many types of data. The three most common that we will encounter are:
 
-The result is:
+- Sequence data
+- Genome feature data
+- Alignment data
+
+We will introduce each data type and their formats in more detail as they enter the workflow, but for now some general notes about the formats we will encounter:
+
+- File formats represent the data in a structured manner.
+- Some file formats are not human-readable; they are binary, and we will see what that means when we discuss alignments.
+- Many file formats are human readble, but very large. **These files should not be viewed in Word or Excel.**
+
+## FASTQ Files
+
+Raw sequenced reads are stored in [FASTQ](https://en.wikipedia.org/wiki/FASTQ_format) format. This is a plain text, human readable file format that stores information about each read. For a single read there are four lines:
 
 ```
 @A00437:266:HVFMYDSXX:1:1101:1181:1000 1:N:0:AGCCTATC+TGCGTAAC
-TTTATTGTTGATGGTTATTTTTTGTTTATGGTTATTTTGTGTTTATGGTTATTTTTTGTTTATGGTTATTTTTTATTGATGGTTATTTTTTGTTTATGGTT
+TTTATTGTTGATGGTTATTTTTTGTTTATGGTTATTTTGTGTTTATGGTTATTTTTTGTTTATGGTTATTTTTTA
 +
-FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:FFFFFFFFFFFFFFFFFF
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 ```
 
-When we said earlier that FASTQ files have a particular structure, we mean that each read contains four lines of information:
+| Line | Description |
+| :--: | ----------- |
+| 1 | Begins with `@` and has information about the read. From AGC will contain flowcell and barcode information. |
+| 2 | The DNA sequence. |
+| 3 | Always begins with `+` and may contain the same information as line 1. |
+| 4 | A string of characters representing the quality scores. Always the same number of characters as line 2. |
 
-- Line 1 gives the read information, often including the sequencer and flowcell used, as well as the barcode for the sample.
-- Line 2 gives the actual sequence, the ACGTs.
-- Line 3 is a separator `+`.
-- Line 4 is the Illumina per-base quality scoring coding. This is referred to as PHRED33.
+### Base Quality Scores
 
-## Base Quality Scores
+The fourth line encodes the quality of each nucleotide in the read. The most common encoding is referred to as PHRED-33, and the following maps characters to qualities:
 
-It's important to note that the 4th line is not intended to be read by humans. Instead, as we'll see shortly, there are programs that convert the encoding to a numerical score which we interpret.
+```
+ Quality encoding: !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHI
+                   |         |         |         |         |
+    Quality score: 0........10........20........30........40
+```
 
-A historical note, you may see programs refer to PHRED33 and PHRED64 scoring systems. The older PHRED64 scoring system is based on a different encoding and was used by older sequencers. It is safe to assume that any new data you receive from AGC is PHRED33. (DISCUSS: Say something about older SRA data? Is it usually indicated in the accession that a PHRED64 was used?)
+The above example is a rather boring read with all bases having `F`, meaning a score of 37, which is good. Each quality score represents the probability that the corresponding nucleotide call is incorrect. The quality score is logarithmic and is calculated as:
 
-## Paired-end FASTQs
+```
+Q = -10 x log10(P), where P is the probability that the base call is erroneous
+```
 
-When paired-end sequencing is performed, we briefly mentioned that read pairs are separated into `R1` files and `R2` files. These files will always have the same number of lines, and the quadruplets correspond to the same read. That is, the first 4 lines of each file refer to one read pair. As we will see later, aligners require that this pairing not be disturbed.
+Another way to interpret the scores is in terms of the following table:
 
+| PHRED Quality Score | Probability of incorrect base call | Base call accuracy |
+| ------------------- | ---------------------------------- | ------------------ |
+| 10 | 1 in 10 | 90% |
+| 20 | 1 in 100 | 99% |
+| 30 | 1 in 1000 | 99.9% |
+| 40 | 1 in 10000 | 99.99% |
 
-# Initial Quality Assessment
+It would clearly be painstaking to go through all the base quality scores of all the millions of reads obtained from a sequencing run, so we typically don't evaluate the FASTQ files by sight. Instead, we use tools that take in FASTQ files and summarize the base quality scores (and other characteristics) to determine the overall quality of the reads from the sequencer.
 
-The first quality assessment is done on the FASTQ files. For this, we use a tool called FastQC ([link](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)). Essentially, it takes the first hundred thousand reads of a FASTQ file, calculates various metrics, and outputs a report.
+# Quality Assessment with FastQC
+
+The first step in most high-throughput sequencing analyses is to examine the quality of the raw reads with [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/). It analyzes various aspects of each FASTQ file and gives a quick impression of the overall quality of the data before proceeding with downstream analysis. The following modules are present in an easy to read HTML report.
 
 - Read quality score per base (by interpreting the PHRED33 scores)
 - Per tile sequencing quality (related to sequencing clusters on the flowcell)
@@ -75,16 +109,17 @@ The first quality assessment is done on the FASTQ files. For this, we use a tool
 - Adapter content
 - Overrepresented sequences
 
-# Running FastQC
+## Running FastQC
 
-Let's make our first use of the `conda` environment that we created in setting up for the workshop. In this environment is the `fastqc` program.
+Let's run FastQC on some example FASTQ files we've provided in the `~/workshop_data` folder. To do so, let's log in to the Amazon instance and activate the `conda` environment we created for the workshop. Note, your user name, between `ssh` and `@` below, will be different.
 
 ```
+ssh mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com
 $ conda activate workshop
 (workshop) $
 ```
 
-We should see the environment activated by the pre-pending of `(workshop)` to the prompt. As we learned in the previous UNIX module, we can use the `--help` flag to look at the options for programs. It's a good habit, before using a tool for the first time, to read through the options and syntax for how to invoke a program.
+The `(workshop) $` indicates that the environment is now active. As we learned in the previous UNIX module, we can use the `--help` flag to look at the options for programs. It's a good habit, before using a tool for the first time, to read through the options and syntax for how to invoke a program.
 
 ```
 (workshop) $ fastqc --help
@@ -210,100 +245,269 @@ BUGS
     or in www.bioinformatics.babraham.ac.uk/bugzilla/
 ```
 
-In particular, we see that the basic usage is to give any number of sequencing files we like.
+In particular, under the `SYNOPSIS` section, we see that the basic way to invoke `fastqc` is:
 
 ```
 fastqc seqfile1 seqfile2 .. seqfileN
 ```
 
-So let's use two of the example FASTQ files provided in the `workshop_data/fastqs` folder. We will also use the `--outdir` flag, noting that "...this directory must exist as the program will not create it."
-
-> Hands-on
+We also observe that if we want to put the result in a directory, we have to create it ourselves. The `--outdir` option notes "that this directory must exist as the program will not create it."
 
 ```
-$ cd ~/Desktop/workshop_data
-$ mkdir -p fastqc
-$ fastq \
-    --outdir fastqc \
-    fastqs/good_example_R1.fastq \
-    fastqs/good_example_R2.fastq \
-    fastqs/bad_example_R1.fastq \
-    fastqs/bad_example_R2.fastq
+(workshop) $ cd ~/workshop_data
+(workshop) $ mkdir -p fastqc
+(workshop) $ fastqc --outdir fastqc example_R1.fastq.gz example_R2.fastq.gz
 ```
 
-Note, we have broken up the `fastq` command over multiple lines to make it more readable. Using the `\` (backslash) in the shell indicates that a command continues on the next line.
+To see what was created, we can look inside the `fastqc` output directory (your output might look a little different because you have a different user name and you did it on a different date):
+
+```
+(workshop) $ ll fastqc
+total 1716
+drwxrwsr-x 2 mbradenb mbradenb   4096 Dec  8 16:27 ./
+drwxrwsr-x 3 mbradenb mbradenb   4096 Dec  8 16:26 ../
+-rw-rw-r-- 1 mbradenb mbradenb 564389 Dec  8 16:27 example_R1_fastqc.html
+-rw-rw-r-- 1 mbradenb mbradenb 308633 Dec  8 16:27 example_R1_fastqc.zip
+-rw-rw-r-- 1 mbradenb mbradenb 568017 Dec  8 16:27 example_R2_fastqc.html
+-rw-rw-r-- 1 mbradenb mbradenb 303034 Dec  8 16:27 example_R2_fastqc.zip
+```
+
+We can see some HTML reports, but there isn't a way to open them on the remote machine in the command-line interface (CLI). This is a good opportunity to learn how to pull files from a remote server onto the computer we're using.
+
+### Transferring Files
+
+We will use a UNIX tool called `scp` (secure copy) to transfer the HTML files to our desktop so that we can open them in a web browser. In `gitbash` or `terminal` on **your computer**, type:
+
+```
+$ scp
+usage: scp [-346BCpqrTv] [-c cipher] [-F ssh_config] [-i identity_file]
+            [-J destination] [-l limit] [-o ssh_option] [-P port]
+            [-S program] source ... target
+```
+
+We can see various options that we can explore in more detail with `man scp` if we wanted, but it seems that we just need to specify the `source` (where the file is on the remote machine) and the `target` (where we want to put the file on the local machine).
+
+So let's try the following, note you will be asked for the password you used to log in to the Amazon instance:
+
+```
+$ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R1_fastqc.html ~/Desktop
+$ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R2_fastqc.html ~/Desktop
+```
+
+The files should now be on the desktop of the computer you are using. Double clicking the files will open them in a web browser.
 
 ## Interpreting FastQC
 
-The results of FastQC are presented as a web-page with different sections. I'll now open the reports for R1 of the good and bad examples, and we'll walk through them.
+FastQC reports are organized around the the different modules characterizing different aspects of the reads. The FastQC [help page](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/) has detailed descriptions for each module.
 
-REWORK THIS TO SHOW GOOD AND BAD WITHIN EACH SECTION. Do we need to use reports from what we ran? What if we just used the examples from Babraham?
+The report summary is a PASS, WARN, FAIL overview of the modules. It's important to not take them too seriously in all cases as there are a number of assumptions that go into the thresholds that may not apply in your particular experiment.
 
-### Basic Statistics
-
-This section tells us the file the report is for, the quality encoding, how many sequences were analyzed, how many are determined to be "poor quality", their lengths, and overall GC content.
+An important note: For computational reasons, FastQC only evaluates the first 100,000 reads in a FASTQ file. The assumption is that the first 100,000 reads sufficiently represent the full library.
 
 ### Per base sequence quality
 
-The graph indicates the base calling quality for each base in the read. The green, yellow, and red sections of the graph are suggestive.
+A per base boxplot of the quality scores with helpful coloring for good, fair, and poor qualities. If a sample has quality scores that degrade at the 3' end of a read (as in the second example below), the sample doesn't necessarily have to be dropped. Some aligners, e.g. STAR, will automatically trim poor quality read ends.
 
-### Per tile sequence quality
+<center>
 
-The heatmap summarizes read qualities for reads in the tiles on the flow cell. This will indicate if a cluster of reads failed. (DISCUSS: Check wording)
+![Good per base quality](images/fastqc_per_base.png){ width=75% }
 
-### Per sequence quality scores
+An example of a good quality run.
 
-This is a cumulative distribution of quality scores over all base pairs over all reads.
+</center>
 
-### Per base sequence content
+<center>
 
-In a reasonably complex library, we should see a fairly even distribution of ACGTs.
+![Bad per base quality](images/fastqc_poor_per_base.png)
 
-There are sequencing cases where this particular graph is not meaningful. For instance, in bisulfite-converted libraries such as Whole Genome Bisulfite Sequencing to determine DNA methylation, we would expect to see far fewer C's and more T's.
+An example of a poor quality run.
 
-### Per sequence GC content
+</center>
 
-In a typical RNA-seq experiment, we expect the GC distribution to be more or less normally distributed with a mean GC content between 45-50%.
+### Sequence Duplication
 
-Similarly, WGBS is an example where the GC content of the reads will fail because of the nature of the sequencing.
+High sequence duplication, indicated by a skew to the right of the blue curve in the plots below, can be caused by low complexity libraries, too many cycles of PCR amplification, or too little starting material.
 
-### Per base N content
+On the other hand, if the library was prepared with an enrichment step (e.g. ChIP-seq), then sequence duplication might not be unexpected.
 
-This is an indication that the sequencer couldn't determine which base is at a particular position in a read. (DISCUSS: When might this go haywire?)
+<center>
 
-### Sequence duplication levels
+![Sequence Duplication](images/fastqc_duplication.png){ width=75% }
 
-This graph indicates how serious sequence duplication is. For example, if the library was low complexity and PCR introduced many many duplicates, you might see that as a spike in this graph.
+An example of a sample with low sequence duplication levels.
+
+</center>
+
+<center>
+
+![Sequence Duplication](images/fastqc_poor_duplication.png)
+
+An example of a sample with high sequence duplication levels.
+
+</center>
 
 ### Overrepresented sequences
 
-This table gives actual sequences which are overrepresented (i.e. appear in the spikes of the graph above), along with how many times that sequence occurs and what it might be attributed to. Often is there is adapter sequence in the reads (next and last FastQC module), you will see the attribution in this table.
+Overrepresented sequences are those making up more than 0.1% of the total (of the 100,000 reads sampled). Finding an overrepresented sequence is an indication of something biologically meaningful (e.g. an enrichment step in the library prep process), or it is an issue stemming from the library preparation process (e.g. adapters, a failure to fully remove polyA tails, or contamination).
 
-#### Adapter content
+<center>
 
-Adapter content can show up in reads if the read fragments are very short (e.g. small RNA sequencing, or a subset of fragments in ATAC-seq).
+![Overrepresented Table](images/fastqc_overrepresented.png)
+
+We see that there is a high number of reads with polyA tails. This could be a result of an inefficient removal of polyA tails, or it could indicate a TotalRNA library prep [TODO: CHECK]. If there should be no polyA
+
+</center>
+
+#### Adapter Content
+
+Adapter sequence typically is not present in standard RNA-seq libraries. However, if the fragment sizes resulting from library prep are smaller than the read length on the sequencer, then it is possible to get "read-through" of the adapter.
+
+This can be dealt with in two ways. First, we could add a step to the workflow that trims the reads of adapter content with a tool such as [cutadapt](https://cutadapt.readthedocs.io/en/stable/). Second, the choice of aligner may gracefully deal with adapter sequence, as we will see with STAR in a later module.
 
 # MultiQC
 
-FastQC is a great tool, and its reports are fairly intuitive to look through. But imagine you have 20 samples that you've sequenced. You'd have to look at each report for each sample, and keep track of things you noticed in previous samples to notice any possible trends. It would be much easier to look at all the FastQC reports compiled into a single report. [MultiQC](https://multiqc.info/) is a tool that does exactly this.
+FastQC is an excellent tool, but imagine you have 20 samples in your experiment. You'd have to look at the report for each sample, while keeping track of what trends emerge. It would be much easier to look at all the FastQC reports compiled into a single report. [MultiQC](https://multiqc.info/) is a tool that does exactly this.
 
-MultiQC is a simple to run tool that will look for output from many Bioinformatics tools and aggregate them into a single report.
+MultiQC is designed to interpret and aggregate reports from [various tools](https://multiqc.info/#supported-tools) and output a single report as an HTML document. Since MultiQC is new to us, let's use the `--help` flag to see how to invoke it and what options we might want to use.
 
 ```
-$ cd /path/to/analysis_dir
-$ multiqc .
+(workshop) $ multiqc --help
+Usage: multiqc [OPTIONS] <analysis directory>
+
+  Main MultiQC run command for use with the click command line, complete
+  with all click function decorators. To make it easy to use MultiQC within
+  notebooks and other locations that don't need click, we simply pass the
+  parsed variables on to a vanilla python function.
+
+Options:
+  -f, --force                     Overwrite any existing reports
+  -d, --dirs                      Prepend directory to sample names
+  -dd, --dirs-depth INTEGER       Prepend [INT] directories to sample names.
+                                  Negative number to take from start of path.
+
+  -s, --fullnames                 Do not clean the sample names (leave as full
+                                  file name)
+
+  -i, --title TEXT                Report title. Printed as page header, used
+                                  for filename if not otherwise specified.
+
+  -b, --comment TEXT              Custom comment, will be printed at the top
+                                  of the report.
+
+  -n, --filename TEXT             Report filename. Use 'stdout' to print to
+                                  standard out.
+
+  -o, --outdir TEXT               Create report in the specified output
+                                  directory.
+
+  -t, --template [default|default_dev|gathered|geo|sections|simple]
+                                  Report template to use.
+  --tag TEXT                      Use only modules which tagged with this
+                                  keyword, eg. RNA
+
+  --view-tags, --view_tags        View the available tags and which modules
+                                  they load
+
+  -x, --ignore TEXT               Ignore analysis files (glob expression)
+  --ignore-samples TEXT           Ignore sample names (glob expression)
+  --ignore-symlinks               Ignore symlinked directories and files
+  --sample-names PATH             File containing alternative sample names
+  --sample-filters PATH           File containing show/hide patterns for the
+                                  report
+
+  -l, --file-list                 Supply a file containing a list of file
+                                  paths to be searched, one per row
+
+  -e, --exclude [module name]     Do not use this module. Can specify multiple
+                                  times.
+
+  -m, --module [module name]      Use only this module. Can specify multiple
+                                  times.
+
+  --data-dir                      Force the parsed data directory to be
+                                  created.
+
+  --no-data-dir                   Prevent the parsed data directory from being
+                                  created.
+
+  -k, --data-format [tsv|json|yaml]
+                                  Output parsed data in a different format.
+                                  Default: tsv
+
+  -z, --zip-data-dir              Compress the data directory.
+  -p, --export                    Export plots as static images in addition to
+                                  the report
+
+  -fp, --flat                     Use only flat plots (static images)
+  -ip, --interactive              Use only interactive plots (HighCharts
+                                  Javascript)
+
+  --lint                          Use strict linting (validation) to help code
+                                  development
+
+  --pdf                           Creates PDF report with 'simple' template.
+                                  Requires Pandoc to be installed.
+
+  --no-megaqc-upload              Don't upload generated report to MegaQC,
+                                  even if MegaQC options are found
+
+  -c, --config PATH               Specific config file to load, after those in
+                                  MultiQC dir / home dir / working dir.
+
+  --cl-config, --cl_config TEXT   Specify MultiQC config YAML on the command
+                                  line
+
+  -v, --verbose                   Increase output verbosity.
+  -q, --quiet                     Only show log warnings
+  --profile-runtime               Add analysis of how long MultiQC takes to
+                                  run to the report
+
+  --no-ansi                       Disable coloured log output
+  --version                       Show the version and exit.
+  -h, --help                      Show this message and exit.
 ```
 
-The result is an HTML document just like FastQC. [Here](https://multiqc.info/examples/rna-seq/multiqc_report.html) is an example from a typical RNA-seq pipeline.
+We see the usage below, and observe that the `--outdir` option will create the directory for us, unlike FastQC.
+
+```
+Usage: multiqc [OPTIONS] <analysis directory>
+```
+
+So let's invoke `multiqc` on the directory with our FastQC results:
+
+```
+(workshop) $ multiqc --outdir multiqc fastqc/
+```
+
+And if we look in the directory we see:
+
+```
+(workshop) $ ll multiqc
+total 1136
+drwxrwsr-x 3 mbradenb mbradenb    4096 Dec  8 18:01 ./
+drwxrwsr-x 4 mbradenb mbradenb    4096 Dec  8 18:01 ../
+drwxrwsr-x 2 mbradenb mbradenb    4096 Dec  8 18:01 multiqc_data/
+-rw-rw-r-- 1 mbradenb mbradenb 1150501 Dec  8 18:01 multiqc_report.html
+```
+
+We can use a similar `scp` command as for FastQC on the local machine:
+
+```
+$ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/multiqc/multiqc_report.html ~/Desktop
+```
+
+Opening the HTML report, we see it is organized by the same modules and each plot has all samples for which FastQC was run.
 
 # Acting on QC
 
 ## What does good QC mean?
 
-At this stage, it simply means that RNA quality, library preparation, and sequencing seem to have been successful. It **does not** indicate that there are differentially expressed genes between groups.
+Good QC on raw reads means that RNA quality, library preparation, and sequencing seem fine to proceed with the next steps of analysis. It **does not** mean that you will find differentially expressed genes downstream.
 
 ## What does bad QC mean?
 
-Failing QC metrics can indicate something wrong with the initial RNA quality (RIN scores), library preparation, or the sequencer. It can be difficult to isolate the source from just the QC.
+The source of bad QC measures are not always easy to determine, and doesn't necessarily mean the data cannot be used downstream. However, bad QC measures may indicate that hazards lie ahead, and that certain steps upstream of sequencing (sample handling, RNA extraction, library preparation) might need to be altered.
 
-However, not all bad QC means that a sample or entire sequencing run has to be scrapped.
+---
+
+These materials have been adapted and extended from materials created by the [Harvard Chan Bioinformatics Core (HBC)](http://bioinformatics.sph.harvard.edu/). These are open access materials distributed under the terms of the [Creative Commons Attribution license (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.
