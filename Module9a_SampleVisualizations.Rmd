@@ -128,13 +128,16 @@ Next, we'll generate a heatmap of the top expressed genes across all samples. Fi
 colors <- colorRampPalette(brewer.pal(9, 'Blues'))(255)
 ```
 
-First, we'll select the top expressed genes across all samples. 
+First, we'll select the top expressed genes across all our samples to prioritize this set of genes and allow for patterns to be more easily ovbserved. 
 ```{r TopExpression}
 select <- order(rowMeans(assay(rld)), decreasing=TRUE)[1:500]
 df <- data.frame(Group = colData(rld)[,c('condition')], row.names = rownames(colData(dds)))
 ```
 
-Next, we'll set up a PDF file and plot our heatmap. Saving the plot as an object allows us to view the figure in our session. 
+Next, we'll set up a PDF file and plot our heatmap. Saving the plot as an object allows us to view the figure within our session as well as writing the plot to file. 
+
+The [`pheatmap` function](https://cran.r-project.org/web/packages/pheatmap/pheatmap.pdf) does quite a lot in a single step, including scaling the data by row and clustering both for the samples (columns) and genes (rows). *TODO: Add additional overview of pheatmap/heatmap function?*
+
 ```{r GeneratePrettyheatmap}
 pdf(file = paste0(plotPath,'Heatmap_TopExp_', Comparison, '.pdf'), onefile = FALSE, width=10, height=20)
 p <- pheatmap(assay(rld)[select,], scale="row",  cluster_rows=TRUE, show_rownames=FALSE, cluster_cols=TRUE, annotation_col=df, fontsize = 7, las = 2, fontsize_row = 7, color = colors, main = '500 Top Expressed Genes Heatmap')
@@ -144,16 +147,26 @@ dev.off()
 #embed example plot (TopExp)
 p
 ```
+>**Note**: [This blog post](https://towardsdatascience.com/pheatmap-draws-pretty-heatmaps-483dab9a3cc) has a nice step by step overview of the pheatmap options, using basketball data as an example.
 
-The columns are the samples, clustered by similarity of rlog normalized expression of the top 500 most expressed genes. The rows are genes, clusted by similarity of expression.    
+Looking at the heatmap, we see that samples within the same treatment group cluster together, with the Mov.KD and Irrel samples on the same parent node, fitting our understanding of the experimental design. We also see clusters of genes that appear to have contrasting patterns between the treatment groups, .
 
-The colors are scaled by the 'distance' between the rows of the input data 
-*TODO: Add additional plotting code to supplemental code file as follow up/take home work*
+> **Note**: Heatmaps are helpful visualizations, especially for sharing an overview of your RNA-seq data. However, the why and how to use them properly can be confusing, such as outlined in the questions and answers in [this biostars post](https://www.biostars.org/p/230115/). 
+
+#### Additional heatmaps
+<details>
+  <summary>Click for Additional visualizations</summary>
+
+This [blog post](http://www.opiniomics.org/you-probably-dont-understand-heatmaps/) reviews the data transformation procedure for generating heatmaps and is a useful resource. They review the steps for generating a by sample heatmap similar to the plot generated below. 
+
+*TODO: Add image for gene expression vs distance & finish heatmap explainations from [blog post](http://www.opiniomics.org/you-probably-dont-understand-heatmaps/)?*
+
 ```{r SampleHeatmaps}
 #heatmap of normalized data, sample distibution matrix
-sampleDists <- dist(t(assay(rld))) #vst normalized data
-sampleDistMatrix <- as.matrix(sampleDists)
+sampleDists <- dist(t(assay(rld))) #rld
+sampleDistMatrix <- as.matrix(sampleDists) # convert to matrix
 colnames(sampleDistMatrix) <- NULL
+
 colors <- colorRampPalette(rev(brewer.pal(9, 'Blues')))(255)
 pdf(file = paste0(plotPath,'Heatmap_Dispersions_', Comparison, '.pdf'), onefile = FALSE)
 pheatmap(sampleDistMatrix, 
@@ -161,13 +174,13 @@ pheatmap(sampleDistMatrix,
          clustering_distance_cols=sampleDists,
          col=colors)
 dev.off()
-
 ```
+If we look at the `sampleDists` object, we now see from the diagonal values that the least distant samples are `Irrel_kd1_1` and `Irrel_kd_2` so these will be clustered together first, with the next closest samples `Irrel_kd_3` and `Irrel_kd_2` clustered together next.
 
-> **Note**: Heatmaps are helpful visualizations, especially for sharing an overview of your RNA-seq data. However, the why and how to use them properly can be confusing, such as outlined in [this post](https://www.biostars.org/p/230115/). 
+Overall, like the heatmap of the top 500 most expressed genes, we see that samples in the same treatment groups cluster well together when the full dataset is considered.
 
-*TODO: Add additional plotting code to supplemental code file as follow up/take home work*
-```{r TopExpHeatmaps}
+Another informative heatmap is for the top most variably expressed genes in the dataset. An example of this code is shown below.
+```{r TopVarianceHeatmaps}
 colors <- colorRampPalette(brewer.pal(9, 'Blues'))(255)
 
 select <- order(rowVars(assay(rld)), decreasing=TRUE)[1:500]
@@ -178,12 +191,17 @@ dev.off()
 
 ```
 
-## PCA
+</details>
 
-First, plot PCA for QC purposes. Code is modified from legacy Watermelon pipeline.
+## Principle Component Analysis (PCA) Plots
+
+A common and very useful plot for evaluating how well our samples cluster by treatmap groups are PCA plots. 
+
+
+
 ```{r PCA}
-
 pdf(file = paste0(plotPath, 'PCAplot_All_', Comparison, '.pdf'), onefile = TRUE)
+
 #PCA plot for Rlog-Normalized counts for all samples
 CombinatoricGroup <- factor(coldata$condition)
 SampleName <- factor(row.names(coldata))
@@ -191,11 +209,6 @@ p.all <- plotPCA(rld, intgroup = c('condition'))
 gp <- ggplot(p.all$data, aes(x = PC1, y = PC2, color = SampleName, shape = CombinatoricGroup)) + xlab(p.all$labels[2]) + ylab(p.all$labels[1]) + scale_shape_manual(values=1:nlevels(CombinatoricGroup), name = 'Combinatoric Group') + geom_point(size=2) + ggtitle(label = as.character('All samples Rlog-Normalized')) + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=guide_legend(nrow=12, title = 'Sample'), legend.key = element_rect(size = 1), legend.key.size = unit(0, 'cm')) + theme_classic(base_size = 10) + theme(legend.margin=margin(t = 0, unit='mm'))
 plot(gp)
 
-#PCA for Depth-Normalized counts for all samples
-DNC <- SummarizedExperiment(log2(counts(dds, normalized = TRUE)), colData=colData(dds))
-p.DNC <- plotPCA(DESeqTransform(DNC), intgroup = 'condition')
-gpDNC <- ggplot(p.DNC$data, aes(x = PC1, y = PC2, color = SampleName, shape = CombinatoricGroup)) + xlab(p.DNC$labels[2]) + ylab(p.DNC$labels[1]) + scale_shape_manual(values=1:nlevels(CombinatoricGroup), name = 'Combinatoric Group') + geom_point(size=2) + ggtitle(label = as.character('All samples Depth-Normalized')) + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=guide_legend(nrow=12, title = 'Sample'), legend.key = element_rect(size = 1), legend.key.size = unit(0, 'cm')) + theme_classic(base_size = 10) + theme(legend.margin=margin(t = 0, unit='mm'))
-plot(gpDNC)
 
 #PCA for Raw counts for all samples
 RC <- SummarizedExperiment(log2(counts(dds, normalized = FALSE)), colData=colData(dds))
