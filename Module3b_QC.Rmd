@@ -25,6 +25,13 @@ render('Module2a_UNIXShell.Rmd')
     }
 </style>
 
+> # Objectives
+> *
+> *
+> *
+> *
+> *
+
 # Differential Expression Workflow
 
 As a reminder, our overall differential expression workflow is shown below. In this lesson, we will go over the bold part of the workflow.

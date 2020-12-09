@@ -10,7 +10,7 @@
 | 3a | | Experimental Design, Library Prep, and Sequencing | Raymond Cavalcante |
 | 3b | | Data QC | Raymond Cavalcante |
 |  | | Break | |
-| 4a | | Reference Genomes and Alignment Indices | Raymond Cavalcante |
+| 4a | | Reference Genomes and Genome Indexing | Raymond Cavalcante |
 |  | | Break | |
 | 4b | | Sequence Alignment and Gene Quantification with STAR/RSEM | Raymond Cavalcante |
 |  | | Break | |
