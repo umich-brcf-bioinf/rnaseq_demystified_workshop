@@ -44,14 +44,14 @@ RNA-seq measures the transcriptome, the biological material in the cell arising 
 
 ## Differential Expression Workflow
 
-The remainder of the workshop is oriented around a standard bulk RNA-seq workflow with the goal of doing differential gene expression analysis between groups of samples.
+The remainder of the workshop is oriented around a standard bulk RNA-seq workflow with the goal of doing differential gene expression analysis between groups of samples. In this lesson, we will go over the bold parts of the workflow.
 
 | Step | Task |
 | :--: | ---- |
-| 1 | Experimental Design |
-| 2 | Biological Samples / Library Preparation |
-| 3 | Sequence Reads |
-| 4 | Assess Quality of Reads |
+| **1** | **Experimental Design** |
+| **2** | **Biological Samples / Library Preparation** |
+| **3** | **Sequence Reads** |
+| 4 | Assess Quality of Raw Reads |
 | 5 | Splice-aware Mapping to Genome |
 | 6 | Count reads associated with genes |
 | 7 | Test for DE Genes |
@@ -131,15 +131,15 @@ For human samples, at least 30 million reads per sample are recommended in the [
 
 ## Single or Paired End?
 
-Many resources state that single-end sequencing is sufficient for differential expression analysis, and that paired-end reads may be an unnecessary expense. However, economies of scale at AGC make a paired-end 100 or 150 bp sequencing run more cost effective than it used to be. Additionally, paired-end reads typically result in better alignments because of the additional information. If an isoform-level analysis is of interest, paired-end reads are much better.
+Many resources state that single-end sequencing is sufficient for differential expression analysis, and that paired-end reads may be an unnecessary expense. However, economies of scale at AGC can make a paired-end 150 bp sequencing run more cost effective than it used to be. Additionally, paired-end reads typically result in better alignments because of the additional information. If an isoform-level analysis is of interest, paired-end reads are much better.
 
-The [AGC Cost Estimator](https://agc-estimator.brcf.med.umich.edu/) is a useful tool for determining libary preparation and sequencing costs for various RNA-seq experiments.
+The [AGC Cost Estimator](https://agc-estimator.brcf.med.umich.edu/) is a useful tool for determining libary preparation and sequencing costs for various RNA-seq experiments. Note, that when selecting a shared NovaSeq flowcell, the run will be 150PE.
 
 > # Exercise?
 > Use the [AGC Cost Estimator](https://agc-estimator.brcf.med.umich.edu/) to compare the costs for library preparation and sequencing under the following two scenarios:
-> - mRNA (polyA) prep using a full NextSeq flowcell with single-end 75bp reads for 12 samples. ($4,253.00)
-> - mRNA (polyA) prep using a shared NovaSeq flowcell giving 400 million reads for 12 samples. ($3,156.40)
+> - mRNA (polyA) prep using a full NextSeq flowcell with ~400 million SE 75bp reads for 12 samples. ($4,253.00)
+> - mRNA (polyA) prep using a shared NovaSeq flowcell giving ~400 million PE 150bp reads for 12 samples. ($3,156.40)
 
 ---
 
-These materials have been adapted from materials created by the [Harvard Chan Bioinformatics Core (HBC)](http://bioinformatics.sph.harvard.edu/). These are open access materials distributed under the terms of the [Creative Commons Attribution license (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.
+These materials have been adapted and extended from materials created by the [Harvard Chan Bioinformatics Core (HBC)](http://bioinformatics.sph.harvard.edu/). These are open access materials distributed under the terms of the [Creative Commons Attribution license (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.
