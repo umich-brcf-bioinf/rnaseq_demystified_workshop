@@ -15,7 +15,7 @@ output:
 
 <!---
 library(rmarkdown)
-render('Module2a_UNIXShell.Rmd')
+render('Module3a_Design_Prep_Seq.Rmd')
 --->
 
 <!--- Allow the page to be wider --->

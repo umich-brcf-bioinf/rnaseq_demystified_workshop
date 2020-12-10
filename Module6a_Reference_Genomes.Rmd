@@ -1,5 +1,5 @@
 ---
-title: "Reference Genomes and Genome Indexing"
+title: "Reference Genomes"
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:
@@ -13,16 +13,27 @@ output:
         keep_md: true
 ---
 
+<!---
+library(rmarkdown)
+render('Module6a_Reference_Genomes.Rmd')
+--->
+
+<!--- Allow the page to be wider --->
+<style>
+    body .main-container {
+        max-width: 1200px;
+    }
+</style>
+
 > # Objectives
-> *
-> *
-> *
-> *
-> *
+> * Understand what a reference genome is and what it contains.
+> * Understand the FASTA and GTF formats.
+> * Appreciate the differences in gene identifiers.
+> * Understand how to download a reference genome.
 
 # Differential Expression Workflow
 
-As a reminder, our overall differential expression workflow is shown below. In this lesson we will set the stage for steps 5 and 6 by discussing reference genomes and genome indexing, which are integral to genome alignments and gene/isoform quantification.
+In this lesson we will set the stage for steps 5 and 6 by discussing reference genomes, which are integral to genome alignments and gene/isoform quantification. Along the way we will touch on some quirks to be aware of.
 
 | Step | Task |
 | :--: | ---- |
@@ -34,19 +45,22 @@ As a reminder, our overall differential expression workflow is shown below. In t
 | **6** | **Count reads associated with genes** |
 | 7 | Test for DE Genes |
 
-Up to this point, we have encountered sequenced reads in FASTQ format. The reads in these files have no connection to genome locations, and no connection to each other. In order to figure out how much a gene is expressed in a sample, let alone among groups of samples, we need to be able to quantify the gene expression by mapping reads to genes.
+# Reference Genomes
 
-We need some idea of where the genes are, and what their sequence is.
+A reference genome consists of the **reference sequence** and, optionally, any number of **genomic annotations** that describe attributes about that sequence. Examples of annotations include:
 
-# Reference Genome Basics
+* Gene models consisting of the location and other information about genes.
+* Variants consisting of the location of common or rare genetic variants, their alleles, and frequencies.
+* Small RNAs consisting of the location and other information about various types of small RNAs.
 
-A reference genome represents our collective understanding of the genomic sequence of an organism. It is important to note that they are not necessarily complete, they do not capture the variability present in populations, and they are the ongoing product of the work of many researchers. That fact is illustrated by the notion of reference genome builds (e.g. hg19 and hg38) which are released periodically by the [Genome Reference Consortium](https://www.ncbi.nlm.nih.gov/grc).
+Of particular relevance to us for this workshop are the reference sequence and gene models.
 
-For the purposes of RNA-seq analysis, the two most important parts of a reference genome are the **sequence** and the **gene model**.
+## Reference Sequence
 
-## Sequence
+Reference sequence is stored in [FASTA](https://en.wikipedia.org/wiki/FASTA_format) files. They are similar to FASTQ files in their storage of sequence information, but their format is a little different in a couple ways:
 
-At the very least, a reference genome consists of the genomic sequence. The following is the beginning of the reference sequence for the human mitochondrial chromosome for genome build hg19:
+1. Records are separated by lines beginning with `>` instead of `@`.
+2. Only the sequence is stored in a FASTA file, there is no notion of quality attached to the nucleotides.
 
 ```
 >chrM
@@ -62,14 +76,10 @@ TTTATCTTTAGGCGGTATGCACTTTTAACAGTCACCCCCCAACTAACACA
 ...
 ```
 
-Genomic sequence is stored in a [FASTA](https://en.wikipedia.org/wiki/FASTA_format) file. These files are similar to FASTQ files in that they store sequence information, but their format is a little different in a couple ways:
-
-1. Records are separated by lines beginning with `>` instead of `@`.
-2. Only the sequence is stored in a FASTA file, there is no notion of quality attached to the nucleotides.
-
 ## Gene Models
 
-For well-characterized organisms, a gene model is often included as part of the reference genome in a [GTF (Gene Transfer Format)](https://uswest.ensembl.org/info/website/upload/gff.html) file. Here is an example of a GTF for the hg19 build of the human genome:
+Well-characterized organisms (e.g. human, mouse, zebrafish) have fairly mature gene models. These are stored in [GTF](https://uswest.ensembl.org/info/website/upload/gff.html) format, which gives location and other information about the each gene feature. Below are two examples:
+
 
 ```
 chr1	unknown	exon	11874	12227	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; transcript_id "NR_046018"; tss_id "TSS16932";
@@ -79,12 +89,18 @@ chr1	unknown	exon	14362	14829	.	-	.	gene_id "WASH7P"; gene_name "WASH7P"; transc
 ...
 ```
 
-Each column of a GTF file has a particular meaning. Based on the above, some columns are clear, and others not. Here's the complete breakdown:
+```
+1	havana	gene	11869	14409	.	+	.	gene_id "ENSG00000223972"; gene_version "5"; gene_name "DDX11L1"; gene_source "havana"; gene_biotype "transcribed_unprocessed_pseudogene";
+1	havana	transcript	11869	14409	.	+	.	gene_id "ENSG00000223972"; gene_version "5"; transcript_id "ENST00000456328"; transcript_version "2"; gene_name "DDX11L1"; gene_source "havana"; gene_biotype "transcribed_unprocessed_pseudogene"; transcript_name "DDX11L1-202"; transcript_source "havana"; transcript_biotype "lncRNA"; tag "basic"; transcript_support_level "1";
+1	havana	exon	11869	12227	.	+	.	gene_id "ENSG00000223972"; gene_version "5"; transcript_id "ENST00000456328"; transcript_version "2"; exon_number "1"; gene_name "DDX11L1"; gene_source "havana"; gene_biotype "transcribed_unprocessed_pseudogene"; transcript_name "DDX11L1-202"; transcript_source "havana"; transcript_biotype "lncRNA"; exon_id "ENSE00002234944"; exon_version "1"; tag "basic"; transcript_support_level "1";
+```
+
+The GTF format stores specific information in each column:
 
 | Column | Description |
 | :----: | ----------- |
 | 1 | Chromosome |
-| 2 | Source, e.g. ENSEMBL, HAVANA |
+| 2 | Source, e.g. ensembl, havana |
 | 3 | Gene feature, e.g. exon, intron, mRNA, transcript |
 | 4 | Start location, 1-based |
 | 5 | End location, 1-based |
@@ -93,19 +109,44 @@ Each column of a GTF file has a particular meaning. Based on the above, some col
 | 8 | Frame, relating to codons |
 | 9 | Attribute, a semicolon separated list of key/value pairs giving additional information about the feature. |
 
-A GTF file representing a gene model gives information about the location of each part of a gene and identity information. We will see a little later that there are different identifiers depending on the source of the gene model.
+## Minutiae, Very Briefly
 
-# Getting Reference Genomes
+Bioinformatics is a relatively new, fast-changing, field and its data standards and formats are no different. Consequently there are some oddities and tedious items of note which we would like to only briefly touch on here.
 
-The [Illumina iGenomes](https://support.illumina.com/sequencing/sequencing_software/igenome.html) resource is one of the easiest ways to download a reference genome. It has builds from ENSEMBL, NCBI, and UCSC (more on the similarities and differences later).
+### Genome Builds
 
-Reference genomes can be **very large**, depending on the organism, and so we will not download one to the Amazon instance we are using for this workshop. Indeed, it is not advised to download these references to your personal computer either. Instead, these should be downloaded on the server (your labs or Great Lakes) where you intend to do the RNA-seq analysis.
+On occassion new reference genomes are released for use, and the genome build number changes. You may be familiar with the UCSC manner of naming human genome builds: hg18, hg19, hg38. ENSEMBL, naturally, has their own way of referring to genome builds: GRCh36, GRCh37, and GRCh38. Notice with the most recent human reference, the numbering now aligns between UCSC and ENSEMBL. That's one small step...
 
-To do that, you would right click the genome build you want to download, and select "Copy link location".
+### Annotation Sources
+
+[NCBI RefSeq](https://www.ncbi.nlm.nih.gov/refseq/rsg/), [ENSEMBL](https://www.ensembl.org/info/genome/genebuild/index.html), and [UCSC Known Genes](https://academic.oup.com/bioinformatics/article/22/9/1036/200093) are three primary human gene annotation databases (different organisms have their own databases). We will not go into exactly how the gene annotations are different, but we note that the are, and [others have examined the consequences of this](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-015-1308-8).
+
+### Gene IDs
+
+The two GTF examples above highlight different ways of referring to the same gene. In the first GTF we see:
+
+* DDX11L1, the gene symbol, controlled by the [Human Gene Nomenclature Committee (HUGO)](https://www.genenames.org/).
+* NR_046018, the RefSeq transcript ID
+
+And in the second GTF we see:
+
+* ENSG00000223972, the ENSEMBL gene ID
+* DDX11L1, the gene symbol, thankfully the same
+* ENST00000456328, the ENSEMBL transcript ID
+
+Translating between different gene IDs is possible, as we will see in Day Two with `biomaRt`. But in terms of **best practice** it is generally a good idea to avoid using the gene symbol as the primary gene identifier because not everyone refers to the same gene by the same symbol.
+
+# Getting a Reference Genome
+
+The [Illumina iGenomes](https://support.illumina.com/sequencing/sequencing_software/igenome.html) resource is one of the easiest, and most comprehensive, ways to download a reference genome. iGenomes includes both the reference sequence and gene models.
+
+Reference genomes can be **very large**, depending on the organism, and so we will not download one to the Amazon instance we are using for this workshop. It is not advised to download these references to your personal computer either. Instead, these should be downloaded on the server where you intend to do the RNA-seq analysis (your lab's or Great Lakes).
+
+To do that, you would go to the [iGenomes](https://support.illumina.com/sequencing/sequencing_software/igenome.html) page, find the build you want from the source you want, right click the genome build you want to download, and select "Copy link location":
 
 ![iGenomes image for copying link location](images/genome_copy_link.png)
 
-Then on the remote server you would go to the directory you'd like to download the genome to and type:
+Then on the remote server you would go to the directory you'd like to download the genome to and type (that URL is what we copied):
 
 ```
 $ wget http://igenomes.illumina.com.s3-website-us-east-1.amazonaws.com/Homo_sapiens/NCBI/GRCh38/Homo_sapiens_NCBI_GRCh38.tar.gz
@@ -117,64 +158,11 @@ After the download finishes (it may take a while as it is tens of GB large), you
 $ tar -xf Homo_sapiens_NCBI_GRCh38.tar.gz
 ```
 
-# Details
+## Which Reference is Right for Me?
 
-We will now discuss some details that arise in the context of reference genomes and file formats.
+The key is to be consistent in your research. Switching from ENSEMBL to UCSC will create many headaches because of the change in gene identifiers, and differences in the gene models themselves. Often people choose the one they're most comfortable with, which is often a function of historical accident. The key is not to overthink it.
 
-* When describing the start and stop locations in the GTF, we mentioned that they are 1-based, what does that mean?
-* On the iGenomes page there were different sources for the human genome (Ensembl, NCBI, and UCSC). What is the difference between the different sources? What is the difference between the different builds?
-* When looking at the features in the GTF, it looked like there were two ways of identifying a gene (e.g. `gene_name "DDX11L1"; transcript_id "NR_046018";`). What are the different identifiers? How can we convert between them?
-
-## Genomic Coordinates
-
-There are two conventions for representing genomic coordinates. They are called 0-based and 1-based, and, unfortunately, different bioinformatic file types sometimes use different conventions. Let's break down the conventions with an illustration, and an example:
-
-```
-0-based, left-open
-
-1 2 3 4 5 6 7 8 9
-| | | | | | | | |
--A-C-G-T-A-C-G-C-
- | | | | | | | |
- 1 2 3 4 5 6 7 8
-
-1-based, closed
-```
-
-Where is the start and end of TAC above in 0-based coordinates? 1-based?
-
-* 0-based: Start is 4, end is 7. Interval is (4, 7].
-* 1-based: Start is 4, end is 6. Interval is [4, 6].
-
-How do you calculate the length of the interval?
-
-* 0-based: 7 - 4 = 3, in general: end - start.
-* 1-based: 6 - 4 + 1 = 3, in general: end - start + 1.
-
-Gene-level analyses may be somewhat robust to differences in 0-based and 1-based locations, but as soon as analyses focus on nucleotide-resolution features (e.g. CpG methylation or variant calling), off-by-one errors can be problematic.
-
-## Gene Identifiers
-
-```
-chr1	unknown	exon	11874	12227	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; transcript_id "NR_046018"; tss_id "TSS16932";
-chr1	unknown	exon	12613	12721	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; transcript_id "NR_046018"; tss_id "TSS16932";
-chr1	unknown	exon	13221	14409	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; transcript_id "NR_046018"; tss_id "TSS16932";
-```
-
-```
-1	pseudogene	gene	11869	14412	.	+	.	gene_id "ENSG00000223972"; gene_name "DDX11L1"; gene_source "ensembl_havana"; gene_biotype "pseudogene";
-1	processed_transcript	transcript	11869	14409	.	+	.	gene_id "ENSG00000223972"; transcript_id "ENST00000456328"; gene_name "DDX11L1"; gene_source "ensembl_havana"; gene_biotype "pseudogene"; transcript_name "DDX11L1-002"; transcript_source "havana";
-1	processed_transcript	exon	11869	12227	.	+	.	gene_id "ENSG00000223972"; transcript_id "ENST00000456328"; exon_number "1"; gene_name "DDX11L1"; gene_source "ensembl_havana"; gene_biotype "pseudogene"; transcript_name "DDX11L1-002"; transcript_source "havana"; exon_id "ENSE00002234944";
-```
-
-| Source | Chromosome Style | Gene Name | Gene ID | Transcript ID |
-| ------ | ---------------- | ------ | ------- | ------------- |
-| ENSEMBL/NCBI | 1 | DDX11L1 | ENSG00000223972 | ENST00000456328 |
-| UCSC | chr1 | DDX11L1 | DDX11L1 | NR_046018 |
-
-# Creating a Genome Index for Alignments
-
-
+Another important note is not to mix the sources. If you download reference sequence from UCSC, don't use an ENSEMBL GTF (and vice versa). One of the quirky differences between the two databases is that ENSEMBL refers to chromosome only by their number, i.e. `1`, whereas UCSC refers to chromsomes as `chr1`. This makes reference FASTAs from one source incompatible with gene builds from another.
 
 ---
 
