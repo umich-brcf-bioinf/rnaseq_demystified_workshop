@@ -153,9 +153,9 @@ Looking at the heatmap, we see that samples within the same treatment group clus
 
 > **Note**: Heatmaps are helpful visualizations, especially for sharing an overview of your RNA-seq data. However, the why and how to use them properly can be confusing, such as outlined in the questions and answers in [this biostars post](https://www.biostars.org/p/230115/). 
 
-#### Additional heatmaps
+#### Sample and Top Variable Expressed Heatmaps
 <details>
-  <summary>Click for Additional visualizations</summary>
+  <summary>Click for code for additional visualizations</summary>
 
 This [blog post](http://www.opiniomics.org/you-probably-dont-understand-heatmaps/) reviews the data transformation procedure for generating heatmaps and is a useful resource. They review the steps for generating a by sample heatmap similar to the plot generated below. 
 
@@ -195,21 +195,54 @@ dev.off()
 
 ## Principle Component Analysis (PCA) Plots
 
-A common and very useful plot for evaluating how well our samples cluster by treatmap groups are PCA plots. 
+A common and very useful plot for evaluating how well our samples cluster by treatment groups are Principle Component Analysis (PCA) plots. PCA is used to emphasize variation and bring out patterns in large datasets by using dimensionality redution. 
 
+PCA .. *TODO: Add overview from*
+[a helpful step by step explaination of PCA](https://blog.bioturing.com/2018/06/14/principal-component-analysis-explained-simply/)
 
+*TODO: Add visualizations from bioturning*
 
-```{r PCA}
-pdf(file = paste0(plotPath, 'PCAplot_All_', Comparison, '.pdf'), onefile = TRUE)
+>**Note**: Details regarding PCA are outlined in [a Harvard Chan Bioinformatic Core training module](https://hbctraining.github.io/DGE_workshop/lessons/principal_component_analysis.html) and is based a more thorough description presented in a [StatQuest’s video](https://www.youtube.com/watch?v=_UVHneBUBW0). Additionally, [this TowardsDataScience blog post](https://towardsdatascience.com/principal-component-analysis-3c39fbf5cb9d)
 
+Below, we will plot the rlog normalized data for our samples projected onto a 2D plane and spanned by their first two principle components to visualize the overall effect of experimental covariates and determine if there is evidence of batch effects. 
+
+We'll first initialize the output file.
+```{r PCArlog1}
+pdf(file = paste0(plotPath, 'PCAplot_rlog_', Comparison, '.pdf'), onefile = TRUE)
+```
+
+Next we'll set up the sample information and group assignments.
+```{r PCArlog2}
 #PCA plot for Rlog-Normalized counts for all samples
 CombinatoricGroup <- factor(coldata$condition)
 SampleName <- factor(row.names(coldata))
-p.all <- plotPCA(rld, intgroup = c('condition'))
+```
+
+Then we'll generate the PCA projections using the `plotPCA` function from DESeq2. 
+```{r PCArlog3}
+p.all <- plotPCA(rld, intgroup = c('condition'), ntop = 500)
+```
+
+Next, we'll generate a customized plot using the `ggplot2` package 
+```{r PCArlog4}
 gp <- ggplot(p.all$data, aes(x = PC1, y = PC2, color = SampleName, shape = CombinatoricGroup)) + xlab(p.all$labels[2]) + ylab(p.all$labels[1]) + scale_shape_manual(values=1:nlevels(CombinatoricGroup), name = 'Combinatoric Group') + geom_point(size=2) + ggtitle(label = as.character('All samples Rlog-Normalized')) + theme(plot.title = element_text(hjust = 0.5)) + guides(colour=guide_legend(nrow=12, title = 'Sample'), legend.key = element_rect(size = 1), legend.key.size = unit(0, 'cm')) + theme_classic(base_size = 10) + theme(legend.margin=margin(t = 0, unit='mm'))
 plot(gp)
+dev.off()
+```
 
+### Interpreting PCA plots
 
+[](https://blog.bioturing.com/2018/06/14/principal-component-analysis-explained-simply/)
+
+*TODO: Add scree plot?*
+
+#### Additional PCA plot for raw data
+<details>
+  <summary>Click for code for additional visualizations</summary>
+  
+It can sometimes be useful to also generate a PCA plot for the raw data as well as the normalized data.
+```{r PCAraw}
+pdf(file = paste0(plotPath, 'PCAplot_raw_', Comparison, '.pdf'), onefile = TRUE)
 #PCA for Raw counts for all samples
 RC <- SummarizedExperiment(log2(counts(dds, normalized = FALSE)), colData=colData(dds))
 p.RC <- plotPCA(DESeqTransform(RC), intgroup = 'condition')
@@ -221,6 +254,8 @@ dev.off()
 # embedd example of plot (rlog only)
 plot(gp)
 ```
+</details>
+
 
 ### Detecting batch effects/confounders
 
