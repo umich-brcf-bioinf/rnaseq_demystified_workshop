@@ -42,7 +42,7 @@ To begin our analysis, we need to read in the **raw** count data, which should h
 
 To read in raw count table we'll use the 'read.table()' function.
 ```{r ReadInCounts}
-data <- read.table("./Day2Data/Mov10_full_counts.txt", header = TRUE, row.names = 1)
+data <- read.table("./data/Mov10_full_counts.txt", header = TRUE, row.names = 1)
 ```
 
 You should now see `GeneCounts` in the "Environment" tab on the right side of your Rstudio window. Let's take a look at the table.
