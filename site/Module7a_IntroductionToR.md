@@ -1,7 +1,7 @@
 ---
 title: "Day 2 - Module 7a: Introduction to R/Rstudio "
 author: "UM Bioinformatics Core"
-date: "`r Sys.Date()`"
+date: "2020-12-11"
 output:
         html_document:
             theme: readable
@@ -71,13 +71,13 @@ To perform our analysis, we'll need to use functions. These are built in capabli
 
 Functions have a specific pattern and usually get one or more inputs called **arguments**. If the argument alters the way the function operates, it is often called an **option**. Some functions can take multiple arguements but may have defaults to fall back on if no specific argument or option is given.
 
-```{r Functions, eval=FALSE}
+
+```r
 print() # does this work?
 print("this is an argument")
 
 round(3.14159)
 round(3.14159, 2) # how many digits do we get?
-
 ```
 
 ### Object names & assignments
@@ -89,14 +89,14 @@ Objects are strings that act as place holders for any type of data. R has some r
 * Should not be identical to a named function
 * Dots & underscores will work but are better to avoid
 
-```{r Objects, eval=FALSE}
+
+```r
 3 + 7
 Mars  <- "planet"
 Number <- 3 + 7 # can also use a `=`
 Mars <- "red"
 
 ### check the values here ###
-
 ```
 
 Objects maintain their assignment unless reassigned or removed from the session environment.
@@ -105,7 +105,8 @@ Objects maintain their assignment unless reassigned or removed from the session 
 
 There are a few different data types that we will be working with when analyzing RNA-seq data. We'll review vectors and what they can store first.
 
-```{r DataTypes, eval=FALSE}
+
+```r
 VectorExString <- c("MFG1, MFG2, MFG3")
 VectorExNumeric <- c(4, 5, 6)
 VectorExLogical <- c(TRUE, FALSE, FALSE)
@@ -113,7 +114,6 @@ VectorExLogical <- c(TRUE, FALSE, FALSE)
 ### get an overview of each vector with the function `str()` ###
 
 ### How can we convert strings to factors? ###
-
 ```
 
 
@@ -122,12 +122,12 @@ VectorExLogical <- c(TRUE, FALSE, FALSE)
 The starting point for our differential expression analysis will be a table of counts, so let's look at the example provided. First, we'll need to read in the file into memory from storage using a function.
 
 *Note: will likely need to update file name and syntax to ensure properly read in*
-```{r DataTable, eval=FALSE}
+
+```r
 CountTable <- read.table("./data/ExampleCounts.txt")
 head(CountTable) # look at the top of the table
 
 ### get an overview of the structure of the table ###
-
 ```
 
 Now that the file is read into R, we can work with the data and we've created a data frame, which is a standard data structure for tabular data in R.
@@ -135,7 +135,8 @@ Now that the file is read into R, we can work with the data and we've created a 
 ### Working with data frames
 
 Data frames are a cornerstone of working with data in R and there are some key syntax and functions that will be helpful as we analyze RNA-seq data. *Include how to add columns or not??*
-```{r DataFrameBasics, eval=FALSE}
+
+```r
 dim(CountTable) # lets us know the number of rows & columns
 
 CountTable[1, ] # lets us look at the first row
@@ -147,14 +148,14 @@ colnames(CountTable) # colnames, if they exist
 ### Subset the table by rows & columns ###
 
 ### Shorthand for select a column by name ($ or with string) ###
-
 ```
 
 ### Getting help within Rstudio
 
 Rstudio has some built in help resources.
 
-```{r Help, eval=FALSE}
+
+```r
 ?dim
 ```
 
@@ -163,7 +164,8 @@ Rstudio has some built in help resources.
 You should already have DESeq2 and several other libraries installed, so we can load them into our R session now. To do that we'll use the `library` function and send the commands to the console.
 
 Before ending this module, let's load the libraries we'll need to use for the next module. *TODO: will need to update with any additional packages*
-```{r Modules, eval=FALSE}
+
+```r
 library(DESeq2)
 library(ggplot2)
 library(tidyr)
@@ -171,7 +173,6 @@ library(matrixStats)
 library('ggrepel', character.only=TRUE)
 library('pheatmap', character.only=TRUE)
 library('RColorBrewer', character.only=TRUE)
-
 ```
 
 

@@ -1,7 +1,7 @@
 ---
 title: "Introduction to UNIX Shell"
 author: "UM Bioinformatics Core"
-date: "`r Sys.Date()`"
+date: "2020-12-11"
 output:
     html_document:
         theme: readable
@@ -15,7 +15,7 @@ output:
 
 <!---
 library(rmarkdown)
-render('Module2a_UNIXShell.Rmd', output_dir = 'site')
+render('Module2a_UNIXShell.Rmd', knit_root_dir = 'markdown')
 --->
 
 <!--- Allow the page to be wider --->
@@ -26,10 +26,11 @@ render('Module2a_UNIXShell.Rmd', output_dir = 'site')
 </style>
 
 > # Objectives
-> * Understand what a UNIX shell is, and why it is useful.
-> * Understand how to navigate the file system in the shell.
-> * Understand how to copy, move, and delete files in the shell.
-> * Understand how to change the behavior of programs in the shell with flags.
+> *
+> *
+> *
+> *
+>
 
 # Background
 
