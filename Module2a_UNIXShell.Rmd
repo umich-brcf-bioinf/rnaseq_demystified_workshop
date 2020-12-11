@@ -25,6 +25,13 @@ render('Module2a_UNIXShell.Rmd')
     }
 </style>
 
+> # Objectives
+> *
+> *
+> *
+> *
+> 
+
 # Background
 
 We interact with computers in myriad ways: with keyboard and mouse, with our fingers in touch interfaces, or with our voice. The **graphical user interface** (GUI) is the most widely used way to interact. A GUI let's us interact with elements on a screen to accomplish various tasks.

@@ -13,6 +13,39 @@ output:
         keep_md: true
 ---
 
+<!---
+library(rmarkdown)
+render('Module6b_Alignment.Rmd')
+--->
+
+<!--- Allow the page to be wider --->
+<style>
+    body .main-container {
+        max-width: 1200px;
+    }
+</style>
+
+> # Objectives
+> *
+> *
+> *
+> *
+> *
+
+# Differential Expression Workflow
+
+In this lesson we will discuss the alignment and gene quantification steps that are necessary prior to doing a test for differential expression, the topic of Day 2.
+
+| Step | Task |
+| :--: | ---- |
+| 1 | Experimental Design |
+| 2 | Biological Samples / Library Preparation |
+| 3 | Sequence Reads |
+| 4 | Assess Quality of Raw Reads |
+| **5** | **Splice-aware Mapping to Genome** |
+| **6** | **Count reads associated with genes** |
+| 7 | Test for DE Genes |
+
 # Notes on STAR
 
 - Algorithmic details to mention (or not):

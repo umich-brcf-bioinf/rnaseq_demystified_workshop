@@ -15,7 +15,7 @@ output:
 
 <!---
 library(rmarkdown)
-render('Module2a_UNIXShell.Rmd')
+render('Module3b_QC.Rmd')
 --->
 
 <!--- Allow the page to be wider --->
@@ -24,6 +24,13 @@ render('Module2a_UNIXShell.Rmd')
         max-width: 1200px;
     }
 </style>
+
+> # Objectives
+> *
+> *
+> *
+> *
+> *
 
 # Differential Expression Workflow
 
