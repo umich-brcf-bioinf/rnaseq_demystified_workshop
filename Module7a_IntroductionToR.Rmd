@@ -156,7 +156,14 @@ Rstudio has some built in help resources that are useful when using new function
 ?dim
 ```
 
-# Check package installations
+# Check package installations & download data
+
+To prepare for the next section, we'll download the data we'll need from the workshop materials. *TODO: How to download files from workshop repo*
+```{r DownloadData}
+#Example from UCdavis
+download.file("https://raw.githubusercontent.com/ucdavis-bioinformatics-training/2020-Intro_Single_Cell_RNA_Seq/master/datasets/expression_tables_cellrangerV3.zip", "expression_tables_cellrangerV3.zip")
+system("unzip expression_tables_cellrangerV3.zip")
+```
 
 You should already have DESeq2 and several other libraries installed, so we can load them into our R session now. To do that we'll use the `library` function and send the commands to the console.
 
