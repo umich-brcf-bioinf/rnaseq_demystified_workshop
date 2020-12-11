@@ -23,6 +23,16 @@ output:
 > * Familiarity with Bioconductor "Tool Set"
 > * Understanding of what DESeq2 does & why it is widely used for differential expression comparisons
 
+```{r Modules, eval=TRUE, echo=FALSE, message=FALSE}
+library(DESeq2)
+library(ggplot2)
+library(tidyr)
+library(matrixStats)
+library('ggrepel', character.only=TRUE)
+library('pheatmap', character.only=TRUE)
+library('RColorBrewer', character.only=TRUE)
+```
+
 # Introduction to Bioconductor
 
 [Bioconductor](https://www.bioconductor.org/) provides open source software for the "analysis and comprehension of high-throughput genomic data", primarily through packages written in R and by . We will use a few tools that are available through Bioconductor for our analysis and highly recommend checking out [more about Bioconductor](https://www.bioconductor.org/about/), including their standards for documentation, workflow examples, and annotation resources.

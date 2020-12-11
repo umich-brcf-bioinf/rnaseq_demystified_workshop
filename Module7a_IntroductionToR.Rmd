@@ -151,8 +151,7 @@ In later sections, we will use additional R syntax, including adding additional 
 
 ### Getting help within Rstudio
 
-Rstudio has some built in help resources that is useful 
-
+Rstudio has some built in help resources that are useful when using new functions or packages. To find out more about a function (that is loaded into your session) use the `?` symbol.
 ```{r Help, eval=FALSE}
 ?dim
 ```
