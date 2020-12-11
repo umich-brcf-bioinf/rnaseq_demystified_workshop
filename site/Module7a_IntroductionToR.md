@@ -29,37 +29,35 @@ output:
 Our goal for any analysis is to do it in a way where it can be easily and exactly replicated, i.e. following standards for "reproducible research". Rstudio has great tools to facilitate this process and is freely available, just like the underlying programming language (R).
 
 First, we'll review the key parts of Rstudio, specifically:
-* Console
-* Scripts
-* Environments
-* File/Plots Viewer
+* Console/Terminal (lk)    
+* Environments/History/Connections   
+* Files/Plots/Packages/Help/Viewer   
 
-*Add diagram of Rstudio here from Umich SWC?*
+
+![](./images/Rstudio_example.png)
 
 ## Navigating directories and writing R code
 
 Today we'll be exploring some RNA-seq data that should have been included in the course materials. To open the file for the first module today, we'll want to navigate to the same project directory we used yesterday, which can be done using the file viewer within Rstudio.
 
-*Add example of project directory?*
-
 
 ## Best practices for file organization
 
 To follow best practices as discussed by [Nobel,2009](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000424) for file organization for bioinformatics/computational projects, we will need to make sure there are separate storage locations for:
-* Raw data
-* Code
-* Output files
+* Raw data   
+* Code    
+* Output files   
 
-*Add diagram from Noble PLOS paper*
 
-## Helpful resources
-
-*
-*
+![](./images/Noble2009_dataprojects.png)
 
 # Interacting with the Console
 
-To ensure that we have a record of our commands, it is better to write all commands within our '.R' file and send the command to the console instead of directly entering them. **Ctrl-Enter** is a standard shortcut in Rstudio to send the current line (or selected lines) to the console. If you see an `>`, then R has executed the command. If you see a `+`, this means that the command is not complete and R is waiting (usually for a `)`).
+To ensure that we have a record of our commands, it is better to write all commands within our '.R' file and send the command to the console instead of directly entering them.
+
+We'll open a new '.R' file by using the toolbar at the top of our window. You should see a new panel opening up on the top left. This is where we can write our commands and then send them to the R console, which is now on the bottom left of our Rstudio window.
+
+**Ctrl-Enter** is a standard shortcut in Rstudio to send the current line (or selected lines) to the console. If you see an `>`, then R has executed the command. If you see a `+`, this means that the command is not complete and R is waiting (usually for a `)`).
 
 ## Key R syntax review
 
@@ -96,7 +94,9 @@ Mars  <- "planet"
 Number <- 3 + 7 # can also use a `=`
 Mars <- "red"
 
-### check the values here ###
+## check the values 
+Mars
+Number
 ```
 
 Objects maintain their assignment unless reassigned or removed from the session environment.
@@ -119,14 +119,31 @@ VectorExLogical <- c(TRUE, FALSE, FALSE)
 
 ### Reading in count data
 
-The starting point for our differential expression analysis will be a table of counts, so let's look at the example provided. First, we'll need to read in the file into memory from storage using a function.
-
-*Note: will likely need to update file name and syntax to ensure properly read in*
+The starting point for our differential expression analysis will be a table of counts, so let's look at the example provided. First, we'll need to read in the file into memory from storage using a function called `read.table`.
 
 ```r
-CountTable <- read.table("./data/ExampleCounts.txt")
+CountTable <- read.table("./data/Mov10_full_counts.txt")
 head(CountTable) # look at the top of the table
+```
 
+```
+##            V1         V2         V3         V4         V5         V6         V7
+## 1  GeneSymbol Mov10_kd_2 Mov10_kd_3 Mov10_oe_1 Mov10_oe_2 Mov10_oe_3 Irrel_kd_1
+## 2 1/2-SBSRNA4         57         41         64         55         38         45
+## 3        A1BG         71         40        100         81         41         77
+## 4    A1BG-AS1        256        177        220        189        107        213
+## 5        A1CF          0          1          1          0          0          0
+## 6       A2LD1        146         81        138        125         52         91
+##           V8         V9
+## 1 Irrel_kd_2 Irrel_kd_3
+## 2         31         39
+## 3         58         40
+## 4        172        126
+## 5          0          0
+## 6         80         50
+```
+
+```r
 ### get an overview of the structure of the table ###
 ```
 
@@ -163,7 +180,7 @@ Rstudio has some built in help resources.
 
 You should already have DESeq2 and several other libraries installed, so we can load them into our R session now. To do that we'll use the `library` function and send the commands to the console.
 
-Before ending this module, let's load the libraries we'll need to use for the next module. *TODO: will need to update with any additional packages*
+Before ending this module, let's load the libraries we'll need to use for the next module. 
 
 ```r
 library(DESeq2)
@@ -174,6 +191,8 @@ library('ggrepel', character.only=TRUE)
 library('pheatmap', character.only=TRUE)
 library('RColorBrewer', character.only=TRUE)
 ```
+
+
 
 
 ---

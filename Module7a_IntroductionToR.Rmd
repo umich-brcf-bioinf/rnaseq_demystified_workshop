@@ -29,37 +29,35 @@ output:
 Our goal for any analysis is to do it in a way where it can be easily and exactly replicated, i.e. following standards for "reproducible research". Rstudio has great tools to facilitate this process and is freely available, just like the underlying programming language (R).
 
 First, we'll review the key parts of Rstudio, specifically:
-* Console
-* Scripts
-* Environments
-* File/Plots Viewer
+* Console/Terminal (lk)    
+* Environments/History/Connections   
+* Files/Plots/Packages/Help/Viewer   
 
-*Add diagram of Rstudio here from Umich SWC?*
+
+![](./images/Rstudio_example.png)
 
 ## Navigating directories and writing R code
 
 Today we'll be exploring some RNA-seq data that should have been included in the course materials. To open the file for the first module today, we'll want to navigate to the same project directory we used yesterday, which can be done using the file viewer within Rstudio.
 
-*Add example of project directory?*
-
 
 ## Best practices for file organization
 
 To follow best practices as discussed by [Nobel,2009](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000424) for file organization for bioinformatics/computational projects, we will need to make sure there are separate storage locations for:
-* Raw data
-* Code
-* Output files
+* Raw data   
+* Code    
+* Output files   
 
-*Add diagram from Noble PLOS paper*
 
-## Helpful resources
-
-*
-*
+![](./images/Noble2009_dataprojects.png)
 
 # Interacting with the Console
 
-To ensure that we have a record of our commands, it is better to write all commands within our '.R' file and send the command to the console instead of directly entering them. **Ctrl-Enter** is a standard shortcut in Rstudio to send the current line (or selected lines) to the console. If you see an `>`, then R has executed the command. If you see a `+`, this means that the command is not complete and R is waiting (usually for a `)`).
+To ensure that we have a record of our commands, it is better to write all commands within our '.R' file and send the command to the console instead of directly entering them.
+
+We'll open a new '.R' file by using the toolbar at the top of our window. You should see a new panel opening up on the top left. This is where we can write our commands and then send them to the R console, which is now on the bottom left of our Rstudio window.
+
+**Ctrl-Enter** is a standard shortcut in Rstudio to send the current line (or selected lines) to the console. If you see an `>`, then R has executed the command. If you see a `+`, this means that the command is not complete and R is waiting (usually for a `)`).
 
 ## Key R syntax review
 
@@ -95,8 +93,9 @@ Mars  <- "planet"
 Number <- 3 + 7 # can also use a `=`
 Mars <- "red"
 
-### check the values here ###
-
+## check the values 
+Mars
+Number
 ```
 
 Objects maintain their assignment unless reassigned or removed from the session environment.
@@ -119,9 +118,8 @@ VectorExLogical <- c(TRUE, FALSE, FALSE)
 
 ### Reading in count data
 
-The starting point for our differential expression analysis will be a table of counts, so let's look at the example provided. First, we'll need to read in the file into memory from storage using a function.
-
-```{r DataTable, eval=FALSE}
+The starting point for our differential expression analysis will be a table of counts, so let's look at the example provided. First, we'll need to read in the file into memory from storage using a function called `read.table`.
+```{r DataTable, eval=TRUE}
 CountTable <- read.table("./data/Mov10_full_counts.txt")
 head(CountTable) # look at the top of the table
 
@@ -133,12 +131,12 @@ Now that the file is read into R, we can work with the data and we've created a 
 
 ### Working with data frames
 
-Data frames are a cornerstone of working with data in R and there are some key syntax and functions that will be helpful as we analyze RNA-seq data. *Include how to add columns or not??*
+Data frames are a cornerstone of working with data in R and there are some key syntax and functions that will be helpful as we analyze RNA-seq data.
 ```{r DataFrameBasics, eval=FALSE}
 dim(CountTable) # lets us know the number of rows & columns
 
 CountTable[1, ] # lets us look at the first row
-CountTable[ , 1] # lets us look at the first column
+head(CountTable[ , 1]) # lets us look at part of the first column
 
 rownames(CountTable) # rownames, if they exist
 colnames(CountTable) # colnames, if they exist
@@ -149,9 +147,11 @@ colnames(CountTable) # colnames, if they exist
 
 ```
 
+In later sections, we will use additional R syntax, including adding additional columns and merging tables together. 
+
 ### Getting help within Rstudio
 
-Rstudio has some built in help resources.
+Rstudio has some built in help resources that is useful 
 
 ```{r Help, eval=FALSE}
 ?dim
@@ -161,8 +161,8 @@ Rstudio has some built in help resources.
 
 You should already have DESeq2 and several other libraries installed, so we can load them into our R session now. To do that we'll use the `library` function and send the commands to the console.
 
-Before ending this module, let's load the libraries we'll need to use for the next module. *TODO: will need to update with any additional packages*
-```{r Modules, eval=FALSE}
+Before ending this module, let's load the libraries we'll need to use for the next module. 
+```{r Modules, message=FALSE, warning= FALSE, eval=TRUE}
 library(DESeq2)
 library(ggplot2)
 library(tidyr)
@@ -170,9 +170,14 @@ library(matrixStats)
 library('ggrepel', character.only=TRUE)
 library('pheatmap', character.only=TRUE)
 library('RColorBrewer', character.only=TRUE)
-
 ```
 
+
+```{r WriteOut.RData, eval=TRUE, echo=FALSE, message=FALSE}
+#Hidden code block to write out data for knitting
+save.image(file = "RunningData.RData")
+#load("RunningData.RData")
+```
 
 ---
 
