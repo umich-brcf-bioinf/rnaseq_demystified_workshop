@@ -91,7 +91,6 @@ DESeq2 has some additional requirments, including the type of data expected as a
 
 Since DESeq2 is both a [Bioconductor](https://www.bioconductor.org/help/package-vignettes/) tool and widely used by the bioinformatics community, there is extensive [documentation](https://bioconductor.org/packages/3.12/bioc/manuals/DESeq2/man/DESeq2.pdf) available, including [vignettes](http://master.bioconductor.org/packages/release/workflows/vignettes/rnaseqGene/inst/doc/rnaseqGene.html#preparing-count-matrices) that walk through options for analysis in greater detail than we will cover here.  
 
-
 ---
 
 # Sources Used
