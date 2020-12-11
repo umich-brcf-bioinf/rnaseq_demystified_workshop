@@ -19,7 +19,6 @@ output:
         max-width: 1200px;
     }
 </style>
-
 > # Objectives   
 > * Understand indivudal samples versus groups for comaprisons
 > * Execute model fitting for differential expression comparisons
@@ -27,6 +26,7 @@ output:
 # Count normalizations
 
 *TODO: How much were count normalizations discussed in STAR/RSEM section?*
+
 *As  previously mentioned*, count normalization is very important for comparing the expression of a gene between samples and/or between genes within the same sample. 
 
 Since counts of mapped reads for each gene is proportional to the expression of RNA in addition to many “uninteresting” other factors, normalization is the process of scaling raw count values to account for the “uninteresting” factors and ensure expression levels are more comparable. 
@@ -71,7 +71,13 @@ Notice that with the additional covariate, additional comparisons are generated 
 * DESeq2 beginners vignette: https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf    
 * Bioconductor RNA-seq Workflows: https://www.bioconductor.org/help/course-materials/2015/LearnBioconductorFeb2015/B02.1_RNASeq.html
 
+---
+
 # Session Info:
 ```{r SessionInfo}
 sessionInfo()
 ```
+
+---
+
+These materials have been adapted and extended from materials listed above. These are open access materials distributed under the terms of the [Creative Commons Attribution license (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.

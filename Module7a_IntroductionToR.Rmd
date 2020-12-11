@@ -19,7 +19,6 @@ output:
         max-width: 1200px;
     }
 </style>
-
 > # Objectives    
 > * Shared understanding of R/RStudio environment & packages    
 > * Import and review count tables    
@@ -64,7 +63,7 @@ To ensure that we have a record of our commands, it is better to write all comma
 
 ## Key R syntax review
 
-For a more extensive introduction to R syntax, there are many resources available. We drew on [Data Carpentry](https://datacarpentry.org/R-genomics/00-before-we-start.html) for these materials and also recommend the [Software Carpentry](https://swcarpentry.github.io/r-novice-gapminder/) materials for a more extensive overview of the R programming language.
+For a more extensive introduction to R syntax, there are many resources available. We drew on [Data Carpentry](https://datacarpentry.org/R-genomics/00-before-we-start.html) for these materials and also recommend the [Software Carpentry](https://swcarpentry.github.io/r-novice-gapminder/) materials for a more extensive introduction to the R programming language.
 
 ### Functions
 
@@ -161,13 +160,21 @@ Rstudio has some built in help resources.
 
 # Check package installations
 
-Before ending this module, load the libraries we'll need to use for the next module. *will need to update with any additional packages*
+You should already have DESeq2 and several other libraries installed, so we can load them into our R session now. To do that we'll use the `library` function and send the commands to the console.
+
+Before ending this module, let's load the libraries we'll need to use for the next module. *TODO: will need to update with any additional packages*
 ```{r Modules, eval=FALSE}
 library(DESeq2)
 library(ggplot2)
-library(pheatmap)
+library(tidyr)
+library(matrixStats)
 library('ggrepel', character.only=TRUE)
+library('pheatmap', character.only=TRUE)
+library('RColorBrewer', character.only=TRUE)
 
 ```
 
 
+---
+
+These materials have been adapted and extended from materials from [Data Carpentry](https://datacarpentry.org/R-genomics/00-before-we-start.html) and [Software Carpentry](https://swcarpentry.github.io/r-novice-gapminder/). These are open access materials distributed under the terms of the [Creative Commons Attribution license (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.

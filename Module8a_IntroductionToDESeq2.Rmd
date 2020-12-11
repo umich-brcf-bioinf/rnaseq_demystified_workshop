@@ -19,7 +19,6 @@ output:
         max-width: 1200px;
     }
 </style>
-
 > # Objectives     
 > * Familiarity with Bioconductor "Tool Set"    
 > * Understanding of what DESeq2 does & why it is widely used for differential expression comparisons   
@@ -37,12 +36,7 @@ While there are several tools that can be used for differential expression compa
 
 > To learn more about statistical testing and what distributions best model the behavior of RNA-seq data, a good resource is this [EdX lecture by Rafael Irizarry](https://www.youtube.com/watch?v=HK7WKsL3c2w&feature=youtu.be) or this [lecture by Kasper Hansen](https://www.youtube.com/watch?v=C8RNvWu7pAw) *TODO:Review/Edit general resources for RNA-seq/stats*   
 
-You should already have DESeq2 installed, so we can load the library into our R session now. To do that we'll use the `library` function in a new line in our R file and send the command to the console. 
-```{r LoadDESeq2, message = FALSE}
-library(DESeq2)
-```
-
-Now we have access to information about DESeq2 within Rstudio. We can check out this out using the `?` operator.
+We previously loaded several libraries into our R session. Since we loaded the library, we now we have access to information about DESeq2 within Rstudio. We can check out this out using the `?` operator.
 ```{r CheckDocumentaion}
 ?`DESeq2-package`
 ```
@@ -53,10 +47,10 @@ A key consideration for RNA-Seq data is that a vast number of RNAs are represent
 
 Since variance is a key to both the statistical test and normalization approach used in DESeq2, if you try to compare treamtment groups with less than **two** replicates, DESeq2 will give you an error. 
 
-So how do we determine what kind of sample "counts" as a replicate?    
+As a review of Day 1, what kind of sample "counts" as a replicate for DESeq2 analysis?    
 
-* **Biological replicates** are independently generated samples representing the same treatment group (i.e. RNA isolated from the kidneys of different mice)    
-* **Technical replicates** are generated from *the same* sample, but with technical steps replicates(i.e. two RNA preps from the same mouse kidney)
+* **Biological replicates** are independently generated samples representing the same treatment group (i.e. RNA isolated from the kidneys of different mice) and are what is expected by DESeq2    
+* **Technical replicates** are generated from *the same* sample, but with technical steps replicates (i.e. two RNA preps from the same mouse kidney) and *would not* satisfy the assumptions of DESeq2, although no error would be triggered.
 
 For most experiments biological variance is much greater than technical variance, especially if [best practices](https://www.txgen.tamu.edu/faq/rna-isolation-best-practices/) for [quality RNA isolation](https://www.biocompare.com/Bench-Tips/128790-Four-Tips-for-Perfecting-RNA-Isolation/) are followed (including DNase treatment!).
 
@@ -66,7 +60,8 @@ A question we are frequently asked is "How many replicates do I need?". *TODO: H
 
 *"More often than not, there is much more going on with your data than what you are anticipating. Genes that vary in expression level between samples is a consequence of not only the experimental variables of interest but also due to extraneous sources. The goal of differential expression analysis to determine the relative role of these effects, and to separate the “interesting” from the “uninteresting”."* () technical vs experimental impacts image?
 
-A related aspect is how much to consider sequencing depth versus additional replicates. This figure shared by Illumina is helpful to understand the relative importance of sequencing depth and replicate number. 
+A related aspect is how much to consider sequencing depth versus additional replicates. This figure shared by Illumina is helpful to understand the relative importance of sequencing depth and replicate number.
+
 *Add reps vs depth image here*
 
 Generally, sequencing depth is important for accurately measuring genes that are expressed at different abundances. For the human and mouse genomes, the general recommendation is 30-40 million reads per sample if measuring the ~20,000  protein-coding genes (i.e.: polyA library prep) to measure both highly expressed (common) and more lowly expresssed (rarer) transcripts. *TODO: Do we discuss library prep options on Day1??* However, as the image above shows, replicates make a bigger impact on detecting differentially expressed genes (DEGs)
@@ -87,7 +82,7 @@ Since DESeq2 is both a [Bioconductor](https://www.bioconductor.org/help/package-
 * DESeq2 beginners vignette: https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf    
 * Bioconductor RNA-seq Workflows: https://www.bioconductor.org/help/course-materials/2015/LearnBioconductorFeb2015/B02.1_RNASeq.html
 
-# Session Info:
-```{r SessionInfo}
-sessionInfo()
-```
+
+---
+
+These materials have been adapted and extended from materials listed above. These are open access materials distributed under the terms of the [Creative Commons Attribution license (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.

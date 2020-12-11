@@ -1,0 +1,42 @@
+---
+title: "RNA-seq Demystified: Day X"
+author: "UM Bioinformatics Core"
+date: "`r Sys.Date()`"
+output:
+        html_document:
+            theme: readable
+            toc: true
+            toc_depth: 4
+            toc_float: true
+            number_sections: true
+            fig_caption: true
+            keep_md: true
+---
+
+<!--- Allow the page to be wider --->
+<style>
+    body .main-container {
+        max-width: 1200px;
+    }
+</style>
+> # Objectives    
+> * Generate common visualizations for differential expression comparisons    
+> * Understand reasonable thresholds for statistically significant diffex genes    
+> * Understand options for functional enrichments    
+
+
+
+
+# Sources Used:    
+* 
+
+---
+
+# Session Info:
+```{r SessionInfo}
+sessionInfo()
+```
+
+---
+
+These materials have been adapted and extended from materials listed above. These are open access materials distributed under the terms of the [Creative Commons Attribution license (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.
