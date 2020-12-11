@@ -19,7 +19,7 @@ output:
         max-width: 1200px;
     }
 </style>
-> # Objectives   
+> # Objectives
 > * Understand indivudal samples versus groups for comaprisons
 > * Execute model fitting for differential expression comparisons
 
@@ -27,15 +27,15 @@ output:
 
 *TODO: How much were count normalizations discussed in STAR/RSEM section?*
 
-*As  previously mentioned*, count normalization is very important for comparing the expression of a gene between samples and/or between genes within the same sample. 
+*As  previously mentioned*, count normalization is very important for comparing the expression of a gene between samples and/or between genes within the same sample.
 
-Since counts of mapped reads for each gene is proportional to the expression of RNA in addition to many “uninteresting” other factors, normalization is the process of scaling raw count values to account for the “uninteresting” factors and ensure expression levels are more comparable. 
+Since counts of mapped reads for each gene is proportional to the expression of RNA in addition to many “uninteresting” other factors, normalization is the process of scaling raw count values to account for the “uninteresting” factors and ensure expression levels are more comparable.
 
-> **Note**: The beginning of [this tutorial](https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html) has a helpful illustration of factors considered, as well as a detailed comparison of different normalization approaches and their best uses. 
+> **Note**: The beginning of [this tutorial](https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html) has a helpful illustration of factors considered, as well as a detailed comparison of different normalization approaches and their best uses.
 
-DESeq2 has an [internal normalization process](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106) that uses the median of ratios method to normalize for sequencing depth and RNA composition prior to differential expression comparisons. However for data exploration and visualizations, it is helpful to generate an object of independently normalized counts. 
+DESeq2 has an [internal normalization process](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106) that uses the median of ratios method to normalize for sequencing depth and RNA composition prior to differential expression comparisons. However for data exploration and visualizations, it is helpful to generate an object of independently normalized counts.
 
-For downstream quality control visualization, we will use the [rlog transformation](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#count-data-transformations), which produces log2 scale data that has also been normalized to overall library size as well as variance across genes at different mean expression levels. 
+For downstream quality control visualization, we will use the [rlog transformation](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#count-data-transformations), which produces log2 scale data that has also been normalized to overall library size as well as variance across genes at different mean expression levels.
 
 The rlog transformation of the normalized counts is only necessary for these visualization methods during this quality assessment. We we set `blind=TRUE` the transformation is blind to the sample information we specified in the design formula.
 ```{r CountNorm}
@@ -43,9 +43,9 @@ rld <- rlog(dds, blind = TRUE)
 head(assay(rld), 3)
 ```
 
-# Model fitting 
+# Model fitting
 
-Before the break, we'll fit our standard model and our model that includes the patient origin covariate. 
+Before the break, we'll fit our standard model and our model that includes the patient origin covariate.
 ```{r FitModelsStandard}
 # Apply model
 dds <- DESeq(dds)
@@ -56,7 +56,7 @@ str(dds)
 
 ```{r FitModelCovariate}
 dds_patient <- DESeq(dds_patient)
-#resultsNames(dds_patient) 
+#resultsNames(dds_patient)
 str(dds_patient)
 ```
 
@@ -64,11 +64,11 @@ Notice that with the additional covariate, additional comparisons are generated 
 
 ---
 
-# Sources Used:    
-* HBC DGE setup: https://hbctraining.github.io/DGE_workshop/lessons/01_DGE_setup_and_overview.html   
+# Sources Used:
+* HBC DGE setup: https://hbctraining.github.io/DGE_workshop/lessons/01_DGE_setup_and_overview.html
 * HBC Count Normalization: https://hbctraining.github.io/DGE_workshop/lessons/02_DGE_count_normalization.html
-* DESeq2 standard vignette: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html 
-* DESeq2 beginners vignette: https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf    
+* DESeq2 standard vignette: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+* DESeq2 beginners vignette: https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf
 * Bioconductor RNA-seq Workflows: https://www.bioconductor.org/help/course-materials/2015/LearnBioconductorFeb2015/B02.1_RNASeq.html
 
 ---

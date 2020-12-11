@@ -1,7 +1,7 @@
 ---
 title: "Alignment and Gene Quantification"
 author: "UM Bioinformatics Core"
-date: "`r Sys.Date()`"
+date: "2020-12-11"
 output:
     html_document:
         theme: readable

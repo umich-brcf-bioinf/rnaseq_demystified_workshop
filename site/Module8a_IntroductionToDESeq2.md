@@ -1,7 +1,7 @@
 ---
 title: "Day 2 - Module 8a: Introduction to DESeq2"
 author: "UM Bioinformatics Core"
-date: "`r Sys.Date()`"
+date: "2020-12-11"
 output:
         html_document:
             theme: readable
@@ -37,8 +37,14 @@ While there are several tools that can be used for differential expression compa
 > To learn more about statistical testing and what distributions best model the behavior of RNA-seq data, a good resource is this [EdX lecture by Rafael Irizarry](https://www.youtube.com/watch?v=HK7WKsL3c2w&feature=youtu.be) or this [lecture by Kasper Hansen](https://www.youtube.com/watch?v=C8RNvWu7pAw) *TODO:Review/Edit general resources for RNA-seq/stats*
 
 We previously loaded several libraries into our R session. Since we loaded the library, we now we have access to information about DESeq2 within Rstudio. We can check out this out using the `?` operator.
-```{r CheckDocumentaion}
+
+```r
 ?`DESeq2-package`
+```
+
+```
+## No documentation for 'DESeq2-package' in specified packages and libraries:
+## you could try '??DESeq2-package'
 ```
 
 ## DESeq2 assumptions and requirements
