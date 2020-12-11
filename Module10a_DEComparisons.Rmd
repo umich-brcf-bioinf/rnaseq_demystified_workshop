@@ -30,11 +30,24 @@ output:
 
 Now that we have reviewed the plots by sample and determined that 
 
-This illustration from the Harvard Chen Bioinformatics training materials illustrates the differential expression comparisons procedure, where we are comparing the expression 
+This illustration from the HCB training materials illustrates the differential expression procedure, where we are comparing the distribution of expression of a gene across samples in each treatment groups. 
 ![](./images/de_theory.png)
 *Image credit: Paul Pavlidis, UBC*
 
+Only where the distributions of each group are sufficiently seperated will a gene be considered differentially expressed. This is where having sufficient replicates are important, as the more replicates we have in each group the better we can determine the distributions of expression for each group. 
+
 ## Results function
+
+We have already fit our DESeq2 model, specifing our model as `X`. 
+
+Now have model that considered paired sample since the mouse number was included in the design. Next, look at result using the output of the `resultsNames()` function above. 
+```{r Results}
+# Comparison <- "condition_Wild_vs_Meta"
+# res <- results(dds, name=Comparison)
+res <- results(dds, c("batch", "two", "three")) # how to get comparisons that aren't part of named results
+head(res)
+```
+Looks like expected output for DESeq2 so just need to confirm that analysis approach is correct for having paired sample effects included in analysis.
 
 ## How do contrasts work
 
