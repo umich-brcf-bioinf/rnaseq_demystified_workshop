@@ -175,6 +175,7 @@ library('RColorBrewer', character.only=TRUE)
 ```{r WriteOut.RData, eval=TRUE, echo=FALSE, message=FALSE}
 #Hidden code block to write out data for knitting
 save.image(file = "RunningData.RData")
+#How to load for next segment
 #load("RunningData.RData")
 ```
 

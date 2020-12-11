@@ -151,13 +151,13 @@ Now that the file is read into R, we can work with the data and we've created a 
 
 ### Working with data frames
 
-Data frames are a cornerstone of working with data in R and there are some key syntax and functions that will be helpful as we analyze RNA-seq data. *Include how to add columns or not??*
+Data frames are a cornerstone of working with data in R and there are some key syntax and functions that will be helpful as we analyze RNA-seq data.
 
 ```r
 dim(CountTable) # lets us know the number of rows & columns
 
 CountTable[1, ] # lets us look at the first row
-CountTable[ , 1] # lets us look at the first column
+head(CountTable[ , 1]) # lets us look at part of the first column
 
 rownames(CountTable) # rownames, if they exist
 colnames(CountTable) # colnames, if they exist
@@ -167,10 +167,11 @@ colnames(CountTable) # colnames, if they exist
 ### Shorthand for select a column by name ($ or with string) ###
 ```
 
+In later sections, we will use additional R syntax, including adding additional columns and merging tables together. 
+
 ### Getting help within Rstudio
 
-Rstudio has some built in help resources.
-
+Rstudio has some built in help resources that are useful when using new functions or packages. To find out more about a function (that is loaded into your session) use the `?` symbol.
 
 ```r
 ?dim
