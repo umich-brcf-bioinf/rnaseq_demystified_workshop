@@ -121,9 +121,8 @@ VectorExLogical <- c(TRUE, FALSE, FALSE)
 
 The starting point for our differential expression analysis will be a table of counts, so let's look at the example provided. First, we'll need to read in the file into memory from storage using a function.
 
-*Note: will likely need to update file name and syntax to ensure properly read in*
 ```{r DataTable, eval=FALSE}
-CountTable <- read.table("./data/ExampleCounts.txt")
+CountTable <- read.table("./data/Mov10_full_counts.txt")
 head(CountTable) # look at the top of the table
 
 ### get an overview of the structure of the table ###
