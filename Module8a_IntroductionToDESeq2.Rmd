@@ -25,13 +25,6 @@ output:
 
 ```{r Modules, eval=TRUE, echo=FALSE, message=FALSE,warning=FALSE}
 library(DESeq2)
-library(ggplot2)
-library(tidyr)
-library(matrixStats)
-library('ggrepel', character.only=TRUE)
-library('pheatmap', character.only=TRUE)
-library('RColorBrewer', character.only=TRUE)
-
 load("RunningData.RData")
 ```
 
@@ -103,8 +96,6 @@ Since DESeq2 is both a [Bioconductor](https://www.bioconductor.org/help/package-
 ```{r WriteOut.RData, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 #Hidden code block to write out data for knitting
 save.image(file = "RunningData.RData")
-#How to load for next segment
-#load("RunningData.RData")
 ```
 
 ---
