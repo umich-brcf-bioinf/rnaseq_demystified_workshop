@@ -1,6 +1,7 @@
 # Setup instructions for RNA-Seq Demystified
 
 This document guides you through the installation of software necessary to participate in the RNA-Seq Demystified workshop. To complete this setup, you will need:
+
 - A Macintosh or Windows workstation connected to the internet.
 - Administrative privilieges on this workstation.
 - The server address of the workshop Linux environment (supplied to you by the workshop hosts) .
@@ -177,23 +178,24 @@ While we have endeavored to make this setup process work robust and comprehensiv
      and click "Download R 4.0.3 for Windows" (the version may be slightly different). Open the downloaded 
      executable to launch the R installer.
 
-    2. The installer will walk through several options; accept all the defaults (by repeatedly clicking **Next**)
-       and when prompted, click **Install**. The installer will show a progress bar; the process takes about 2 minutes;
-       click **Finish** when prompted to close the installer.
+  2. The installer will walk through several options; accept all the defaults (by repeatedly clicking **Next**)
+     and when prompted, click **Install**. The installer will show a progress bar; the process takes about 2 minutes;
+     click **Finish** when prompted to close the installer.
 
-    3. To install RStudio, in a web-browser, open https://rstudio.com/products/rstudio/download/#download
-       and click on **Download RStudio Desktop for Windows**.  Open the downloaded executable to launch the 
-       installer.
+  3. To install RStudio, in a web-browser, open https://rstudio.com/products/rstudio/download/#download
+     and click on **Download RStudio Desktop for Windows**.  Open the downloaded executable to launch the 
+     installer.
        
-    4. The installer will either prompt you to login as an Admin user or (if your current account has Admin privileges) simply ask you to allow it to make changes. Click **Yes**
+  4. The installer will either prompt you to login as an Admin user or (if your current account has Admin privileges) 
+     simply ask you to allow it to make changes. Click **Yes**
     
-    5. The installer will walk through several options; accept all the defaults (by repeatedly clicking **Next**) 
-       and when prompted, click **Install**. The installer will show a progress bar; the process takes less than one minute; 
-       click **Finish** when prompted to close the installer.
+  5. The installer will walk through several options; accept all the defaults (by repeatedly clicking **Next**) 
+     and when prompted, click **Install**. The installer will show a progress bar; the process takes less than one 
+     minute; click **Finish** when prompted to close the installer.
        
-    6. Press Windows+R keys to open the **Run** dialog; type **"RStudio"** in the text box and hit 
-       enter. This will launch a new RStudio window. The RStudio window is divided into several panes. The lower left 
-       pane shows the **Console** tab and will show some text followed by a command prompt (>):
+  6. Press Windows+R keys to open the **Run** dialog; type **"RStudio"** in the text box and hit 
+     enter. This will launch a new RStudio window. The RStudio window is divided into several panes. The lower left 
+     pane shows the **Console** tab and will show some text followed by a command prompt (>):
 
             R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
             Copyright (C) 2020 The R Foundation for Statistical Computing
@@ -247,10 +249,12 @@ While we have endeavored to make this setup process work robust and comprehensiv
    
 ### Notes (Windows)
 
-- Following the workshop, you can remove any of Git-bash, R and RStudio. As an Admin user, go Start > Settings > Apps & Features. Click on the program to remove and click Uninstall. 
+- Following the workshop, you can remove any of Git-bash, R and RStudio. As an Admin user, go Start > Settings > Apps 
+  & Features. Click on the program to remove and click Uninstall. 
 
 
 ---
+
 ## Macintosh setup
 
 ### Zoom
