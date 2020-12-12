@@ -42,7 +42,7 @@ In this lesson we will set the stage for steps 5 and 6 by discussing reference g
 | 3 | Sequence Reads |
 | 4 | Assess Quality of Raw Reads |
 | **5** | **Splice-aware Mapping to Genome** |
-| **6** | **Count reads associated with genes** |
+| **6** | **Count Reads Associated with Genes** |
 | 7 | Test for DE Genes |
 
 # Reference Genomes
@@ -78,7 +78,7 @@ TTTATCTTTAGGCGGTATGCACTTTTAACAGTCACCCCCCAACTAACACA
 
 ## Gene Models
 
-Well-characterized organisms (e.g. human, mouse, zebrafish) have fairly mature gene models. These are stored in [GTF](https://uswest.ensembl.org/info/website/upload/gff.html) format, which gives location and other information about the each gene feature. Below are two examples:
+Well-characterized organisms (e.g. human, mouse, zebrafish) have fairly mature gene models. These are stored in [GTF](https://uswest.ensembl.org/info/website/upload/gff.html) format, which gives location and other information about each gene feature. Below are two examples:
 
 
 ```
@@ -115,7 +115,7 @@ Bioinformatics is a relatively new, fast-changing, field and its data standards 
 
 ### Genome Builds
 
-On occassion new reference genomes are released for use, and the genome build number changes. You may be familiar with the UCSC manner of naming human genome builds: hg18, hg19, hg38. ENSEMBL, naturally, has their own way of referring to genome builds: GRCh36, GRCh37, and GRCh38. Notice with the most recent human reference, the numbering now aligns between UCSC and ENSEMBL. That's one small step...
+On occassion new reference genomes are released, and the genome build number changes. You may be familiar with the UCSC manner of naming human genome builds: hg18, hg19, hg38. ENSEMBL, naturally, has their own way of referring to genome builds: GRCh36, GRCh37, and GRCh38. Notice with the most recent human reference, the numbering now aligns between UCSC and ENSEMBL. That's one small step...
 
 ### Annotation Sources
 
