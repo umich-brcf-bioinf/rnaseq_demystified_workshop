@@ -37,7 +37,7 @@ render('Module3a_Design_Prep_Seq.Rmd', output_dir = 'site')
 
 RNA-seq measures the transcriptome, the biological material in the cell arising from transcription. It has many uses:
 
-- Differential gene expression: a *quantitative* evaluation and comparison of transcript levels
+- Differential gene expression: a *quantitative* evaluation and comparison of transcript levels between groups of samples
 - Transcriptome assembly: a *qualitative* profile of transcribed regions of the genome
 - Construct better gene models
 - Metatranscriptomics or community transcriptome analysis
@@ -53,7 +53,7 @@ The remainder of the workshop is oriented around a standard bulk RNA-seq workflo
 | **3** | **Sequence Reads** |
 | 4 | Assess Quality of Raw Reads |
 | 5 | Splice-aware Mapping to Genome |
-| 6 | Count reads associated with genes |
+| 6 | Count Reads Associated with Genes |
 | 7 | Test for DE Genes |
 
 # Experimental Design and Practicalities

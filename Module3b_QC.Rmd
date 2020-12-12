@@ -42,7 +42,7 @@ As a reminder, our overall differential expression workflow is shown below. In t
 | 3 | Sequence Reads |
 | **4** | **Assess Quality of Raw Reads** |
 | 5 | Splice-aware Mapping to Genome |
-| 6 | Count reads associated with genes |
+| 6 | Count Reads Associated with Genes |
 | 7 | Test for DE Genes |
 
 # Data Types
