@@ -23,8 +23,7 @@ output:
 > * Generate tables of DE results
 > * Understand what a p-value represents.   
 > * Understand  multiple hypothesis correction and importance    
-> * Understand advantages of using gene ids when analyzing data.    
-> * Given a list of Ensembl gene ids, add gene symbols and Entrez accessions.    
+
 
 ```{r Modules, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 library(DESeq2)
@@ -73,37 +72,52 @@ For a more detailed overview of the statistical comparisons , please refer to [t
 
 ## Results function
 
-We can check what comparisons were automatically generated during fitting using the `resultsNames()` and select a comparison of interest using the `results` function. 
+We can check what comparisons were automatically generated during fitting using the `resultsNames()`. 
 ```{r Results}
 resultsNames(dds)
-Comparison <- "condition_Mov.KD_vs_Irrel"
-res <- results(dds, name=Comparison)
 ```
-Looks like expected output for DESeq2 so just need to confirm that analysis approach is correct for having paired sample effects included in analysis.
+
+Since we are interested in comparing the Mov.KD or Mov.OE samples to the Irrel control, we can select one of the automatically generated comparisons using the `results` function and assign those result to a new object.
+```{r SetsResult}
+Comparison <- "condition_Mov.KD_vs_Irrel"
+res.KD <- results(dds, name=Comparison)
+```
 
 ## How generate additional contrasts
 
-If there are comparisons that are not included in the `resultsName`, since our dds object already has the fitted data we can generate Wald test results for additional comparisons by specifying those comparisons as an additional 
-```{r AdditionalComparisons}
-res <- results(dds, c("batch", "two", "three")) # how to get comparisons that aren't part of named results
-head(res)
+If there are comparisons that are not included in the `resultsName`, since our dds object already has the fitted data we can generate Wald test results by specifying those comparisons as an additional arguement to the results function. 
+```{r ResultsFunction}
+?results
 ```
 
+As the function description specifies, we need to provide a list of three elements: the name of the factor in the model design , the name of the numerator for the fold-change, and the name of denominator. 
+```{r AdditionalComparisons}
+res <- results(dds, contrast=c("condition", "Mov.OE", "Mov.KD")) 
+head(res)
+```
 
 ## Results table - review of output columns
 
+Next, we'll take a look at the results we generated. 
 ```{r Results}
-head(res)
+head(res.KD)
 ```
+
+We can see in the results table that the row name are gene symbols and there are [six columns of values](https://support.illumina.com/help/BS_App_RNASeq_DE_OLH_1000000071939/Content/Source/Informatics/Apps/DESeq2ResultFile_swBS.htm#:~:text=baseMean%E2%80%94The%20average%20of%20the,factors%2C%20taken%20over%20all%20samples.&text=log2FoldChange%E2%80%93The%20effect%20size%20estimate,the%20comparison%20and%20control%20groups). 
+
+The first column, 'baseMean' is the average of the normalized count values, dividing by size factors, taken over all samples, and can be interpreted as the relative expression level of that gene across all samples. 
+
+The second column, 'log2FoldChange', is the ratio of the expression of the numerator group (`Mov.KD`) over the denominator group (`Irrel`). If the value is positive, that means the expression of that gene is greater across the Mov.KD samples than across the Irrel samples. If the value is negative, that means the expression of that gene is greater across the Irrel samples. The third column, 'lfcSE' is the standard error for the log2 fold change estimate. 
+
+The fourth column, 'stat', is the calculated Wald statistic for that gene, while the fifth column 'pvalue' is the nominal significance for that gene.
 
 ### Multiple hypothesis testing and FDR correction
 
+The sixth column, 'padj', is the *adjusted p-value* and is what we use for determining significantly differently expressed genes. 
 
-# How to annotate the results table
+[DESeq2 vignette's discussion of filtering and multiple testing](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#independent-filtering-and-multiple-testing)
 
-
-[Accessing BioMart](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html)
-
+[HBC tutorial that includes overview of multiple hypothesis correction](https://hbctraining.github.io/DGE_workshop/lessons/05_DGE_DESeq2_analysis2.html)
 
 # Sources Used:    
 * HBC DGE training module, part 1: https://hbctraining.github.io/DGE_workshop/lessons/04_DGE_DESeq2_analysis.html    
