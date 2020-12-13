@@ -28,6 +28,6 @@
 | | 5 mins | - Break -   | |
 | 9a | 30 mins | [Sample Visualizations for QC](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module9a_SampleVisualizations) | Dana King |
 | | 10 mins | - Break -  | |
-| 10a | 30 mins | [DE Comparisons and Gene Annotations]() | Dana King |
-| 10b | 20 mins | [DE Visualizations and output files]() | Dana King |
-| 11 | 15 mins | Review & Survey | |
+| 10a | 30 mins | [DE Comparisons and Gene Annotations](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module10a_DEComparisons) | Dana King |
+| 10b | 20 mins | [DE Visualizations and output files](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module10b_DEVisualizations) | Dana King |
+| 11 | 15 mins | [Wrap up](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module99_Wrap_up) | |
