@@ -29,22 +29,51 @@ output:
 ```{r Modules, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 library(DESeq2)
 library(tidyr)
+library(dplyr)
 load("RunningData.RData")
 ```
 
 # Generating DE results table
 
-Now that we have reviewed the plots by sample and determined that 
+Now that we have reviewed the plots by sample and determined that our data passed our quality control checks, specifically that the patterns we observe are likely due to our experimental treatments over technical or other cofounding factors. 
 
-This illustration from the HCB training materials illustrates the differential expression procedure, where we are comparing the distribution of expression of a gene across samples in each treatment groups. 
+This illustration from the HCB training materials illustrates the basis of the differential expression procedure, where our goal is to compare the distribution of an expressed gene across samples in each treatment groups. 
 ![](./images/de_theory.png)
 *Image credit: Paul Pavlidis, UBC*
 
-Only where the distributions of each group are sufficiently seperated will a gene be considered differentially expressed. This is where having sufficient replicates are important, as the more replicates we have in each group the better we can determine the distributions of expression for each group. 
+Only where the distributions of each group are sufficiently seperated will a gene be considered differentially expressed. This is where having sufficient replicates to overcome within group variance is important, as the more replicates we have in each group the better we can determine the distributions of expression for each group. 
+
+## Dispersion estimates
+
+Since we've already run our `DESeq` analysis, the internal normalization process and specified model fit have already been added to our `dds` object. Let's take another look at the `dds` object.
+
+```{r Checkdds, eval=FALSE}
+head(dds)
+```
+
+We can visualize the DESeq2 normalization results for our data, which center on shrinking the variance across all genes to better fit the expected spread at a given expression level by plotting the **dispersion estimates** with the `plotDispEsts` function.
+
+```{r CheckDispersions}
+plotDispEsts(dds)
+```
+
+We can see the raw data plotted in black, the fitted (or expected) dispersion in red, and the normalized data with scaled variance in blue. Since we have fairly small sample sizes for each condition, we see shrinkage for many genes but a reasonable correlation between the expression level and dispersions.
+
+This [HBC tutorial](https://hbctraining.github.io/DGE_workshop/lessons/04_DGE_DESeq2_analysis.html) has a more detailed overview of estimating size factors, estimating gene dispersion, and the shrinkage procedure, as well as examples of concerning dispersion plots that may suggest reassessing quality of the experimental data. 
+
+## DESeq2 statistical testing
+
+We have already fit our DESeq2 model, specifing our model as `~ condition` and our next step is to identify genes with significantly different expression between our contrasts of interest. To determine significance, a statistical test is required.
+
+The first step for any statistical test is to define the *null hypothesis*. In this case, the null hypothesis would be that there is no difference in the expression of a gene between two groups of samples, such as illustrated at the bottom of the first figure in this module. The next step is to use a statistical test to determine if, based on the observed data, the null hypothesis can be rejected.
+
+To do this, [DESeq2 applies the Wald test](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#theory-behind-deseq2) to compare two groups. A Wald test statistic is computed as well as the probability that the observed value or more extreme test statistic would be observed. This probability is called the p-value of the test. If the p-value is smaller than a pre-defined threshold, we would reject the null hypothesis and state that there is evidence against the null, i.e. the gene is differentially expressed. However, if the p-value is larger than our threshold, we would *fail to reject* the null hypothesis, meaning that we lack evidence that the expression of this gene is different *NOT* that we have evidence that the expression is indeed the same in both groups. 
+
+For a more detailed overview of the statistical comparisons , please refer to [this HBC tutorial](https://hbctraining.github.io/DGE_workshop/lessons/05_DGE_DESeq2_analysis2.html) or the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#theory-behind-deseq2).
 
 ## Results function
 
-We have already fit our DESeq2 model, specifing our model as `~ condition`. We can check what comparisons were automatically generated during fitting using the `resultsNames()` and select a comparison of interest using the `results` function. 
+We can check what comparisons were automatically generated during fitting using the `resultsNames()` and select a comparison of interest using the `results` function. 
 ```{r Results}
 resultsNames(dds)
 Comparison <- "condition_Mov.KD_vs_Irrel"
@@ -52,18 +81,26 @@ res <- results(dds, name=Comparison)
 ```
 Looks like expected output for DESeq2 so just need to confirm that analysis approach is correct for having paired sample effects included in analysis.
 
+## How generate additional contrasts
+
+If there are comparisons that are not included in the `resultsName`, since our dds object already has the fitted data we can generate Wald test results for additional comparisons by specifying those comparisons as an additional 
 ```{r AdditionalComparisons}
 res <- results(dds, c("batch", "two", "three")) # how to get comparisons that aren't part of named results
 head(res)
 ```
 
-## How do contrasts work
 
 ## Results table - review of output columns
 
+```{r Results}
+head(res)
+```
+
 ### Multiple hypothesis testing and FDR correction
 
+
 # How to annotate the results table
+
 
 [Accessing BioMart](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html)
 
@@ -73,6 +110,14 @@ head(res)
 * HBC DGE training module, part 2: https://hbctraining.github.io/DGE_workshop/lessons/05_DGE_DESeq2_analysis2.html    
 * DESeq2 vignette: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#differential-expression-analysis    
 * 
+
+
+```{r WriteOut.RData, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+#Hidden code block to write out data for knitting
+save.image(file = "RunningData.RData")
+```
+
+
 
 ---
 
