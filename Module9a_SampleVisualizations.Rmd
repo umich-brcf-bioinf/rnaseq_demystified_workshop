@@ -290,7 +290,7 @@ We see that there is less variance explained by PC1 and that the samples from th
 
 PCA plots are useful for evaulating the impact of factors other than the experimental treatment or group. 
 
-At times, batch effects can be quite obvious, such as this example from the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html), where there are . 
+At times, batch effects can be quite obvious, such as this example from the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html), where there is clear separation within the treatment groups. 
 
 
 ![](./images/PCA1_DESeq2Vignette.png)
