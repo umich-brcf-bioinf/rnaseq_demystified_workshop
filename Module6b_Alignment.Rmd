@@ -27,8 +27,8 @@ render('Module4b_Alignment.Rmd', output_dir = 'site')
 
 > # Objectives
 > * Understand the idea behind splice-aware alignments.
-> * Understand the two steps needed to run RSEM + STAR.
-> * Understand
+> * Understand the two steps needed to run RSEM+STAR.
+> * Understand what SAM/BAM files are.
 
 # Differential Expression Workflow
 
@@ -73,9 +73,15 @@ Credit: https://raw.githubusercontent.com/hbctraining/Intro-to-rnaseq-hpc-O2/mas
 
 RSEM (RNA-seq by Expectation Maximization) determines gene and isoform abundance using an expectation maximization (EM) algorithm on the relative percentage of isoform usage. From there, gene-level quantification is reported by effectively collapsing the isoform quantifications.
 
-The primary issue that RSEM attempts to solve is that reads can align to multiple isoforms (when, for example, they share an exon), and that creates ambiguity in deciding which isoform a read gets assigned to for quantification.
+The primary issue that RSEM attempts to solve is that reads can align to multiple isoforms (when, for example, they share an exon), and that creates ambiguity in deciding which isoform a read gets assigned to for quantification. See the image below for an illustration of this problem.
 
-# Running RSEM + STAR
+<center>
+
+![Image of alignment track and gene isoforms]()
+
+</center>
+
+# Running RSEM+STAR
 
 RSEM can be run with just two commands: the first `rsem-prepare-reference` ([manual](https://deweylab.github.io/RSEM/rsem-prepare-reference.html)) builds an index for STAR and RSEM to use, and the second `rsem-calculate-expression` ([manual](https://deweylab.github.io/RSEM/rsem-calculate-expression.html)) does the alignment and gene quantification.
 
@@ -85,7 +91,7 @@ RSEM can be run with just two commands: the first `rsem-prepare-reference` ([man
 
 To use `rsem-prepare-reference` ([manual](https://deweylab.github.io/RSEM/rsem-prepare-reference.html)) we would need the FASTA sequence for the reference genome, and the gene model in the form of a GTF, as discussed in the previous section.
 
-> **Note**: We will avoid running RSEM + STAR in this workshop because of the computational requirements and our limited Amazon instance. We would also recommend not running it on a personal computer for the same reason.
+> **Note**: We will avoid running RSEM+STAR in this workshop because of the computational requirements and our limited Amazon instance. We would also recommend not running it on a personal computer for the same reason.
 
 If we were to have a genome FASTA in hand, call it `GRCm38.fasta` and a GTF in hand, call it `GRCm38.gtf`, then we would create the reference index by calling:
 
@@ -116,30 +122,43 @@ $ rsem-calculate-expression --star \
                             /path/to/example
 ```
 
-RSEM + STAR, with the above options, outputs the following files:
+RSEM+STAR, with the above options, outputs the following files:
 
 | File | Description |
 | ---- | ----------- |
+| `example.genome.bam` | The alignments in genomic coordinates. Used for visualization in a gennome browser such as [IGV](https://software.broadinstitute.org/software/igv/). |
+| `example.transcript.bam` | The alignments in transcriptomic coordinates. Not used for this workshop. |
 | `example.genes.results` | Gene-level results to be used in downstream DE analysis. |
-| `example.isoforms.results` | Isoform-level results. Not used. |
-| `example.genome.bam` | The BAM encoded alignments in genomic coordinates. Can be used for visualization in a gennome browser such as [IGV](https://software.broadinstitute.org/software/igv/). |
-| `example.transcript.bam` | The BAM encoded alignments in transcriptomic coordinates. |
+| `example.isoforms.results` | Isoform-level results. Not used for this workshop. |
 
-# Output of RSEM + STAR
+# Output of RSEM+STAR
 
-The two results we will use most often from RSEM + STAR are the `example.genes.results` and `example.genome.bam` files. Let's look at them each in more detail:
+The two results we will use most often from RSEM+STAR are the gene-level quantifications (`example.genes.results`) and the alignments in genome-coordinates (`example.genome.bam`). Each sample for which we run RSEM+STAR will have these output files named after the sample.
 
-## `example.genes.results`
+## Genome Alignments
 
-If we were to use `head` on the file we would see:
+The `example.genome.bam` alignments file is a special, compressed, version of a SAM file (sequence alignment/map). In order to view it, we have to use a special program called [`samtools`](https://www.htslib.org/doc/samtools.html).
+
+If we were too peek inside of `example.genome.bam`, we would see:
 
 ```
-gene_id transcript_id(s)        length  effective_length        expected_count  TPM     FPKM
-ENSMUSG00000000001      ENSMUST00000000001      3262.00 3116.28 601.00  45.50   36.70
-ENSMUSG00000000003      ENSMUST00000000003,ENSMUST00000114041   799.50  653.78  0.00    0.00    0.00
+(workshop) $ samtools view example.genome.bam | head
+NB551521:212:H5L73AFX2:1:11101:16446:1034       0       2       10022660        255     148M    *       0       0       GANAGACAGATATCCTACAAAACACAGAAAGACTAATAAACTCTTATGTTGACTATGAAAGCTGTAAGAAACTTCCAGAAGAAATATTGAAAATGTAGAATAACTGAAGTGTGCTGTGTGTCCATAGCTGTTCTGCTGAGGAAACATT   AA#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEE<EEEEAEAEEAEA<A<AAAAEEEEEA    NH:i:1  HI:i:1  AS:i:145        NM:i:1  MD:Z:2A145
+NB551521:212:H5L73AFX2:1:11101:16366:1035       0       X       48488697        255     146M    *       0       0       TANGTACGCACACAAATTGATCCATACCTTTACTTCCTTTTTTTCCAGCTACTGAATAAGGGGACCTTTCTATTCCTTTGTGTCTCACCATTTTATTGTCTTTCAGAATCTTCACCTGGTCCATTCATTCCTCTACCCTCTCCTGT     AA#EEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEE<EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE6EEEAEEEEEEEEEEEEEEEEEAEEEEEEEAAEEEE/<E<AA<<<AAAA<AEE      NH:i:1  HI:i:1  AS:i:143        NM:i:1  MD:Z:2G143
 ```
 
-The columns of the file are:
+The [SAM format](https://en.wikipedia.org/wiki/SAM_(file_format)) gives information about where each read maps to in the genome, and has information about that mapping.
+
+## Gene-level Quantification
+
+If we were to look at the top 3 lines of `example.genes.results`, we see it is a plain-text file separated by tabs where each row is a gene, and the columns are described the first row. The `genes.results` files for each sample can be directly imported into DESeq2 using the [`tximport`](https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html#rsem) R Bioconductor package. More on this tomorrow.
+
+```
+(workshop) $ head -3 example.genes.results
+gene_id                 transcript_id(s)                        length  effective_length        expected_count  TPM     FPKM
+ENSMUSG00000000001      ENSMUST00000000001                      3262.00 3116.28                 601.00          45.50   36.70
+ENSMUSG00000000003      ENSMUST00000000003,ENSMUST00000114041   799.50  653.78                  0.00            0.00    0.00
+```
 
 | Column | Description |
 | ---- | ----------- |
@@ -147,4 +166,6 @@ The columns of the file are:
 | transcript_id(s) | The transcript IDs corresponding to the gene in the gene model GTF. |
 | length | The weighted average of its transcripts' lengths. |
 | effective_length | The weighted average, over its transcripts, of the mean number of positions from which a fragment may start within the sequence of transcript. |
-| expected_count | The sum, over all tra
+| expected_count | The sum, over all transcripts, of the estimated counts from the EM algorithm. |
+| TPM | Transcript per million, a relative measure of transcript abundance where the sum of all TPMs is 1 million. |
+| FPKM | Fragments per kilobase of transcript per million mapped reads. |
