@@ -30,4 +30,4 @@
 | | 10 mins | - Break -  | |
 | 10a | 30 mins | [DE Comparisons and Gene Annotations]() | Dana King |
 | 10b | 20 mins | [DE Visualizations and output files]() | Dana King |
-| 11 | 15 mins | Review & Survey | |
+| 11 | 15 mins | Wrap up | |

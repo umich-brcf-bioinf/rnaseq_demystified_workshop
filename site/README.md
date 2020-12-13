@@ -4,7 +4,7 @@
 
 | Session | Time | Topic | Instructor |
 | :-----: | ---- | ----- | ---------- |
-| 1 | 10 mins | Workshop Introduction | Chris Gates |
+| 1 | 10 mins | [Workshop Introduction](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module1_Introduction) | Chris Gates |
 | 2 | 40 mins | [UNIX Shell Introduction](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module2a_UNIXShell) | Raymond Cavalcante |
 |  | 10 mins | - Break - | |
 | 3a | 20 mins | [Experimental Design, Library Prep, and Sequencing](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module3a_Design_Prep_Seq) | Raymond Cavalcante |
