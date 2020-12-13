@@ -73,20 +73,17 @@ GTCTGCACAGCCGCTTTCCACACAGACATCATAACAAAAAATTTCCACCA
 AACCCCCCCCTCCCCCCGCTTCTGGCCACAGCACTTAAACACATCTCTGC
 CAAACCCCAAAAACAAAGAACCCTAACACCAGCCTAACCAGATTTCAAAT
 TTTATCTTTAGGCGGTATGCACTTTTAACAGTCACCCCCCAACTAACACA
-...
 ```
 
 ## Gene Models
 
 Well-characterized organisms (e.g. human, mouse, zebrafish) have fairly mature gene models. These are stored in [GTF](https://uswest.ensembl.org/info/website/upload/gff.html) format, which gives location and other information about each gene feature. Below are two examples:
 
-
 ```
 chr1	unknown	exon	11874	12227	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; transcript_id "NR_046018"; tss_id "TSS16932";
 chr1	unknown	exon	12613	12721	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; transcript_id "NR_046018"; tss_id "TSS16932";
 chr1	unknown	exon	13221	14409	.	+	.	gene_id "DDX11L1"; gene_name "DDX11L1"; transcript_id "NR_046018"; tss_id "TSS16932";
 chr1	unknown	exon	14362	14829	.	-	.	gene_id "WASH7P"; gene_name "WASH7P"; transcript_id "NR_024540"; tss_id "TSS8568";
-...
 ```
 
 ```
