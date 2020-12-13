@@ -5,15 +5,13 @@
 | Session | Time | Topic | Instructor |
 | :-----: | ---- | ----- | ---------- |
 | 1 | 10 mins | Workshop Introduction | Chris Gates |
-| 2 | X mins | [UNIX Shell Introduction](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module2a_UNIXShell) | Raymond Cavalcante |
+| 2 | 40 mins | [UNIX Shell Introduction](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module2a_UNIXShell) | Raymond Cavalcante |
 |  | 10 mins | - Break - | |
-| 3a | X mins | [Experimental Design, Library Prep, and Sequencing](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module3a_Design_Prep_Seq) | Raymond Cavalcante |
-| 3b | X mins | [Data QC](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module3b_QC) | Raymond Cavalcante |
+| 3a | 20 mins | [Experimental Design, Library Prep, and Sequencing](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module3a_Design_Prep_Seq) | Raymond Cavalcante |
+| 3b | 30 mins | [Data QC](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module3b_QC) | Raymond Cavalcante |
 |  | 10 mins | - Break -  | |
-| 4a | X mins | [Reference Genomes](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module4a_Reference_Genomes) | Raymond Cavalcante |
-|  | 10 mins | - Break -  | |
-| 4b | X mins | [Sequence Alignment and Gene Quantification with STAR/RSEM](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module4b_Alignment) | Raymond Cavalcante |
-|  | 10 mins | - Break -  | |
+| 4a | 20 mins | [Reference Genomes](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module4a_Reference_Genomes) | Raymond Cavalcante |
+| 4b | 30 mins | [Sequence Alignment and Gene Quantification with STAR/RSEM](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module4b_Alignment) | Raymond Cavalcante |
 | 5 | 15 mins | Review & Questions | |
 
 ## Day Two
