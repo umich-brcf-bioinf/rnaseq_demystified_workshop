@@ -1,7 +1,7 @@
 library(rmarkdown)
 
+render('Module2a_UNIXShell.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
 render('Module3a_Design_Prep_Seq.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
-render('Module3b_QC.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
 render('Module3b_QC.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
 render('Module4a_Reference_Genomes.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
 render('Module4b_Alignment.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
