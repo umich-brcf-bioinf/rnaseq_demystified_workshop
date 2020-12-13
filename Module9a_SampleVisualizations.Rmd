@@ -26,6 +26,17 @@ output:
 > * Understand the pitfalls of post-hoc analysis     
 > * Describe the causes and implications of batch effect or other QC issues in an RNA-Seq experiment     
 
+```{r Modules, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+library(DESeq2)
+library(ggplot2)
+library(tidyr)
+library(matrixStats)
+library('ggrepel', character.only=TRUE)
+library('pheatmap', character.only=TRUE)
+library('RColorBrewer', character.only=TRUE)
+load("RunningData.RData")
+```
+
 # Sample Visualizatons for Quality Control     
 
 Yesterday we discussed aspects of quality control assessment at the sequencing data level. Today we will outline sample-level and gene level quality controlto determine what we should expect from our downstream differential expression comparisons.
@@ -43,7 +54,7 @@ plotPath = "./Figures/BySamples/"
 
 ## Count boxplots
 
-Next, we'll look at our distributions of raw and normalized counts. First, we need to set up some tables and labels. *TODO: Create plotting code file for learners to copy & paste from?*
+Next, we'll look at our distributions of raw and normalized counts. First, we need to set up some tables and labels.
 ```{r RawCountsSetup}
 ## setup for raw counts
 pdata = data.frame(colData(dds))
@@ -80,7 +91,7 @@ box_plot = ggplot(tidy_mat, aes(x = sample, y = log2(counts), fill = Group)) +
 ggsave(filename = paste0(plotPath, "BoxPlot_Mov10_raw.pdf"), plot = box_plot, height = 8, width = 8, dpi = 300)
 ```
 
-*TODO: How much to explain second plot or put as supplemental code?*
+To understand 
 ```{r BoxplotsRlog}
 ## rlog counts
 pdata = data.frame(colData(rld))
@@ -148,10 +159,8 @@ Looking at the heatmap, we see that samples within the same treatment group clus
 <details>
   <summary>Click for code for additional visualizations</summary>
 
-This [blog post](http://www.opiniomics.org/you-probably-dont-understand-heatmaps/) reviews the data transformation procedure for generating heatmaps and is a useful resource. They review the steps for generating a by sample heatmap similar to the plot generated below. 
+This [blog post](http://www.opiniomics.org/you-probably-dont-understand-heatmaps/) reviews the data transformation procedure for generating heatmaps and is a useful resource. They review the steps for generating a sample heatmap similar to the plot generated below. 
 
-*TODO: Add image for gene expression vs distance & finish heatmap explainations from [blog post](http://www.opiniomics.org/you-probably-dont-understand-heatmaps/)?*
-image: ![](path/to/smallorb.png)
 
 ```{r SampleHeatmaps}
 #heatmap of normalized data, sample distibution matrix
@@ -276,21 +285,45 @@ plot(gp)
 We see that there is less variance explained by PC1 and that the samples from the same group are not as well clustered for the raw data. Since this is prior to normalization, these differences are likely due to **technical** considerations like sequencing depth differences that are accounted for in the rlog normalization.   
 </details>
 
-### Evaulating batch effects/confounders
+### Evaulating batch effects or confounders
 
-[Batch effects example](http://www.molmine.com/magma/global_analysis/batch_effect.html)
-[HCB QC](https://hbctraining.github.io/DGE_workshop/lessons/03_DGE_QC_analysis.html)
+PCA plots are useful for evaulating the impact of factors other than the experimental treatment or group. 
 
+At times, batch effects can be quite obvious, such as this example from the [DESeq2 vignette](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html), where there are . 
+
+
+![](./images/PCA1_DESeq2Vignette.png)
+
+If we color only by sequencing run type (paired-end vs. single-end), we see that PC2 (29% of variance) is primarily explained by this technical covariate. 
+![](./images/PCA1_DESeq2Vignette.png)
+
+However, the experimental condition clearly seperates on PC1 and since PC1 explains more variance 
+
+In experiments with more complex designs, such as when there are interesecting/multiple treatment conditions, it can be less clear what covariants are influencing expression, such as illustrated from [this documenation for a microarray analysis tool](http://www.molmine.com/magma/global_analysis/batch_effect.html).
+
+From the PCA labeled by experimental treatment, we see that samples from the treatment group do not cluster together and that there is high variance across all treatment groups.
+![](./images/batch_ex1b.jpg)
+
+However, when the plot is color coded by the technical batches of probe labeling, we see that the patterns in the data are better explained by batch than the experimental conditions.
+![](./images/batch_ex1c.jpg)
+
+> The HBC training materials has a step-by-step example of evaluating [batch effects](https://hbctraining.github.io/DGE_workshop/lessons/03_DGE_QC_analysis.html) using batch effects.
 
 #### When to remove samples or update the design formula
 
-
+...
 
 ---
 
 # Sources Used:    
 * HBC QC tutorial: https://hbctraining.github.io/DGE_workshop/lessons/03_DGE_QC_analysis.html    
 * Detailed Heatmap tutorial from Galaxy: https://training.galaxyproject.org/training-material/topics/transcriptomics/tutorials/rna-seq-viz-with-heatmap2/tutorial.html    
+
+```{r WriteOut.RData, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+#Hidden code block to write out data for knitting
+save.image(file = "RunningData.RData")
+```
+
 
 ---
 

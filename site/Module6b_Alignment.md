@@ -34,7 +34,7 @@ render('Module4b_Alignment.Rmd', output_dir = 'site')
 
 # Differential Expression Workflow
 
-In this lesson we will discuss the alignment and gene quantification steps that are necessary prior to doing a test for differential expression, the topic of Day 2.
+In this lesson we will discuss the alignment and gene quantification steps that are necessary prior to testing for differential expression, the topic of Day 2.
 
 | Step | Task |
 | :--: | ---- |
@@ -45,6 +45,10 @@ In this lesson we will discuss the alignment and gene quantification steps that 
 | **5** | **Splice-aware Mapping to Genome** |
 | **6** | **Count reads associated with genes** |
 | 7 | Test for DE Genes |
+
+# Alignment and Gene Quantification
+
+
 
 # Notes on STAR
 

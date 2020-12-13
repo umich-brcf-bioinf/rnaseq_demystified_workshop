@@ -26,6 +26,12 @@ output:
 > * Understand advantages of using gene ids when analyzing data.    
 > * Given a list of Ensembl gene ids, add gene symbols and Entrez accessions.    
 
+```{r Modules, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+library(DESeq2)
+library(tidyr)
+load("RunningData.RData")
+```
+
 # Generating DE results table
 
 Now that we have reviewed the plots by sample and determined that 
@@ -38,16 +44,18 @@ Only where the distributions of each group are sufficiently seperated will a gen
 
 ## Results function
 
-We have already fit our DESeq2 model, specifing our model as `X`. 
-
-Now have model that considered paired sample since the mouse number was included in the design. Next, look at result using the output of the `resultsNames()` function above. 
+We have already fit our DESeq2 model, specifing our model as `~ condition`. We can check what comparisons were automatically generated during fitting using the `resultsNames()` and select a comparison of interest using the `results` function. 
 ```{r Results}
-# Comparison <- "condition_Wild_vs_Meta"
-# res <- results(dds, name=Comparison)
+resultsNames(dds)
+Comparison <- "condition_Mov.KD_vs_Irrel"
+res <- results(dds, name=Comparison)
+```
+Looks like expected output for DESeq2 so just need to confirm that analysis approach is correct for having paired sample effects included in analysis.
+
+```{r AdditionalComparisons}
 res <- results(dds, c("batch", "two", "three")) # how to get comparisons that aren't part of named results
 head(res)
 ```
-Looks like expected output for DESeq2 so just need to confirm that analysis approach is correct for having paired sample effects included in analysis.
 
 ## How do contrasts work
 
