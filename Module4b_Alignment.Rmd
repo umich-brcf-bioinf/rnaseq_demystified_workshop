@@ -221,4 +221,13 @@ If we were to run `multiqc` again, then it would detect these reports and includ
 $ multiqc --outdir multiqc_with_alignments .
 ```
 
-**Note**, since we haven't actually done the alignments we won't call this. Also note the use of `.`, meaning "here". `multiqc` looks for reports it can recognize in the directory you give it, and all its sub-directories.
+**Note**, since we haven't actually done the alignments we won't call this. Also note the use of `.`, meaning "here". `multiqc` looks for reports it can recognize in the directory you give it, and all its sub-directories. The resulting section will look something like the following:
+
+<center>
+
+![Example of STAR alignment statistics in MultiQC.](images/multiqc_star.png)
+Example of STAR alignment statistics in MultiQC.
+
+Source: [MultiQC example report](https://multiqc.info/examples/rna-seq/multiqc_report.html#star)
+
+</center>
