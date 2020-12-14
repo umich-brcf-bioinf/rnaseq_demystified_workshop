@@ -11,7 +11,7 @@
 
 <meta name="author" content="UM Bioinformatics Core" />
 
-<meta name="date" content="2020-12-13" />
+<meta name="date" content="2020-12-14" />
 
 <title>Introduction to UNIX Shell</title>
 
@@ -268,7 +268,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Introduction to UNIX Shell</h1>
 <h4 class="author">UM Bioinformatics Core</h4>
-<h4 class="date">2020-12-13</h4>
+<h4 class="date">2020-12-14</h4>
 
 </div>
 
@@ -365,20 +365,23 @@ cp: &#39;/home/rcavalca/workshop_data&#39; and &#39;./workshop_data&#39; are the
 <h2 number="3.5"><span class="header-section-number">3.5</span> The tree Command</h2>
 <p>When we navigate a file system in a GUI, the directory structure is clear to us. With the command line, there is a helpful command called <code>tree</code> that helps us see the structure. Let’s type the following command to see what’s included in the <code>workshop_data</code> folder we just copied.</p>
 <pre><code>$ tree workshop_data
-workshop_data/
-├── example.sam
+workshop_data
+├── example.genes.results
+├── example.genome.bam
+├── example.genome.sam
 ├── fastqs
 │   ├── example_R1.fastq.gz
 │   ├── example_R2.fastq.gz
 │   └── example_sra.fastq
 └── human_reference
     ├── GRCh38
-    │   └── GRCh38.98.gtf
+    │   ├── GRCh38.98.gtf
+    │   └── GRCh38.fa
     └── hg19
-        ├── chrM.fa
+        ├── genome.fa
         └── hg19_genes.gtf
 
-4 directories, 7 files</code></pre>
+4 directories, 10 files</code></pre>
 <p>This is a helpful way to hierarchically view the folders and files in the filesystem. <strong>Warning</strong>, <code>tree</code> can sometimes surprise you with its prolific output (depending on how many sub-folders and sub-directories there are). In the next section, we’ll see how to find out more about commands and their options.</p>
 </div>
 </div>
@@ -473,7 +476,7 @@ usage: ls [-@ABCFGHLOPRSTUWabcdefghiklmnopqrstuwx1%] [file ...]</code></pre>
 <h1 number="6"><span class="header-section-number">6</span> Exploring other directories</h1>
 <p>The <code>ls</code> command can also be used to look into other directories. We used <code>tree</code> above to look inside <code>workshop_data</code>, but we also could have used <code>ls</code>.</p>
 <pre><code>$ ls workshop_data/
-example.sam  fastqs  human_reference</code></pre>
+example.genes.results  example.genome.bam  example.genome.sam  fastqs  human_reference</code></pre>
 <p>We could go a little further and look inside <code>fastqs</code> inside <code>workshop_data</code> with:</p>
 <pre><code>$ ls workshop_data/fastqs
 example_R1.fastq.gz  example_R2.fastq.gz  example_sra.fastq</code></pre>
@@ -489,9 +492,9 @@ $ cd fastqs</code></pre>
 <p>Let’s try invoking <code>ls</code> with a new option, <code>-l</code> for list format:</p>
 <pre><code>$ ls -l
 total 6624
--rw-rw-r-- 1 rcavalca rcavalca 3236531 Dec 13 16:12 example_R1.fastq.gz
--rw-rw-r-- 1 rcavalca rcavalca 3535293 Dec 13 16:12 example_R2.fastq.gz
--rw-rw-r-- 1 rcavalca rcavalca    1912 Dec 13 16:12 example_sra.fastq</code></pre>
+-rw-rw-r-- 1 rcavalca rcavalca 3236531 Dec 14 12:10 example_R1.fastq.gz
+-rw-rw-r-- 1 rcavalca rcavalca 3535293 Dec 14 12:10 example_R2.fastq.gz
+-rw-rw-r-- 1 rcavalca rcavalca    1912 Dec 14 12:10 example_sra.fastq</code></pre>
 <p>This shows us the contents of the directory in a list format, with quite a bit more information. It tells us</p>
 <ul>
 <li>who is allowed to do what with the file (<code>-rw-rw-r--</code>),</li>
@@ -533,17 +536,15 @@ cd: no such file or directory: workshop_data</code></pre>
 <p>We’ve just learned how to explore files and directories, but how do we create them? A good place to start is to see where we are and what we have. Going back to <code>workshop_data</code>:</p>
 <pre><code>$ cd ~/workshop_data
 $ ls -F
-example.sam  fastqs/  human_reference/</code></pre>
-<p>Let’s make a new directory for the file <code>example.sam</code> called <code>alignments</code>:</p>
-<pre><code>$ mkdir alignments</code></pre>
+example.genes.results  example.genome.bam  example.genome.sam  fastqs/  human_reference/</code></pre>
+<p>Let’s make a new directory for the <code>example</code> files called <code>rsem_star</code>:</p>
+<pre><code>$ mkdir rsem_star</code></pre>
 <p>The <code>mkdir</code> command means ‘make directory’. Since we gave a relative path, it was created in the working directory:</p>
 <pre><code>$ ls -F
-alignments/  example.sam  fastqs/  human_reference/</code></pre>
+example.genes.results  example.genome.bam  example.genome.sam  fastqs/  human_reference/  rsem_star/</code></pre>
 <p>Since we just made it, there’s nothing in it, which is indicated by nothing being returned:</p>
-<pre><code>$ ls -F alignments
+<pre><code>$ ls -F rsem_star
 $</code></pre>
-<p>The <code>mkdir</code> command is not limited to creating single directories at a time. We can use the <code>-p</code> option to create a directory with any number of nested sub-directories, as in:</p>
-<pre><code>$ mkdir -p alignments/example</code></pre>
 <blockquote>
 <p><strong>A note on names</strong></p>
 <p>Complicated names can cause difficulty later on by making it difficult to remember and difficult to type the names of directories or files. Some tips for naming files and directories:</p>
@@ -557,26 +558,30 @@ $</code></pre>
 </div>
 <div id="moving-files-and-directories" class="section level2" number="7.2">
 <h2 number="7.2"><span class="header-section-number">7.2</span> Moving files and directories</h2>
-<p>Let’s say that we want to move the file <code>example.sam</code> into the <code>alignments/example</code> folder we just created. We can do that with the move command <code>mv</code>:</p>
-<pre><code>$ mv example.sam alignments/example</code></pre>
+<p>Let’s say that we want to move the files <code>example.genes.results</code>, <code>example.genome.bam</code>, and <code>example.genome.sam</code> into the <code>rsem_star</code> folder we just created. We can do that with the move command <code>mv</code>:</p>
+<pre><code>$ mv example.genes.results rsem_star
+$ mv example.genome.bam rsem_star
+$ mv example.genome.sam rsem_star</code></pre>
 <p>The first argument tells <code>mv</code> what we’re moving (the <strong>source</strong>) and the second is where it should go (the <strong>target</strong>). If we check with <code>tree</code>, we’ll see that the file has been moved:</p>
 <pre><code>$ tree .
 .
-├── alignments
-│   └── example
-│       └── example.sam
 ├── fastqs
 │   ├── example_R1.fastq.gz
 │   ├── example_R2.fastq.gz
 │   └── example_sra.fastq
-└── human_reference
-    ├── GRCh38
-    │   └── GRCh38.98.gtf
-    └── hg19
-        ├── chrM.fa
-        └── hg19_genes.gtf
+├── human_reference
+│   ├── GRCh38
+│   │   ├── GRCh38.98.gtf
+│   │   └── GRCh38.fa
+│   └── hg19
+│       ├── genome.fa
+│       └── hg19_genes.gtf
+└── rsem_star
+    ├── example.genes.results
+    ├── example.genome.bam
+    └── example.genome.sam
 
-6 directories, 7 files</code></pre>
+5 directories, 10 files</code></pre>
 <p>We should be careful when specifying the target file name because <code>mv</code> silently overwrites any existing file with the same name, which could cause data loss. The <code>-i</code> option (<code>mv -i</code> or <code>mv --interactive</code>), will ask for confirmation before moving.</p>
 <p>Note, <code>mv</code> also works on directories. Say we want to change the name of the directory <code>human_reference</code> to <code>human_reference_genomes</code>. We could do that with (but let’s not):</p>
 <pre><code>$ mv human_reference human_reference_genomes</code></pre>

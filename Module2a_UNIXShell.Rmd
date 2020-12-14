@@ -144,20 +144,23 @@ When we navigate a file system in a GUI, the directory structure is clear to us.
 
 ```
 $ tree workshop_data
-workshop_data/
-├── example.sam
+workshop_data
+├── example.genes.results
+├── example.genome.bam
+├── example.genome.sam
 ├── fastqs
 │   ├── example_R1.fastq.gz
 │   ├── example_R2.fastq.gz
 │   └── example_sra.fastq
 └── human_reference
     ├── GRCh38
-    │   └── GRCh38.98.gtf
+    │   ├── GRCh38.98.gtf
+    │   └── GRCh38.fa
     └── hg19
-        ├── chrM.fa
+        ├── genome.fa
         └── hg19_genes.gtf
 
-4 directories, 7 files
+4 directories, 10 files
 ```
 
 This is a helpful way to hierarchically view the folders and files in the filesystem. **Warning**, `tree` can sometimes surprise you with its prolific output (depending on how many sub-folders and sub-directories there are). In the next section, we'll see how to find out more about commands and their options.
@@ -271,7 +274,7 @@ The `ls` command can also be used to look into other directories. We used `tree`
 
 ```
 $ ls workshop_data/
-example.sam  fastqs  human_reference
+example.genes.results  example.genome.bam  example.genome.sam  fastqs  human_reference
 ```
 
 We could go a little further and look inside `fastqs` inside `workshop_data` with:
@@ -304,9 +307,9 @@ Let's try invoking `ls` with a new option, `-l` for list format:
 ```
 $ ls -l
 total 6624
--rw-rw-r-- 1 rcavalca rcavalca 3236531 Dec 13 16:12 example_R1.fastq.gz
--rw-rw-r-- 1 rcavalca rcavalca 3535293 Dec 13 16:12 example_R2.fastq.gz
--rw-rw-r-- 1 rcavalca rcavalca    1912 Dec 13 16:12 example_sra.fastq
+-rw-rw-r-- 1 rcavalca rcavalca 3236531 Dec 14 12:10 example_R1.fastq.gz
+-rw-rw-r-- 1 rcavalca rcavalca 3535293 Dec 14 12:10 example_R2.fastq.gz
+-rw-rw-r-- 1 rcavalca rcavalca    1912 Dec 14 12:10 example_sra.fastq
 ```
 
 This shows us the contents of the directory in a list format, with quite a bit more information. It tells us
@@ -381,33 +384,27 @@ We've just learned how to explore files and directories, but how do we create th
 ```
 $ cd ~/workshop_data
 $ ls -F
-example.sam  fastqs/  human_reference/
+example.genes.results  example.genome.bam  example.genome.sam  fastqs/  human_reference/
 ```
 
-Let's make a new directory for the file `example.sam` called `alignments`:
+Let's make a new directory for the `example` files called `rsem_star`:
 
 ```
-$ mkdir alignments
+$ mkdir rsem_star
 ```
 
 The `mkdir` command means 'make directory'. Since we gave a relative path, it was created in the working directory:
 
 ```
 $ ls -F
-alignments/  example.sam  fastqs/  human_reference/
+example.genes.results  example.genome.bam  example.genome.sam  fastqs/  human_reference/  rsem_star/
 ```
 
 Since we just made it, there's nothing in it, which is indicated by nothing being returned:
 
 ```
-$ ls -F alignments
+$ ls -F rsem_star
 $
-```
-
-The `mkdir` command is not limited to creating single directories at a time. We can use the `-p` option to create a directory with any number of nested sub-directories, as in:
-
-```
-$ mkdir -p alignments/example
 ```
 
 > **A note on names**
@@ -424,10 +421,12 @@ $ mkdir -p alignments/example
 
 ## Moving files and directories
 
-Let's say that we want to move the file `example.sam` into the `alignments/example` folder we just created. We can do that with the move command `mv`:
+Let's say that we want to move the files `example.genes.results`, `example.genome.bam`, and `example.genome.sam` into the `rsem_star` folder we just created. We can do that with the move command `mv`:
 
 ```
-$ mv example.sam alignments/example
+$ mv example.genes.results rsem_star
+$ mv example.genome.bam rsem_star
+$ mv example.genome.sam rsem_star
 ```
 
 The first argument tells `mv` what we're moving (the **source**) and the second is where it should go (the **target**). If we check with `tree`, we'll see that the file has been moved:
@@ -435,21 +434,23 @@ The first argument tells `mv` what we're moving (the **source**) and the second 
 ```
 $ tree .
 .
-├── alignments
-│   └── example
-│       └── example.sam
 ├── fastqs
 │   ├── example_R1.fastq.gz
 │   ├── example_R2.fastq.gz
 │   └── example_sra.fastq
-└── human_reference
-    ├── GRCh38
-    │   └── GRCh38.98.gtf
-    └── hg19
-        ├── chrM.fa
-        └── hg19_genes.gtf
+├── human_reference
+│   ├── GRCh38
+│   │   ├── GRCh38.98.gtf
+│   │   └── GRCh38.fa
+│   └── hg19
+│       ├── genome.fa
+│       └── hg19_genes.gtf
+└── rsem_star
+    ├── example.genes.results
+    ├── example.genome.bam
+    └── example.genome.sam
 
-6 directories, 7 files
+5 directories, 10 files
 ```
 
 We should be careful when specifying the target file name because `mv` silently overwrites any existing file with the same name, which could cause data loss. The `-i` option (`mv -i` or `mv --interactive`), will ask for confirmation before moving.

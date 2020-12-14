@@ -356,7 +356,7 @@ render('Module4b_Alignment.Rmd', output_dir = 'site')
 </div>
 <div id="rsem" class="section level2" number="2.2">
 <h2 number="2.2"><span class="header-section-number">2.2</span> RSEM</h2>
-<p>RSEM (RNA-seq by Expectation Maximization) determines gene and isoform abundance using an expectation maximization (EM) algorithm on the relative percentage of isoform usage. From there, gene-level quantification is reported by effectively collapsing the isoform quantifications.</p>
+<p>RSEM (RNA-seq by Expectation Maximization) determines gene and isoform abundance using an expectation maximization (EM) algorithm to determine the probability that any particular read originated from a particular transcript. From there, gene-level quantification is reported by effectively collapsing the isoform quantifications over all isoforms belonging to the gene.</p>
 <p>The primary issue that RSEM attempts to solve is that reads can align to multiple isoforms (when, for example, they share an exon), and that creates ambiguity in deciding which isoform a read gets assigned to for quantification. See the image below for an illustration of this problem.</p>
 <center>
 <div class="figure">
@@ -437,15 +437,15 @@ render('Module4b_Alignment.Rmd', output_dir = 'site')
 <h2 number="4.1"><span class="header-section-number">4.1</span> Genome Alignments</h2>
 <p>The <code>example.genome.bam</code> alignments file is a special, compressed, version of a SAM file (sequence alignment/map). In order to view it, we have to use a special program called <a href="https://www.htslib.org/doc/samtools.html"><code>samtools</code></a>.</p>
 <p>If we were too peek inside of <code>example.genome.bam</code>, we would see:</p>
-<pre><code>(workshop) $ samtools view example.genome.bam | head
+<pre><code>$ samtools view ~/workshop_data/rsem_star/example.genome.bam | head -2
 NB551521:212:H5L73AFX2:1:11101:16446:1034       0       2       10022660        255     148M    *       0       0       GANAGACAGATATCCTACAAAACACAGAAAGACTAATAAACTCTTATGTTGACTATGAAAGCTGTAAGAAACTTCCAGAAGAAATATTGAAAATGTAGAATAACTGAAGTGTGCTGTGTGTCCATAGCTGTTCTGCTGAGGAAACATT   AA#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEAEEEEEEEE&lt;EEEEAEAEEAEA&lt;A&lt;AAAAEEEEEA    NH:i:1  HI:i:1  AS:i:145        NM:i:1  MD:Z:2A145
 NB551521:212:H5L73AFX2:1:11101:16366:1035       0       X       48488697        255     146M    *       0       0       TANGTACGCACACAAATTGATCCATACCTTTACTTCCTTTTTTTCCAGCTACTGAATAAGGGGACCTTTCTATTCCTTTGTGTCTCACCATTTTATTGTCTTTCAGAATCTTCACCTGGTCCATTCATTCCTCTACCCTCTCCTGT     AA#EEEEEEEEEEEEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEE&lt;EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE6EEEAEEEEEEEEEEEEEEEEEAEEEEEEEAAEEEE/&lt;E&lt;AA&lt;&lt;&lt;AAAA&lt;AEE      NH:i:1  HI:i:1  AS:i:143        NM:i:1  MD:Z:2G143</code></pre>
-<p>The <a href="https://en.wikipedia.org/wiki/SAM_(file_format)">SAM format</a> gives information about where each read maps to in the genome, and has information about that mapping.</p>
+<p>The <a href="https://en.wikipedia.org/wiki/SAM_(file_format)">SAM format</a> gives information about where each read maps to in the genome (one read per line), and has information about that mapping.</p>
 </div>
 <div id="gene-level-quantification" class="section level2" number="4.2">
 <h2 number="4.2"><span class="header-section-number">4.2</span> Gene-level Quantification</h2>
 <p>If we were to look at the top 3 lines of <code>example.genes.results</code>, we see it is a plain-text file separated by tabs where each row is a gene, and the columns are described the first row. The <code>genes.results</code> files for each sample can be directly imported into DESeq2 using the <a href="https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html#rsem"><code>tximport</code></a> R Bioconductor package. More on this tomorrow.</p>
-<pre><code>(workshop) $ head -3 example.genes.results
+<pre><code>$ head -3 ~/workshop_data/rsem_star/example.genes.results
 gene_id                 transcript_id(s)                        length  effective_length        expected_count  TPM     FPKM
 ENSMUSG00000000001      ENSMUST00000000001                      3262.00 3116.28                 601.00          45.50   36.70
 ENSMUSG00000000003      ENSMUST00000000003,ENSMUST00000114041   799.50  653.78                  0.00            0.00    0.00</code></pre>
