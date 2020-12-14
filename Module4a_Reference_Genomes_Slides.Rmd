@@ -94,10 +94,11 @@ chr1	unknown	exon	14362	14829	.	-	.	gene_id "WASH7P"; gene_name "WASH7P"; transc
     - e.g. UCSC genomes hg18, hg19, hg38
     - e.g. ENSEMBL genomes GRCh36, GRCh37, GRCh38
 - With the most recent genome build, versioning is aligned.
+- Different organisms have their own versioning.
 
 ## Annotation Sources
 
-- Historically three primary human gene annotation databases (different organisms have their own databases):
+- Historically three primary gene annotation databases (different organisms have their own databases):
     - [NCBI RefSeq](https://www.ncbi.nlm.nih.gov/refseq/rsg/)
     - [ENSEMBL](https://www.ensembl.org/info/genome/genebuild/index.html)
     - [UCSC Known Genes](https://academic.oup.com/bioinformatics/article/22/9/1036/200093)

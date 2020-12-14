@@ -112,11 +112,13 @@ Bioinformatics is a relatively new, fast-changing, field and its data standards 
 
 ### Genome Builds
 
-On occassion new reference genomes are released, and the genome build number changes. You may be familiar with the UCSC manner of naming human genome builds: hg18, hg19, hg38. ENSEMBL, naturally, has their own way of referring to genome builds: GRCh36, GRCh37, and GRCh38. Notice with the most recent human reference, the numbering now aligns between UCSC and ENSEMBL. That's one small step...
+On occassion new reference genomes are released, and the genome build number changes. You may be familiar with the UCSC manner of naming human genome builds: hg18, hg19, hg38. ENSEMBL, naturally, has their own way of referring to genome builds: GRCh36, GRCh37, and GRCh38. Notice with the most recent human reference, the numbering now aligns between UCSC and ENSEMBL.
+
+Different organisms have their own versioning.
 
 ### Annotation Sources
 
-[NCBI RefSeq](https://www.ncbi.nlm.nih.gov/refseq/rsg/), [ENSEMBL](https://www.ensembl.org/info/genome/genebuild/index.html), and [UCSC Known Genes](https://academic.oup.com/bioinformatics/article/22/9/1036/200093) are three primary human gene annotation databases (different organisms have their own databases). We will not go into exactly how the gene annotations are different, but we note that the are, and [others have examined the consequences of this](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-015-1308-8).
+[NCBI RefSeq](https://www.ncbi.nlm.nih.gov/refseq/rsg/), [ENSEMBL](https://www.ensembl.org/info/genome/genebuild/index.html), and [UCSC Known Genes](https://academic.oup.com/bioinformatics/article/22/9/1036/200093) are the three primary gene annotation databases (different organisms have their own databases). We will not go into exactly how the gene annotations are different, but we note that the are, and [others have examined the consequences of this](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-015-1308-8).
 
 ### Gene IDs
 
