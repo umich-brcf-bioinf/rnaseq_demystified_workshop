@@ -71,9 +71,12 @@ render('Module3a_Design_Prep_Seq_Slides.Rmd', output_dir = '~/Desktop')
 
 ## RNA Integrity Number
 
-- Essentially a ratio of 28S to 16S ribosmal RNA that measures the degradation of the RNA.
-- Scale of 0 (very degraded) to 10 (not degraded).
-- AGC also has [recommendations](https://brcf.medicine.umich.edu/cores/advanced-genomics/sample-requirements/) for RIN scores for different library preparation types.
+- A measure of RNA degredation developed by [Agilent](https://bmcmolbiol.biomedcentral.com/articles/10.1186/1471-2199-7-3).
+- Reported on a scale of 0 to 10, from very degraded to least degraded.
+- AGC will check the RIN number before putting samples on the sequencer.
+- **Effects** demonstrated by [Romero et al](https://bmcbiol.biomedcentral.com/articles/10.1186/1741-7007-12-42):
+    - Can reduce library complexity, which can affect alignment rates.
+    - Increases variability between samples which adversely affects differential analysis.
 
 ## Preparation
 
@@ -90,9 +93,11 @@ http://rnaseq.uoregon.edu/#rna-prep and Martin J.A. and Wang Z., Nat. Rev. Genet
 </center>
 [Source: Harvard Chan Bioinformatics Core](https://raw.githubusercontent.com/hbctraining/Intro-to-rnaseq-hpc-O2/master/lectures/rna-seq_design.pdf) and [Illumina (video)](https://www.youtube.com/watch?v=fCd6B5HRaZ8&feature=emb_title)
 
+
+
 ## How Many Reads?
 
-- [ENCODE guidelines](https://www.encodeproject.org/documents/cede0cbe-d324-4ce7-ace4-f0c3eddf5972/@@download/attachment/ENCODE%20Best%20Practices%20for%20RNA_v2.pdf) recommend 30-40 million reads per human sample.
+- [ENCODE guidelines](https://www.encodeproject.org/documents/cede0cbe-d324-4ce7-ace4-f0c3eddf5972/@@download/attachment/ENCODE%20Best%20Practices%20for%20RNA_v2.pdf) recommend 30-40 million reads per human sample for a typical differential expression analysis.
 - For other organisms, scaling to the size of the transcriptome is a good start.
 
 ## Paired-end or Single-end?
@@ -103,6 +108,10 @@ http://rnaseq.uoregon.edu/#rna-prep and Martin J.A. and Wang Z., Nat. Rev. Genet
 - PE reads have other advantages:
     - Better alignments.
     - Better able to infer isoform usage.
+
+## Additional Sources
+
+- [2-BitBio Blog](https://2-bitbio.com/2017/04/rin-value-how-low-is-too-low.html)
 
 ##
 

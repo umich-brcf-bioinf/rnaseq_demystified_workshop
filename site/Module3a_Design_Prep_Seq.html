@@ -11,7 +11,7 @@
 
 <meta name="author" content="UM Bioinformatics Core" />
 
-<meta name="date" content="2020-12-13" />
+<meta name="date" content="2020-12-14" />
 
 <title>Experimental Design, Library Preparation, and Sequencing</title>
 
@@ -268,7 +268,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Experimental Design, Library Preparation, and Sequencing</h1>
 <h4 class="author">UM Bioinformatics Core</h4>
-<h4 class="date">2020-12-13</h4>
+<h4 class="date">2020-12-14</h4>
 
 </div>
 
@@ -417,7 +417,8 @@ render('Module3a_Design_Prep_Seq.Rmd', output_dir = 'site')
 </div>
 <div id="rna-integrity-number" class="section level2" number="3.2">
 <h2 number="3.2"><span class="header-section-number">3.2</span> RNA Integrity Number</h2>
-<p>The RNA Integrity Number (RIN) is essentially the ratio of 28S to 18S rRNA and measures the degradation of the RNA on a scale of 0 (degraded) to 10 (not degraded). It has been shown [REF] that low RIN scores can adversely affect downstream analysis of RNA-seq data. AGC also has <a href="https://brcf.medicine.umich.edu/cores/advanced-genomics/sample-requirements/">recommendations</a> for RIN scores for different library preparation types.</p>
+<p>The RNA Integrity Number (RIN) is a tool developed by <a href="https://bmcmolbiol.biomedcentral.com/articles/10.1186/1471-2199-7-3">Agilent</a> to measure RNA degredation in a systematic way. It is reported on a scale of 0 to 10, from very degraded to least degraded, and AGC runs each sample on the Bioanalyzer to obtain a RIN number. <a href="https://brcf.medicine.umich.edu/cores/advanced-genomics/sample-requirements/">Their recommendations</a> for RIN scores vary by library type, but in general the higher the RIN score, the more robust your data.</p>
+<p><a href="https://bmcbiol.biomedcentral.com/articles/10.1186/1741-7007-12-42">Romero et al</a> investigated the impact of low RIN scores on downstream analyses. They reported that degradation can reduce library complexity, which can lower alignment rates. They also reported that RNA degredation causes the variance between samples to increase, which will adversely affect differential expression modeling (as we will see on Day 2).</p>
 </div>
 <div id="preparation" class="section level2" number="3.3">
 <h2 number="3.3"><span class="header-section-number">3.3</span> Preparation</h2>
@@ -445,12 +446,18 @@ render('Module3a_Design_Prep_Seq.Rmd', output_dir = 'site')
 </div>
 <div id="how-many-reads" class="section level2" number="4.2">
 <h2 number="4.2"><span class="header-section-number">4.2</span> How Many Reads?</h2>
-<p>For human samples, at least 30 million reads per sample are recommended in the <a href="https://www.encodeproject.org/documents/cede0cbe-d324-4ce7-ace4-f0c3eddf5972/@@download/attachment/ENCODE%20Best%20Practices%20for%20RNA_v2.pdf">ENCODE guidelines</a>. For other organisms, you can crudely scale by the size of the transcriptome.</p>
+<p>For human samples, and a regular differential expression analysis, at least 30 million reads per sample are recommended in the <a href="https://www.encodeproject.org/documents/cede0cbe-d324-4ce7-ace4-f0c3eddf5972/@@download/attachment/ENCODE%20Best%20Practices%20for%20RNA_v2.pdf">ENCODE guidelines</a>. For other organisms, you can crudely scale by the size of the transcriptome. For other purposes, such as transcriptome assembly, you will need many more reads to attain sufficient coverage.</p>
 </div>
 <div id="single-or-paired-end" class="section level2" number="4.3">
 <h2 number="4.3"><span class="header-section-number">4.3</span> Single or Paired End?</h2>
 <p>Many resources state that single-end sequencing is sufficient for differential expression analysis, and that paired-end reads may be an unnecessary expense. However, economies of scale at AGC can make a paired-end 150 bp sequencing run more cost effective than it used to be. Additionally, paired-end reads typically result in better alignments because of the additional information. If an isoform-level analysis is of interest, paired-end reads are much better.</p>
 <p>The <a href="https://agc-estimator.brcf.med.umich.edu/">AGC Cost Estimator</a> is a useful tool for determining libary preparation and sequencing costs for various RNA-seq experiments. Note, that when selecting a shared NovaSeq flowcell, the run will be 150PE.</p>
+</div>
+<div id="additional-sources" class="section level2" number="4.4">
+<h2 number="4.4"><span class="header-section-number">4.4</span> Additional Sources</h2>
+<ul>
+<li><a href="https://2-bitbio.com/2017/04/rin-value-how-low-is-too-low.html">2-BitBio Blog</a></li>
+</ul>
 <hr />
 <p>These materials have been adapted and extended from materials created by the <a href="http://bioinformatics.sph.harvard.edu/">Harvard Chan Bioinformatics Core (HBC)</a>. These are open access materials distributed under the terms of the <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution license (CC BY 4.0)</a>, which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.</p>
 </div>

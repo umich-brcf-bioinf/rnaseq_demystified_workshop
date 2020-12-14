@@ -9,7 +9,7 @@
 
 
 
-  <meta name="date" content="2020-12-13" />
+  <meta name="date" content="2020-12-14" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -109,7 +109,7 @@ slide:not(.current) .plotly.html-widget{
       <h1 data-config-title><!-- populated from slide_config.json --></h1>
       
       <p data-config-presenter><!-- populated from slide_config.json --></p>
-            <p style="margin-top: 6px; margin-left: -2px;">2020-12-13</p>
+            <p style="margin-top: 6px; margin-left: -2px;">2020-12-14</p>
           </hgroup>
   </slide>
 
@@ -238,9 +238,15 @@ render('Module3a_Design_Prep_Seq_Slides.Rmd', output_dir = '~/Desktop')
 </article></slide><slide class=""><hgroup><h2>RNA Integrity Number</h2></hgroup><article  id="rna-integrity-number">
 
 <ul>
-<li>Essentially a ratio of 28S to 16S ribosmal RNA that measures the degradation of the RNA.</li>
-<li>Scale of 0 (very degraded) to 10 (not degraded).</li>
-<li>AGC also has <a href='https://brcf.medicine.umich.edu/cores/advanced-genomics/sample-requirements/' title=''>recommendations</a> for RIN scores for different library preparation types.</li>
+<li>A measure of RNA degredation developed by <a href='https://bmcmolbiol.biomedcentral.com/articles/10.1186/1471-2199-7-3' title=''>Agilent</a>.</li>
+<li>Reported on a scale of 0 to 10, from very degraded to least degraded.</li>
+<li>AGC will check the RIN number before putting samples on the sequencer.</li>
+<li><strong>Effects</strong> demonstrated by <a href='https://bmcbiol.biomedcentral.com/articles/10.1186/1741-7007-12-42' title=''>Romero et al</a>:
+
+<ul>
+<li>Can reduce library complexity, which can affect alignment rates.</li>
+<li>Increases variability between samples which adversely affects differential analysis.</li>
+</ul></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Preparation</h2></hgroup><article  id="preparation">
@@ -266,7 +272,7 @@ render('Module3a_Design_Prep_Seq_Slides.Rmd', output_dir = '~/Desktop')
 </article></slide><slide class=""><hgroup><h2>How Many Reads?</h2></hgroup><article  id="how-many-reads">
 
 <ul>
-<li><a href='https://www.encodeproject.org/documents/cede0cbe-d324-4ce7-ace4-f0c3eddf5972/@@download/attachment/ENCODE%20Best%20Practices%20for%20RNA_v2.pdf' title=''>ENCODE guidelines</a> recommend 30-40 million reads per human sample.</li>
+<li><a href='https://www.encodeproject.org/documents/cede0cbe-d324-4ce7-ace4-f0c3eddf5972/@@download/attachment/ENCODE%20Best%20Practices%20for%20RNA_v2.pdf' title=''>ENCODE guidelines</a> recommend 30-40 million reads per human sample for a typical differential expression analysis.</li>
 <li>For other organisms, scaling to the size of the transcriptome is a good start.</li>
 </ul>
 
@@ -289,6 +295,12 @@ render('Module3a_Design_Prep_Seq_Slides.Rmd', output_dir = '~/Desktop')
 <li>Better alignments.</li>
 <li>Better able to infer isoform usage.</li>
 </ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Additional Sources</h2></hgroup><article  id="additional-sources">
+
+<ul>
+<li><a href='https://2-bitbio.com/2017/04/rin-value-how-low-is-too-low.html' title=''>2-BitBio Blog</a></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section">
