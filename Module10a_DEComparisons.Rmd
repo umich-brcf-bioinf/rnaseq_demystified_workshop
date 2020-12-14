@@ -81,6 +81,8 @@ Since we are interested in comparing the Mov.KD or Mov.OE samples to the Irrel c
 ```{r SetsResult}
 Comparison <- "condition_Mov.KD_vs_Irrel"
 res.KD <- results(dds, name=Comparison)
+Comparison <- "condition_Mov.OE_vs_Irrel"
+res.OE <- results(dds, name=Comparison)
 ```
 
 ## How to generate additional contrasts
@@ -98,7 +100,7 @@ head(res)
 
 ## Results table - review of output columns
 
-Next, we'll take a look at the results we generated. 
+Next, we'll take a look at some of the results we generated. 
 ```{r ResultsKD}
 head(res.KD)
 ```
@@ -135,6 +137,10 @@ The default FDR rate cutoff for DESeq2 is `alpha = 0.05`. By setting the cutoff 
 * HBC DGE training module, part 1: https://hbctraining.github.io/DGE_workshop/lessons/04_DGE_DESeq2_analysis.html    
 * HBC DGE training module, part 2: https://hbctraining.github.io/DGE_workshop/lessons/05_DGE_DESeq2_analysis2.html    
 * DESeq2 vignette: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#differential-expression-analysis    
+
+---
+
+![](./images/significant_xkcd.png)
 
 
 ```{r WriteOut.RData, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}

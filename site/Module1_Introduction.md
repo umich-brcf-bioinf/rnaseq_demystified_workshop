@@ -126,7 +126,6 @@
 
 ### Schedule
 
-#### Day One
 
 | Time | Topic | Instructor |
 | ---- | ----------------- | ---------- |
