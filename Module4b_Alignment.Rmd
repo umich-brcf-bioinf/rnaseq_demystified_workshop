@@ -116,6 +116,7 @@ $ rsem-calculate-expression --star \
                             --num-threads 8 \
                             --star-gzipped-read-file \
                             --star-output-genome-bam \
+                            --keep-intermediate-files \
                             --paired-end \
                             /path/to/example_R1.fastq.gz /path/to/example_R2.fastq.gz \
                             /path/to/index/GRCm38
@@ -169,3 +170,64 @@ ENSMUSG00000000003      ENSMUST00000000003,ENSMUST00000114041   799.50  653.78  
 | expected_count | The sum, over all transcripts, of the estimated counts from the EM algorithm. |
 | TPM | Transcript per million, a relative measure of transcript abundance where the sum of all TPMs is 1 million. |
 | FPKM | Fragments per kilobase of transcript per million mapped reads. |
+
+# Running MultiQC Again
+
+After aligning reads it is often helpful to know how many reads were uniquely aligned, mapped to multiple loci, or not mapped at all. The `exampleLog.final.out` file which is output alongside the alignments in `example.temp/` folder (we used the `--keep-intermediate-files` flag), reports this information:
+
+```
+                                 Started job on |	Oct 02 13:09:23
+                             Started mapping on |	Oct 02 13:09:51
+                                    Finished on |	Oct 02 13:12:47
+       Mapping speed, Million of reads per hour |	238.82
+
+                          Number of input reads |	11675504
+                      Average input read length |	146
+                                    UNIQUE READS:
+                   Uniquely mapped reads number |	10609591
+                        Uniquely mapped reads % |	90.87%
+                          Average mapped length |	146.37
+                       Number of splices: Total |	2755543
+            Number of splices: Annotated (sjdb) |	2734730
+                       Number of splices: GT/AG |	2739697
+                       Number of splices: GC/AG |	13204
+                       Number of splices: AT/AC |	1744
+               Number of splices: Non-canonical |	898
+                      Mismatch rate per base, % |	0.18%
+                         Deletion rate per base |	0.01%
+                        Deletion average length |	1.60
+                        Insertion rate per base |	0.01%
+                       Insertion average length |	1.29
+                             MULTI-MAPPING READS:
+        Number of reads mapped to multiple loci |	599915
+             % of reads mapped to multiple loci |	5.14%
+        Number of reads mapped to too many loci |	12786
+             % of reads mapped to too many loci |	0.11%
+                                  UNMAPPED READS:
+  Number of reads unmapped: too many mismatches |	20381
+       % of reads unmapped: too many mismatches |	0.17%
+            Number of reads unmapped: too short |	389960
+                 % of reads unmapped: too short |	3.34%
+                Number of reads unmapped: other |	42871
+                     % of reads unmapped: other |	0.37%
+                                  CHIMERIC READS:
+                       Number of chimeric reads |	0
+                            % of chimeric reads |	0.00%
+```
+
+If we were to run `multiqc` again, then it would detect these reports and include them. For example:
+
+```
+$ multiqc --outdir multiqc_with_alignments .
+```
+
+**Note**, since we haven't actually done the alignments we won't call this. Also note the use of `.`, meaning "here". `multiqc` looks for reports it can recognize in the directory you give it, and all its sub-directories. The resulting section will look something like the following:
+
+<center>
+
+![Example of STAR alignment statistics in MultiQC.](images/multiqc_star.png)
+Example of STAR alignment statistics in MultiQC.
+
+Source: [MultiQC example report](https://multiqc.info/examples/rna-seq/multiqc_report.html#star)
+
+</center>
