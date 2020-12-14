@@ -360,7 +360,7 @@ Overrepresented sequences are those making up more than 0.1% of the total (of th
 
 ![Overrepresented Table](images/fastqc_overrepresented.png)
 
-We see that there is a high number of reads with polyA tails. This could be a result of an inefficient removal of polyA tails, or it could indicate a TotalRNA library prep [TODO: CHECK]. If there should be no polyA
+We see that there is a high number of reads with polyA tails. This could be a result of an inefficient removal of polyA tails.
 
 </center>
 
