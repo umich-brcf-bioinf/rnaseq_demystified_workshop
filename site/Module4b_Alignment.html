@@ -392,6 +392,7 @@ render('Module4b_Alignment.Rmd', output_dir = 'site')
                             --num-threads 8 \
                             --star-gzipped-read-file \
                             --star-output-genome-bam \
+                            --keep-intermediate-files \
                             --paired-end \
                             /path/to/example_R1.fastq.gz /path/to/example_R2.fastq.gz \
                             /path/to/index/GRCm38
@@ -491,6 +492,50 @@ ENSMUSG00000000003      ENSMUST00000000003,ENSMUST00000114041   799.50  653.78  
 </tbody>
 </table>
 </div>
+</div>
+<div id="running-multiqc-again" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> Running MultiQC Again</h1>
+<p>After aligning reads it is often helpful to know how many reads were uniquely aligned, mapped to multiple loci, or not mapped at all. The <code>exampleLog.final.out</code> file which is output alongside the alignments in <code>example.temp/</code> folder (we used the <code>--keep-intermediate-files</code> flag), reports this information:</p>
+<pre><code>                                 Started job on |   Oct 02 13:09:23
+                             Started mapping on |   Oct 02 13:09:51
+                                    Finished on |   Oct 02 13:12:47
+       Mapping speed, Million of reads per hour |   238.82
+
+                          Number of input reads |   11675504
+                      Average input read length |   146
+                                    UNIQUE READS:
+                   Uniquely mapped reads number |   10609591
+                        Uniquely mapped reads % |   90.87%
+                          Average mapped length |   146.37
+                       Number of splices: Total |   2755543
+            Number of splices: Annotated (sjdb) |   2734730
+                       Number of splices: GT/AG |   2739697
+                       Number of splices: GC/AG |   13204
+                       Number of splices: AT/AC |   1744
+               Number of splices: Non-canonical |   898
+                      Mismatch rate per base, % |   0.18%
+                         Deletion rate per base |   0.01%
+                        Deletion average length |   1.60
+                        Insertion rate per base |   0.01%
+                       Insertion average length |   1.29
+                             MULTI-MAPPING READS:
+        Number of reads mapped to multiple loci |   599915
+             % of reads mapped to multiple loci |   5.14%
+        Number of reads mapped to too many loci |   12786
+             % of reads mapped to too many loci |   0.11%
+                                  UNMAPPED READS:
+  Number of reads unmapped: too many mismatches |   20381
+       % of reads unmapped: too many mismatches |   0.17%
+            Number of reads unmapped: too short |   389960
+                 % of reads unmapped: too short |   3.34%
+                Number of reads unmapped: other |   42871
+                     % of reads unmapped: other |   0.37%
+                                  CHIMERIC READS:
+                       Number of chimeric reads |   0
+                            % of chimeric reads |   0.00%</code></pre>
+<p>If we were to run <code>multiqc</code> again, then it would detect these reports and include them. For example:</p>
+<pre><code>$ multiqc --outdir multiqc_with_alignments .</code></pre>
+<p><strong>Note</strong>, since we haven’t actually done the alignments we won’t call this. Also note the use of <code>.</code>, meaning “here”. <code>multiqc</code> looks for reports it can recognize in the directory you give it, and all its sub-directories.</p>
 </div>
 
 
