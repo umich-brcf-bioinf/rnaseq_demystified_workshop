@@ -123,7 +123,7 @@ The figure below comprises the main steps of RNA-seq library preparation. To sum
 
 ## How Does It Work?
 
-*TO DO: Add description for script*
+Briefly, during the library preparation step, binding oligos are added to the ends of the fragments which are complementary to a lawn of oligos on the flowcell. Each fragment is clonally amplified via bridge amplification to create clusters of the original fragments. The fragments are then sequenced by adding flourescently tagged nucleotides that are incorporated as the complement to the template. The sequencer detects these flashes of flourescence in the clusters across the entire flowcell, recording, in essence, the sequence of the fragments.
 
 <center>
 
