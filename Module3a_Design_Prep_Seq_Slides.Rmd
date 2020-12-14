@@ -41,8 +41,6 @@ render('Module3a_Design_Prep_Seq_Slides.Rmd', output_dir = '~/Desktop')
 | 6 | Count Reads Associated with Genes |
 | 7 | Test for DE Genes |
 
-# Experimental Design and Practicalities
-
 ## Replicates
 
 <center>
