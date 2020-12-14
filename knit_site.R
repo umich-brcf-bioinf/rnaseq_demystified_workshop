@@ -7,7 +7,6 @@ render('Module3b_QC.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_
 render('Module4a_Reference_Genomes.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
 render('Module4a_Reference_Genomes_Slides.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
 render('Module4b_Alignment.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
-render('Module4b_Alignment_Slides.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
 render('Module7a_IntroductionToR.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
 render('Module8a_IntroductionToDESeq2.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
 render('Module8b_DESeq2Initialization.Rmd', output_dir = 'site', intermediates_dir = 'site', knit_root_dir = 'site')
