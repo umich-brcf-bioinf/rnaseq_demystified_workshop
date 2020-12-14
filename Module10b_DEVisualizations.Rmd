@@ -1,5 +1,5 @@
 ---
-title: "RNA-seq Demystified: Day X"
+title: "Day 2 - Module 10b: DE Visualizationsand Gene Annotations"
 author: "UM Bioinformatics Core"
 date: "`r Sys.Date()`"
 output:
@@ -20,19 +20,83 @@ output:
     }
 </style>
 > # Objectives    
+> * Understand advantages of using gene ids when analyzing data.    
+> * Given a list of ENSEMBL gene ids, add gene symbols and Entrez accessions.    
 > * Generate common visualizations for differential expression comparisons    
 > * Understand reasonable thresholds for statistically significant diffex genes    
 > * Understand options for functional enrichments    
 
 
+```{r Modules, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+library(DESeq2)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library('ggrepel', character.only=TRUE)
+library('pheatmap', character.only=TRUE)
+library('RColorBrewer', character.only=TRUE)
+load("RunningData.RData")
+```
+
+# How to annotate the results table
+
+Adding additional information...
+
+## Adding annotations
+
+bioMart - hg19
+[Accessing BioMart](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html)
+
+### Gene symbols versus gene ids
+
+## Adding DE calls
+
+Using conditional statements to make results easier to interpret...
+Importance of documenting thresholds
+
+# Visualizing DE results
+
+## Volcano plots
+
+How does significant relate to fold change?
+
+## MA plots?
+
+# Outputting results to file
+
+## Count tables
+
+## DE results table
+
+### What can we do with our DE results
 
 
-# Sources Used:    
-* 
+
+# Review of Kenny et al results
+
+[Kenny PJ et al, Cell Rep 2014](http://www.ncbi.nlm.nih.gov/pubmed/25464849)
+
+comparing the [RNA-Seq methods reported in the paper](https://ars-els-cdn-com.proxy.lib.umich.edu/content/image/1-s2.0-S2211124714009231-mmc1.pdf)
+
+
 
 ---
 
-# Session Info:
+# Sources Used      
+* HBC DGE training module, part 1: https://hbctraining.github.io/DGE_workshop/lessons/04_DGE_DESeq2_analysis.html    
+* HBC DGE training module, part 2: https://hbctraining.github.io/DGE_workshop/lessons/05_DGE_DESeq2_analysis2.html    
+* DESeq2 vignette: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#differential-expression-analysis    
+
+
+```{r WriteOut.RData, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+#Hidden code block to write out data for knitting
+save.image(file = "RunningData.RData")
+```
+
+
+---
+
+# Session Info    
 ```{r SessionInfo}
 sessionInfo()
 ```
