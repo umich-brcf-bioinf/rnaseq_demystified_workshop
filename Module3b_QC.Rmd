@@ -117,18 +117,16 @@ The first step in most high-throughput sequencing analyses is to examine the qua
 
 ## Running FastQC
 
-Let's run FastQC on some example FASTQ files we've provided in the `~/workshop_data` folder. To do so, let's log in to the Amazon instance and activate the `conda` environment we created for the workshop. Note, your user name, between `ssh` and `@` below, will be different.
+Let's run FastQC on some example FASTQ files we've provided in the `~/workshop_data` folder. If you're not already logged in to the Amazon instance, please do so with your user name replacing `rcavalca` and using the password provided to you:
 
 ```
-ssh mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com
-$ conda activate workshop
-(workshop) $
+$ ssh rcavalca@ec2-50-17-210-255.compute-1.amazonaws.com
 ```
 
-The `(workshop) $` indicates that the environment is now active. As we learned in the previous UNIX module, we can use the `--help` flag to look at the options for programs. It's a good habit, before using a tool for the first time, to read through the options and syntax for how to invoke a program.
+As we learned in the previous UNIX module, we can use the `--help` flag to look at the options for programs. It's a good habit, before using a tool for the first time, to read through the options and syntax for how to invoke a program.
 
 ```
-(workshop) $ fastqc --help
+$ fastqc --help
 
             FastQC - A high throughput sequence QC analysis tool
 
@@ -260,22 +258,24 @@ fastqc seqfile1 seqfile2 .. seqfileN
 We also observe that if we want to put the result in a directory, we have to create it ourselves. The `--outdir` option notes "that this directory must exist as the program will not create it."
 
 ```
-(workshop) $ cd ~/workshop_data
-(workshop) $ mkdir -p fastqc
-(workshop) $ fastqc --outdir fastqc example_R1.fastq.gz example_R2.fastq.gz
+$ cd ~/workshop_data
+$ mkdir -p fastqc
+$ fastqc --outdir fastqc \
+    fastqs/example_R1.fastq.gz \
+    fastqs/example_R2.fastq.gz
 ```
 
 To see what was created, we can look inside the `fastqc` output directory (your output might look a little different because you have a different user name and you did it on a different date):
 
 ```
-(workshop) $ ll fastqc
-total 1716
-drwxrwsr-x 2 mbradenb mbradenb   4096 Dec  8 16:27 ./
-drwxrwsr-x 3 mbradenb mbradenb   4096 Dec  8 16:26 ../
--rw-rw-r-- 1 mbradenb mbradenb 564389 Dec  8 16:27 example_R1_fastqc.html
--rw-rw-r-- 1 mbradenb mbradenb 308633 Dec  8 16:27 example_R1_fastqc.zip
--rw-rw-r-- 1 mbradenb mbradenb 568017 Dec  8 16:27 example_R2_fastqc.html
--rw-rw-r-- 1 mbradenb mbradenb 303034 Dec  8 16:27 example_R2_fastqc.zip
+$ ll fastqc
+total 884
+drwxrwxr-x 2 rcavalca rcavalca   4096 Dec 14 00:36 ./
+drwxrwxr-x 5 rcavalca rcavalca   4096 Dec 14 00:36 ../
+-rw-rw-r-- 1 rcavalca rcavalca 226826 Dec 14 00:36 example_R1_fastqc.html
+-rw-rw-r-- 1 rcavalca rcavalca 223962 Dec 14 00:36 example_R1_fastqc.zip
+-rw-rw-r-- 1 rcavalca rcavalca 225038 Dec 14 00:36 example_R2_fastqc.html
+-rw-rw-r-- 1 rcavalca rcavalca 216159 Dec 14 00:36 example_R2_fastqc.zip
 ```
 
 We can see some HTML reports, but there isn't a way to open them on the remote machine in the command-line interface (CLI). This is a good opportunity to learn how to pull files from a remote server onto the computer we're using.
@@ -296,8 +296,8 @@ We can see various options that we can explore in more detail with `man scp` if 
 So let's try the following, note you will be asked for the password you used to log in to the Amazon instance:
 
 ```
-$ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R1_fastqc.html ~/Desktop
-$ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R2_fastqc.html ~/Desktop
+$ scp rcavalca@ec2-50-17-210-255.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R1_fastqc.html ~/Desktop
+$ scp rcavalca@ec2-50-17-210-255.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R2_fastqc.html ~/Desktop
 ```
 
 The files should now be on the desktop of the computer you are using. Double clicking the files will open them in a web browser.
@@ -377,7 +377,7 @@ FastQC is an excellent tool, but imagine you have 20 samples in your experiment.
 MultiQC is designed to interpret and aggregate reports from [various tools](https://multiqc.info/#supported-tools) and output a single report as an HTML document. Since MultiQC is new to us, let's use the `--help` flag to see how to invoke it and what options we might want to use.
 
 ```
-(workshop) $ multiqc --help
+$ multiqc --help
 Usage: multiqc [OPTIONS] <analysis directory>
 
   Main MultiQC run command for use with the click command line, complete
@@ -482,24 +482,24 @@ Usage: multiqc [OPTIONS] <analysis directory>
 So let's invoke `multiqc` on the directory with our FastQC results:
 
 ```
-(workshop) $ multiqc --outdir multiqc fastqc/
+$ multiqc --outdir multiqc fastqc/
 ```
 
 And if we look in the directory we see:
 
 ```
-(workshop) $ ll multiqc
+$ ll multiqc
 total 1136
-drwxrwsr-x 3 mbradenb mbradenb    4096 Dec  8 18:01 ./
-drwxrwsr-x 4 mbradenb mbradenb    4096 Dec  8 18:01 ../
-drwxrwsr-x 2 mbradenb mbradenb    4096 Dec  8 18:01 multiqc_data/
--rw-rw-r-- 1 mbradenb mbradenb 1150501 Dec  8 18:01 multiqc_report.html
+drwxrwxr-x 3 rcavalca rcavalca    4096 Dec 14 00:41 ./
+drwxrwxr-x 6 rcavalca rcavalca    4096 Dec 14 00:41 ../
+drwxrwxr-x 2 rcavalca rcavalca    4096 Dec 14 00:41 multiqc_data/
+-rw-rw-r-- 1 rcavalca rcavalca 1150501 Dec 14 00:41 multiqc_report.html
 ```
 
 We can use a similar `scp` command as for FastQC on the local machine:
 
 ```
-$ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/multiqc/multiqc_report.html ~/Desktop
+$ scp rcavalca@ec2-50-17-210-255.compute-1.amazonaws.com:~/workshop_data/multiqc/multiqc_report.html ~/Desktop
 ```
 
 Opening the HTML report, we see it is organized by the same modules and each plot has all samples for which FastQC was run.

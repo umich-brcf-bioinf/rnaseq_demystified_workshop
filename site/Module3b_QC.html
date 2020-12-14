@@ -442,12 +442,10 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF</cod
 </ul>
 <div id="running-fastqc" class="section level2" number="3.1">
 <h2 number="3.1"><span class="header-section-number">3.1</span> Running FastQC</h2>
-<p>Let’s run FastQC on some example FASTQ files we’ve provided in the <code>~/workshop_data</code> folder. To do so, let’s log in to the Amazon instance and activate the <code>conda</code> environment we created for the workshop. Note, your user name, between <code>ssh</code> and <code>@</code> below, will be different.</p>
-<pre><code>ssh mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com
-$ conda activate workshop
-(workshop) $</code></pre>
-<p>The <code>(workshop) $</code> indicates that the environment is now active. As we learned in the previous UNIX module, we can use the <code>--help</code> flag to look at the options for programs. It’s a good habit, before using a tool for the first time, to read through the options and syntax for how to invoke a program.</p>
-<pre><code>(workshop) $ fastqc --help
+<p>Let’s run FastQC on some example FASTQ files we’ve provided in the <code>~/workshop_data</code> folder. If you’re not already logged in to the Amazon instance, please do so with your user name replacing <code>rcavalca</code> and using the password provided to you:</p>
+<pre><code>$ ssh rcavalca@ec2-50-17-210-255.compute-1.amazonaws.com</code></pre>
+<p>As we learned in the previous UNIX module, we can use the <code>--help</code> flag to look at the options for programs. It’s a good habit, before using a tool for the first time, to read through the options and syntax for how to invoke a program.</p>
+<pre><code>$ fastqc --help
 
             FastQC - A high throughput sequence QC analysis tool
 
@@ -571,18 +569,20 @@ BUGS
 <p>In particular, under the <code>SYNOPSIS</code> section, we see that the basic way to invoke <code>fastqc</code> is:</p>
 <pre><code>fastqc seqfile1 seqfile2 .. seqfileN</code></pre>
 <p>We also observe that if we want to put the result in a directory, we have to create it ourselves. The <code>--outdir</code> option notes “that this directory must exist as the program will not create it.”</p>
-<pre><code>(workshop) $ cd ~/workshop_data
-(workshop) $ mkdir -p fastqc
-(workshop) $ fastqc --outdir fastqc example_R1.fastq.gz example_R2.fastq.gz</code></pre>
+<pre><code>$ cd ~/workshop_data
+$ mkdir -p fastqc
+$ fastqc --outdir fastqc \
+    fastqs/example_R1.fastq.gz \
+    fastqs/example_R2.fastq.gz</code></pre>
 <p>To see what was created, we can look inside the <code>fastqc</code> output directory (your output might look a little different because you have a different user name and you did it on a different date):</p>
-<pre><code>(workshop) $ ll fastqc
-total 1716
-drwxrwsr-x 2 mbradenb mbradenb   4096 Dec  8 16:27 ./
-drwxrwsr-x 3 mbradenb mbradenb   4096 Dec  8 16:26 ../
--rw-rw-r-- 1 mbradenb mbradenb 564389 Dec  8 16:27 example_R1_fastqc.html
--rw-rw-r-- 1 mbradenb mbradenb 308633 Dec  8 16:27 example_R1_fastqc.zip
--rw-rw-r-- 1 mbradenb mbradenb 568017 Dec  8 16:27 example_R2_fastqc.html
--rw-rw-r-- 1 mbradenb mbradenb 303034 Dec  8 16:27 example_R2_fastqc.zip</code></pre>
+<pre><code>$ ll fastqc
+total 884
+drwxrwxr-x 2 rcavalca rcavalca   4096 Dec 14 00:36 ./
+drwxrwxr-x 5 rcavalca rcavalca   4096 Dec 14 00:36 ../
+-rw-rw-r-- 1 rcavalca rcavalca 226826 Dec 14 00:36 example_R1_fastqc.html
+-rw-rw-r-- 1 rcavalca rcavalca 223962 Dec 14 00:36 example_R1_fastqc.zip
+-rw-rw-r-- 1 rcavalca rcavalca 225038 Dec 14 00:36 example_R2_fastqc.html
+-rw-rw-r-- 1 rcavalca rcavalca 216159 Dec 14 00:36 example_R2_fastqc.zip</code></pre>
 <p>We can see some HTML reports, but there isn’t a way to open them on the remote machine in the command-line interface (CLI). This is a good opportunity to learn how to pull files from a remote server onto the computer we’re using.</p>
 <div id="transferring-files" class="section level3" number="3.1.1">
 <h3 number="3.1.1"><span class="header-section-number">3.1.1</span> Transferring Files</h3>
@@ -593,8 +593,8 @@ usage: scp [-346BCpqrTv] [-c cipher] [-F ssh_config] [-i identity_file]
             [-S program] source ... target</code></pre>
 <p>We can see various options that we can explore in more detail with <code>man scp</code> if we wanted, but it seems that we just need to specify the <code>source</code> (where the file is on the remote machine) and the <code>target</code> (where we want to put the file on the local machine).</p>
 <p>So let’s try the following, note you will be asked for the password you used to log in to the Amazon instance:</p>
-<pre><code>$ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R1_fastqc.html ~/Desktop
-$ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R2_fastqc.html ~/Desktop</code></pre>
+<pre><code>$ scp rcavalca@ec2-50-17-210-255.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R1_fastqc.html ~/Desktop
+$ scp rcavalca@ec2-50-17-210-255.compute-1.amazonaws.com:~/workshop_data/fastqc/example_R2_fastqc.html ~/Desktop</code></pre>
 <p>The files should now be on the desktop of the computer you are using. Double clicking the files will open them in a web browser.</p>
 </div>
 </div>
@@ -662,7 +662,7 @@ $ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/fastqc
 <h1 number="4"><span class="header-section-number">4</span> MultiQC</h1>
 <p>FastQC is an excellent tool, but imagine you have 20 samples in your experiment. You’d have to look at the report for each sample, while keeping track of what trends emerge. It would be much easier to look at all the FastQC reports compiled into a single report. <a href="https://multiqc.info/">MultiQC</a> is a tool that does exactly this.</p>
 <p>MultiQC is designed to interpret and aggregate reports from <a href="https://multiqc.info/#supported-tools">various tools</a> and output a single report as an HTML document. Since MultiQC is new to us, let’s use the <code>--help</code> flag to see how to invoke it and what options we might want to use.</p>
-<pre><code>(workshop) $ multiqc --help
+<pre><code>$ multiqc --help
 Usage: multiqc [OPTIONS] &lt;analysis directory&gt;
 
   Main MultiQC run command for use with the click command line, complete
@@ -759,16 +759,16 @@ Options:
 <p>We see the usage below, and observe that the <code>--outdir</code> option will create the directory for us, unlike FastQC.</p>
 <pre><code>Usage: multiqc [OPTIONS] &lt;analysis directory&gt;</code></pre>
 <p>So let’s invoke <code>multiqc</code> on the directory with our FastQC results:</p>
-<pre><code>(workshop) $ multiqc --outdir multiqc fastqc/</code></pre>
+<pre><code>$ multiqc --outdir multiqc fastqc/</code></pre>
 <p>And if we look in the directory we see:</p>
-<pre><code>(workshop) $ ll multiqc
+<pre><code>$ ll multiqc
 total 1136
-drwxrwsr-x 3 mbradenb mbradenb    4096 Dec  8 18:01 ./
-drwxrwsr-x 4 mbradenb mbradenb    4096 Dec  8 18:01 ../
-drwxrwsr-x 2 mbradenb mbradenb    4096 Dec  8 18:01 multiqc_data/
--rw-rw-r-- 1 mbradenb mbradenb 1150501 Dec  8 18:01 multiqc_report.html</code></pre>
+drwxrwxr-x 3 rcavalca rcavalca    4096 Dec 14 00:41 ./
+drwxrwxr-x 6 rcavalca rcavalca    4096 Dec 14 00:41 ../
+drwxrwxr-x 2 rcavalca rcavalca    4096 Dec 14 00:41 multiqc_data/
+-rw-rw-r-- 1 rcavalca rcavalca 1150501 Dec 14 00:41 multiqc_report.html</code></pre>
 <p>We can use a similar <code>scp</code> command as for FastQC on the local machine:</p>
-<pre><code>$ scp mbradenb@ec2-54-147-125-188.compute-1.amazonaws.com:~/workshop_data/multiqc/multiqc_report.html ~/Desktop</code></pre>
+<pre><code>$ scp rcavalca@ec2-50-17-210-255.compute-1.amazonaws.com:~/workshop_data/multiqc/multiqc_report.html ~/Desktop</code></pre>
 <p>Opening the HTML report, we see it is organized by the same modules and each plot has all samples for which FastQC was run.</p>
 </div>
 <div id="acting-on-qc" class="section level1" number="5">
