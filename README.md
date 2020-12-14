@@ -7,10 +7,10 @@
 | 1 | 10 mins | [Workshop Introduction](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module1_Introduction) | Chris Gates |
 | 2 | 40 mins | [UNIX Shell Introduction](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module2a_UNIXShell) | Raymond Cavalcante |
 |  | 10 mins | - Break - | |
-| 3a | 20 mins | [Experimental Design, Library Prep, and Sequencing](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module3a_Design_Prep_Seq) | Raymond Cavalcante |
+| 3a | 20 mins | [Experimental Design, Library Prep, and Sequencing](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module3a_Design_Prep_Seq_Slides) | Raymond Cavalcante |
 | 3b | 30 mins | [Data QC](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module3b_QC) | Raymond Cavalcante |
 |  | 10 mins | - Break -  | |
-| 4a | 20 mins | [Reference Genomes](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module4a_Reference_Genomes) | Raymond Cavalcante |
+| 4a | 20 mins | [Reference Genomes](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module4a_Reference_Genomes_Slides) | Raymond Cavalcante |
 | 4b | 30 mins | [Sequence Alignment and Gene Quantification with STAR/RSEM](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module4b_Alignment) | Raymond Cavalcante |
 | 5 | 15 mins | Review & Questions | |
 
@@ -28,6 +28,6 @@
 | | 5 mins | - Break -   | |
 | 9a | 30 mins | [Sample Visualizations for QC](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module9a_SampleVisualizations) | Dana King |
 | | 10 mins | - Break -  | |
-| 10a | 30 mins | [DE Comparisons and Gene Annotations](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module10a_DEComparisons) | Dana King |
-| 10b | 20 mins | [DE Visualizations and output files](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module10b_DEVisualizations) | Dana King |
+| 10a | 30 mins | [DE Comparison Results](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module10a_DEComparisons) | Dana King |
+| 10b | 20 mins | [DE Visualizations and Gene Annotations](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module10b_DEVisualizations) | Dana King |
 | 11 | 15 mins | [Wrap up](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module99_Wrap_up) | |
