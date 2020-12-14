@@ -26,7 +26,6 @@ output:
 > * Understand reasonable thresholds for statistically significant diffex genes    
 > * Understand options for functional enrichments    
 
-
 ```{r Modules, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 library(DESeq2)
 library(ggplot2)
@@ -38,29 +37,139 @@ library('RColorBrewer', character.only=TRUE)
 load("RunningData.RData")
 ```
 
+# Visualizing DE results
+
+Part of differential expression analysis is generating visualizations to share our results. While the DESeq2 tutorial provides [examples of other visualizations](http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#exploring-and-exporting-results), a common visualization to summarize DE comparisons are [volcano plots](http://resources.qiagenbioinformatics.com/manuals/clcgenomicsworkbench/752/index.php?manual=Volcano_plots_inspecting_result_statistical_analysis.html). 
+
+## Generating Volcano plots
+
+As described by this [Galaxy project tutorial](https://galaxyproject.github.io/training-material/topics/transcriptomics/tutorials/rna-seq-viz-with-volcanoplot/tutorial.html), a volcano plot is a type of scatterplot that shows statistical significance (adjusted pvalue) versus magnitude of change (fold change). It allows us to quickly identify genes with large fold changes that are also statistically significant. In a volcano plot, the most upregulated genes are towards the right, the most downregulated genes are towards the left, and the most statistically significant genes are towards the top.
+
+First, we need to set thresholds for determining significant genes. A reasonable threshold would be a fold-change of less than -1.5 or greater than 1.5 and an adjusted pvalue less than 0.05.
+```{r PlotSetup1}
+fc <- 1.5
+pval <- 0.05
+```
+
+```{r PlotSetup2}
+res.KD <- res.KD[order(res.KD$padj),]
+diffexData <- as.data.frame(res.KD)
+setDT(diffexData, keep.rownames = TRUE)[] #set rownames to valid column
+colnames(diffexData) <- c('id','baseMean','log2FoldChange','lfcSE','stat','pvalue','padj') #rename first column
+#diffexData$Condition <- testName
+#diffexData$Control <- referenceName
+
+df <- diffexData
+str(df)
+
+comparison <- "Case_vs_Control"
+
+df$dot <- rep(3, nrow(df))
+df$dot[which(df$padj <= pval & df$log2FoldChange < 0 & abs(df$log2FoldChange) >= log2(fc))] = 2
+df$dot[which(df$padj <= pval & df$log2FoldChange > 0 & abs(df$log2FoldChange) >= log2(fc))] = 1
+df$sig <- df$dot
+
+#take top 5 up, down, then combine, assign label
+top <- rbind(head(subset(df, df$dot == 1), 5),head(subset(df, df$dot == 2), 5))
+top$label <- top$id
+df <- merge(x = df, y = top[,c('id','label')], by = "id", all.x = TRUE)
+
+#count the number of significan up and down genes, assign value for legend
+df$dot <- factor(df$dot,levels = c(1,2,3), labels = c(paste0('Up: ', sum(df$dot == 1)),paste0('Down: ', sum(df$dot == 2)),'NS'))
+```
+
+Once we've setup the annotations we need, we can proceed with generating the volcano plot.
+```{r VolcanoPlot}
+
+  #Volcano plot
+  pdf(file = paste0(plotPath,'VolcanoPlot_', comparison, '.pdf'), onefile = FALSE)
+  p <- ggplot(df, aes(x = log2FoldChange, y = -log10(padj))) + geom_point(aes(color = df$dot), size = 1) + theme_classic() + xlab('Log2 fold-change') + ylab('-Log10 adjusted p-value')
+  p <- p + scale_color_manual(name = '', values=c('#B31B21', '#1465AC', 'darkgray'))
+  p <- p + geom_vline(xintercept = c(0, -log2(fc), log2(fc)), linetype = c(1, 2, 2), color = c('black', 'black', 'black')) + geom_hline(yintercept = -log10(pval), linetype = 2, color = 'black')
+  if (sum(is.na(df$label)) < nrow(df)) {
+    p <- p + geom_label_repel(label = df$label, force = 3, segment.alpha = 0.4) + ggtitle(as.character(comparison))
+  } else {
+    p <- p + ggtitle(as.character(comparison))
+  }
+  print(p)
+  dev.off()
+  p
+```
+
+How does significance relate to fold change?
+
+For additional visualizations for our DE results, this [HBC tutorial](https://hbctraining.github.io/DGE_workshop/lessons/06_DGE_visualizing_results.html) includes some nice examples.
+
 # How to annotate the results table
 
-Adding additional information...
-
-## Adding annotations
-
-bioMart - hg19
-[Accessing BioMart](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html)
-
-### Gene symbols versus gene ids
+It can be useful to annotate our results table with additional information to make them easier to interpret, such as adding additional gene information or better summarizing our DE results.
 
 ## Adding DE calls
 
+```{r DEcalls}
+padj.cutoff <- 0.05
+lfc.cutoff <- 0.58
+```
+
 Using conditional statements to make results easier to interpret...
+
+To generate a general summary of the DE results, we can use the `summary` function. We can also use conditional statements to determine the number
+```{r StatSigGenes}
+summary(res.KD)
+sum(res.KD$padj < 0.05 & abs(res.KD$log2FoldChange) >= log2(1.5), na.rm = TRUE)
+```
+
 Importance of documenting thresholds
 
-# Visualizing DE results
+## Adding genome annotations
 
-## Volcano plots
+Bioconductor provides many tools and resources to facilitate access to [genomic annotation resources](http://bioconductor.org/packages/devel/workflows/vignettes/annotation/inst/doc/Annotation_Resources.html). 
 
-How does significant relate to fold change?
+From the [RNA-Seq methods reported in the Kenny et al paper](https://ars-els-cdn-com.proxy.lib.umich.edu/content/image/1-s2.0-S2211124714009231-mmc1.pdf), we know that the hg19 (UCSC) reference genome was used for alignment. 
 
-## MA plots?
+We can access additional genomic annotations using the [`bioMart` package](https://bioconductor.org/packages/release/bioc/html/biomaRt.html). To identify  we'll structure our 'query' or search of the bioMart resources to use the gene symbols from our alignment to add the [ENSEMBL id](https://m.ensembl.org/info/genome/genebuild/gene_names.html) and gene description for each gene. 
+
+### Gene symbols versus Gene ids
+
+Since UCSC and ENSEMBL are two difference reference builds not all genes are shared, as outlined in [this comprehensive review of reference genomes by Zhao & Zhang](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-015-1308-8). Additionally, since gene symbols can change over time or be ambigous we use and recommend using the EMSEMBL reference genome and ENSEMBL ids for alignments.
+
+To proceed with our BioMart query, we will first load the biomaRt library & choose what reference we want to access.
+```{r AddAnnotations1, warning=FALSE }
+library("biomaRt")
+ensembl <- useMart("ensembl",dataset="hsapiens_gene_ensembl")
+```
+
+To identify possible **filters** to restrict our data, we can use the `listFilters` function. To identify the **attributes** we want to retrive, we can use the `listAttributes` function. There are also [search functions](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html#how-to-build-a-biomart-query) to help narrow down the available options.
+```{r AddAnnotations2, warning=FALSE}
+head(listFilters(mart = ensembl))
+head(listAttributes(ensembl))
+```
+
+Next, we'll [build our query](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html#how-to-build-a-biomart-query) to retrive the information we want to add to our DE results table.
+```{r AddAnotation3, warning=FALSE}
+GeneKey <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol', "description"), 
+      filters = 'hgnc_symbol', 
+      values = row.names(assay(dds)), 
+      mart = ensembl)
+```
+
+>**Note**: For additional information regarding bioMart, please consult the [ENSEMBL bioMart vignette](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html) or the broader [Bioconductor Annotation Resources vignette ](http://bioconductor.org/packages/devel/workflows/vignettes/annotation/inst/doc/Annotation_Resources.html)
+
+Now that we have the ENSEMBL information and a gene symbol to match to our results, we can add this to our DE results table *TODO: Update results table*
+```{r updateDETable}
+res_table <- cbind(genes=row.names(res), res[ ,c(1:6)])
+
+## add Akk Refseq id & gene description to best of ability
+res_table <- as.data.frame(res_table)
+
+## Use NCBI id as key for forcing merge between results table and RefSeq table
+res_table <- as.data.table(res_table)
+
+res_anno <- merge(RefSeq_trimmed, res_table, by.x = "NCBI_id", by.y="genes", all.x = FALSE, all.y = TRUE)
+
+```
+
+While we are able to annotate our results with the ENSEMBL ids, we should be very cautious as the gene symbol is not a good unique identifier, and we did not start with a UCSC annotation resource. However, this code is similar to the steps needed to annotate ENSEMBL id based results, like what would have been generated from yesterday's alignments, with more interpretable gene symbols.
 
 # Outputting results to file
 
@@ -68,7 +177,7 @@ How does significant relate to fold change?
 
 ## DE results table
 
-### What can we do with our DE results
+# What can we do with our DE results?
 
 
 
@@ -86,6 +195,8 @@ comparing the [RNA-Seq methods reported in the paper](https://ars-els-cdn-com.pr
 * HBC DGE training module, part 1: https://hbctraining.github.io/DGE_workshop/lessons/04_DGE_DESeq2_analysis.html    
 * HBC DGE training module, part 2: https://hbctraining.github.io/DGE_workshop/lessons/05_DGE_DESeq2_analysis2.html    
 * DESeq2 vignette: http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#differential-expression-analysis    
+* Bioconductor Genomic Annotation resources: http://bioconductor.org/packages/devel/workflows/vignettes/annotation/inst/doc/Annotation_Resources.html    
+* BioMart vignette: https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html    
 
 
 ```{r WriteOut.RData, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
