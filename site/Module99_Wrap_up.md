@@ -9,8 +9,7 @@ connect to enable gene expression analysis from bulk RNA-Seq data.
 - Day 2: R, DESeq2, QC visualizations, process of differential expression analysis
 - Learning bioinformatic analyses more like a process than a task
 
-- Training resrouces/workshops <br />
-  https://brcf.medicine.umich.edu/cores/bioinformatics-core/training/
+- [Training resources/workshops](https://brcf.medicine.umich.edu/cores/bioinformatics-core/training/)
 
 ---
 
@@ -20,8 +19,8 @@ connect to enable gene expression analysis from bulk RNA-Seq data.
 
 - We will email you a to the session recordings by next week.
 
-- Please take our optional post-workshop survey (5-10 minutes) <br />
-  https://forms.gle/bsqTx6GVsxMvye169
+- Please take our optional [post-workshop survey](https://forms.gle/bsqTx6GVsxMvye169) (5-10 minutes) <br />
+  [https://forms.gle/bsqTx6GVsxMvye169](https://forms.gle/bsqTx6GVsxMvye169)
 
 ---
 

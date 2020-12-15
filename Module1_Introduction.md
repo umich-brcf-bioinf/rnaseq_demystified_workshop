@@ -146,7 +146,7 @@
 | 11:00 | [Sample Visualizations for QC](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module9a_SampleVisualizations) | Dana King |
 |  | [DE Comparisons and Gene Annotations](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module10a_DEComparisons) | Dana King |
 | 12:00 | [DE Visualizations and output files](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module10b_DEVisualizations) | Dana King |
-| 12:45  | Wrap-up | Chris Gates |
+| 12:45  | [Wrap-up](https://umich-brcf-bioinf.github.io/rnaseq_demystified_workshop/site/Module99_Wrap_up) | Chris Gates |
 
 
 ### Any questions?
