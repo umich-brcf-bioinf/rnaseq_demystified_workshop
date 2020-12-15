@@ -17,7 +17,7 @@ connect to enable gene expression analysis from bulk RNA-Seq data.
 
 - Linux/Unix workshop compute environment (at Amazon) will be available until Friday.
 
-- We will email you a to the session recordings by next week.
+- We will email you a link to the session recordings by next week.
 
 - Please take our optional [post-workshop survey](https://forms.gle/bsqTx6GVsxMvye169) (5-10 minutes) <br />
   [https://forms.gle/bsqTx6GVsxMvye169](https://forms.gle/bsqTx6GVsxMvye169)
@@ -28,10 +28,11 @@ connect to enable gene expression analysis from bulk RNA-Seq data.
 
 We welcome your questions and feedback.
 
-- Chris Gates cgates@umich.edu
-- Marci Brandenburg mbradenb@umich.edu
-- Dana King damki@umich.edu
-- Raymond Calvalcante rcavalca@umich.edu
+- [bioinformatics-workshops@umich.edu](bioinformatics-workshops@umich.edu)
+- Chris Gates [cgates@umich.edu](cgates@umich.edu)
+- Marci Brandenburg [mbradenb@umich.edu](mbradenb@umich.edu)
+- Dana King [damki@umich.edu](damki@umich.edu)
+- Raymond Calvalcante [rcavalca@umich.edu](rcavalca@umich.edu)
 
 ![Sponsors](images/Module1_sponsor_logos.png)
 
