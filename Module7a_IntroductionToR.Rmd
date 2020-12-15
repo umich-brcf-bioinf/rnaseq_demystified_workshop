@@ -49,13 +49,40 @@ To follow best practices as discussed by [Nobel,2009](https://journals.plos.org/
 * Output files   
 
 
-![](./images/Noble2009_dataprojects.png)
+![](./images/Noble2009_dataprojects.png)    
+
+To organize our files for our analysis today we'll create a new folder, ideally in our home directory, using the 'New Folder' button on the right side of our screen. Let's name it "RNASeqDemystified" and then click on the folder in the file viewer. You should now see an empty directory, like below.
+
+![](./images/NewDirectory.png)            
+
+Then we'll use the 'More' drop down menu on the right side of our file viewer to choose the 'Set as Working Directory' option. You should see a command similar to `setwd("~/RNASeqDemystified")`in your console. 
+
+We'll make a new folder within "RNASeqDemystified" called "data". It is important to make this new folder exactly match by name.
+
+```{r DownloadData, eval=FALSE}
+#Example from UCdavis
+download.file("https://github.com/umich-brcf-bioinf/rnaseq_demystified_workshop/tree/main/site/Day2Data/Mov10_full_counts.txt", "~/RNASeqDemystified/data/Mov10_full_counts.txt")
+download.file("https://github.com/umich-brcf-bioinf/rnaseq_demystified_workshop/tree/main/site/Day2Data/Mov10_full_meta.txt", "~/RNASeqDemystified/data/Mov10_full_meta.txt")
+```
+
+
+
+<details>
+  <summary>Click for alternative download option</summary>
+To get our data, we'll need to navigate to [https://github.com/umich-brcf-bioinf/rnaseq_demystified_workshop/blob/main/site/Day2Data/data.zip](https://github.com/umich-brcf-bioinf/rnaseq_demystified_workshop/blob/main/site/Day2Data/data.zip) and click the download button for each file. Use your file viewer to drag & drop the "Mov10_full_counts.txt" and "Mov10_full_meta.txt" files into the 'data' subfolder within the 'RNASeqDemystified' directory.
+</details>
+
+**Please use the 'raise hand' button if you are having issues with downloading the data, or if you don't see the files after clicking on the "data" directory, like shown below. If you have successfully downloaded the data then used the green 'yes' button**
+
+![](./images/DirectoryWithData.png)
 
 # Interacting with the Console
 
 To ensure that we have a record of our commands, it is better to write all commands within our '.R' file and send the command to the console instead of directly entering them.
 
-We'll open a new '.R' file by using the toolbar at the top of our window. You should see a new panel opening up on the top left. This is where we can write our commands and then send them to the R console, which is now on the bottom left of our Rstudio window.
+We'll open a new '.R' script file by using the toolbar at the top of our window. You should see a new panel opening up on the top left. This is where we can write our commands and then send them to the R console, which is now on the bottom left of our Rstudio window.
+
+We'll save our 'Untitled1' file as "RNASeqAnalysis" using the floppy disk iconon the top left of the file window. 
 
 **Ctrl-Enter** is a standard shortcut in Rstudio to send the current line (or selected lines) to the console. If you see an `>`, then R has executed the command. If you see a `+`, this means that the command is not complete and R is waiting (usually for a `)`).
 
@@ -109,7 +136,7 @@ VectorExString <- c("MFG1, MFG2, MFG3")
 VectorExNumeric <- c(4, 5, 6)
 VectorExLogical <- c(TRUE, FALSE, FALSE)
 
-### get an overview of each vector with the function `str()` ###
+### Bonus: get an overview of each vector with the function `str()` ###
 
 ### How can we convert strings to factors? ###
 
@@ -118,12 +145,12 @@ VectorExLogical <- c(TRUE, FALSE, FALSE)
 
 ### Reading in count data
 
-The starting point for our differential expression analysis will be a table of counts, so let's look at the example provided. First, we'll need to read in the file into memory from storage using a function called `read.table`.
+The starting point for our differential expression (DE) analysis will be a table of counts, so let's look at the example provided. First, we'll need to read in the file into memory from storage using a function called `read.table`.
 ```{r DataTable, eval=TRUE}
 CountTable <- read.table("./data/Mov10_full_counts.txt")
 head(CountTable) # look at the top of the table
 
-### get an overview of the structure of the table ###
+### How would we get an overview of the structure of the table? ###
 
 ```
 
@@ -141,9 +168,9 @@ head(CountTable[ , 1]) # lets us look at part of the first column
 rownames(CountTable) # rownames, if they exist
 colnames(CountTable) # colnames, if they exist
 
-### Subset the table by rows & columns ###
+### How would you subset the table by rows & columns? ###
 
-### Shorthand for select a column by name ($ or with string) ###
+### HowShorthand for select a column by name ($ or with string) ###
 
 ```
 
@@ -156,14 +183,7 @@ Rstudio has some built in help resources that are useful when using new function
 ?dim
 ```
 
-# Check package installations & download data
-
-To prepare for the next section, we'll download the data we'll need from the workshop materials. *TODO: How to download files from workshop repo*
-```{r DownloadData}
-#Example from UCdavis
-download.file("https://raw.githubusercontent.com/ucdavis-bioinformatics-training/2020-Intro_Single_Cell_RNA_Seq/master/datasets/expression_tables_cellrangerV3.zip", "expression_tables_cellrangerV3.zip")
-system("unzip expression_tables_cellrangerV3.zip")
-```
+# Check package installations 
 
 You should already have DESeq2 and several other libraries installed, so we can load them into our R session now. To do that we'll use the `library` function and send the commands to the console.
 

@@ -51,19 +51,18 @@ fc <- 1.5
 pval <- 0.05
 ```
 
+Then, we need to sep up some object to run our plotting code, creating a new object for our plotting and labeling our comparison of interest. 
 ```{r PlotSetup2}
-res.KD <- res.KD[order(res.KD$padj),]
-diffexData <- as.data.frame(res.KD)
-setDT(diffexData, keep.rownames = TRUE)[] #set rownames to valid column
-colnames(diffexData) <- c('id','baseMean','log2FoldChange','lfcSE','stat','pvalue','padj') #rename first column
-#diffexData$Condition <- testName
-#diffexData$Control <- referenceName
+df<- res.KD[order(res.KD$padj),] #select our data of interest
+df <- as.data.frame(df) #convert our object type
+df <- cbind("id" = row.names(df), df) #set rownames to valid column
+str(df) 
 
-df <- diffexData
-str(df)
+Comparison <- "Mov10.KD_vs_Irrel"
+```
 
-comparison <- "Case_vs_Control"
-
+Now we need to [subset our data](https://www.statmethods.net/management/subset.html) to label the datapoints (genes) that pass our thresholds.
+```{r PlotSetup2a}
 df$dot <- rep(3, nrow(df))
 df$dot[which(df$padj <= pval & df$log2FoldChange < 0 & abs(df$log2FoldChange) >= log2(fc))] = 2
 df$dot[which(df$padj <= pval & df$log2FoldChange > 0 & abs(df$log2FoldChange) >= log2(fc))] = 1
@@ -79,21 +78,24 @@ df$dot <- factor(df$dot,levels = c(1,2,3), labels = c(paste0('Up: ', sum(df$dot 
 ```
 
 Once we've setup the annotations we need, we can proceed with generating the volcano plot.
-```{r VolcanoPlot}
+```{r VolcanoPlot, message=FALSE}
+pdf(file = paste0(plotPath,'VolcanoPlot_', Comparison, '.pdf'), onefile = FALSE)
 
-  #Volcano plot
-  pdf(file = paste0(plotPath,'VolcanoPlot_', comparison, '.pdf'), onefile = FALSE)
-  p <- ggplot(df, aes(x = log2FoldChange, y = -log10(padj))) + geom_point(aes(color = df$dot), size = 1) + theme_classic() + xlab('Log2 fold-change') + ylab('-Log10 adjusted p-value')
-  p <- p + scale_color_manual(name = '', values=c('#B31B21', '#1465AC', 'darkgray'))
-  p <- p + geom_vline(xintercept = c(0, -log2(fc), log2(fc)), linetype = c(1, 2, 2), color = c('black', 'black', 'black')) + geom_hline(yintercept = -log10(pval), linetype = 2, color = 'black')
-  if (sum(is.na(df$label)) < nrow(df)) {
-    p <- p + geom_label_repel(label = df$label, force = 3, segment.alpha = 0.4) + ggtitle(as.character(comparison))
-  } else {
-    p <- p + ggtitle(as.character(comparison))
-  }
-  print(p)
-  dev.off()
-  p
+p <- ggplot(df, aes(x = log2FoldChange, y = -log10(padj))) + geom_point(aes(color = df$dot), size = 1) + theme_classic() + xlab('Log2 fold-change') + ylab('-Log10 adjusted p-value')
+
+p <- p + scale_color_manual(name = '', values=c('#B31B21', '#1465AC', 'darkgray'))
+
+p <- p + geom_vline(xintercept = c(0, -log2(fc), log2(fc)), linetype = c(1, 2, 2), color = c('black', 'black', 'black')) + geom_hline(yintercept = -log10(pval), linetype = 2, color = 'black')
+
+if (sum(is.na(df$label)) < nrow(df)) {
+  p <- p + geom_label_repel(label = df$label, force = 3, segment.alpha = 0.4) + ggtitle(as.character(Comparison))
+} else {
+  p <- p + ggtitle(as.character(comparison))
+}
+
+print(p)
+dev.off()
+p
 ```
 
 How does significance relate to fold change?
@@ -104,22 +106,45 @@ For additional visualizations for our DE results, this [HBC tutorial](https://hb
 
 It can be useful to annotate our results table with additional information to make them easier to interpret, such as adding additional gene information or better summarizing our DE results.
 
-## Adding DE calls
+## Summarizing our DE results
 
-```{r DEcalls}
-padj.cutoff <- 0.05
-lfc.cutoff <- 0.58
-```
+To generate a general summary of the DE results, we can use the `summary` function to generate a basic summary by DESeq2.
 
-Using conditional statements to make results easier to interpret...
-
-To generate a general summary of the DE results, we can use the `summary` function. We can also use conditional statements to determine the number
+However, we can also use conditional statements to determine the number of genes that pass our thresholds for each comparison, which might be more informative.
 ```{r StatSigGenes}
-summary(res.KD)
+#summary(res.KD)
 sum(res.KD$padj < 0.05 & abs(res.KD$log2FoldChange) >= log2(1.5), na.rm = TRUE)
+sum(res.OE$padj < 0.05 & abs(res.OE$log2FoldChange) >= log2(1.5), na.rm = TRUE)
 ```
 
-Importance of documenting thresholds
+#### Subsetting significant genes
+<details>
+  <summary>Click for code</summary>
+
+You may be interested in identifying only the genes that pass your significance thesholds. A useful way to do this is to conditionally subset your results. 
+```{r ConditionalSubset, eval=FALSE}
+res.KD_sig <- na.omit(res.KD)
+res.KD_sig <- res.KD_sig[which(res.KD_sig$padj < 0.05 & abs(res.KD_sig$log2FoldChange) >= log2(1.5)), ]
+head(res.KD_sig)
+```
+
+For more details about subsetting tables in R, we recommend the [Data Carpentry manipulating and analyzing data module](https://datacarpentry.org/R-ecology-lesson/03-dplyr.html). 
+
+We can also annotate our results to include a column that identifies our significant genes.
+```{r ConditionalSubset, eval=FALSE}
+res.KD_anno <- res.KD # copy table
+# add a column and assign all genes are non-significance
+res.KD_anno$Call <- rep(FALSE, length(res.KD$baseMean)) 
+
+# change 'Call' column to TRUE if meets conditions for significant differences
+res.KD_anno[which(!is.na(res.KD_anno$padj) & res.KD_anno$padj < 0.05 & abs(res.KD_anno$log2FoldChange) >= log2(1.5)), ]$Call <- TRUE
+
+# reorder table to rank significant genes at the top
+res.KD_anno <- res.KD_anno[order(-res.KD_anno$Call),]
+```
+
+</details>
+
 
 ## Adding genome annotations
 
@@ -150,32 +175,52 @@ Next, we'll [build our query](https://bioconductor.org/packages/release/bioc/vig
 GeneKey <- getBM(attributes=c('ensembl_gene_id', 'hgnc_symbol', "description"), 
       filters = 'hgnc_symbol', 
       values = row.names(assay(dds)), 
-      mart = ensembl)
+      mart = ensembl) # will take some time to run
+head(GeneKey)
 ```
 
->**Note**: For additional information regarding bioMart, please consult the [ENSEMBL bioMart vignette](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html) or the broader [Bioconductor Annotation Resources vignette ](http://bioconductor.org/packages/devel/workflows/vignettes/annotation/inst/doc/Annotation_Resources.html)
 
-Now that we have the ENSEMBL information and a gene symbol to match to our results, we can add this to our DE results table *TODO: Update results table*
+Now that we have the ENSEMBL information and a gene symbol to match to our results, we can add this to our DE results table.
 ```{r updateDETable}
-res_table <- cbind(genes=row.names(res), res[ ,c(1:6)])
+res.KD_anno <- res.KD # copy table
+res.KD_anno <- cbind(genes=row.names(res.KD_anno), res.KD_anno[ ,c(1:6)])
+res.KD_anno <- as.data.frame(res.KD_anno)
 
-## add Akk Refseq id & gene description to best of ability
-res_table <- as.data.frame(res_table)
-
-## Use NCBI id as key for forcing merge between results table and RefSeq table
-res_table <- as.data.table(res_table)
-
-res_anno <- merge(RefSeq_trimmed, res_table, by.x = "NCBI_id", by.y="genes", all.x = FALSE, all.y = TRUE)
-
+res.KD_anno <- merge(GeneKey, res.KD_anno, by.x = "hgnc_symbol", by.y="genes", all.x = FALSE, all.y = TRUE) # combine the two tables using the merge function
+head(res.KD_anno)
 ```
 
-While we are able to annotate our results with the ENSEMBL ids, we should be very cautious as the gene symbol is not a good unique identifier, and we did not start with a UCSC annotation resource. However, this code is similar to the steps needed to annotate ENSEMBL id based results, like what would have been generated from yesterday's alignments, with more interpretable gene symbols.
+Notice that not all genes were annotated with an ENSEMBl gene id or gene description. While we are able to annotate our results, we should be very cautious as the gene symbol is not a good unique identifier plus we did not use a UCSC annotation resource so the HUGO gene symbol may not always match. However, this code is similar to the steps needed to annotate ENSEMBL id based results, like what would have been generated from yesterday's alignments, with more interpretable gene symbols.
+
+>**Note**: For additional information regarding bioMart, please consult the [ENSEMBL bioMart vignette](https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html) or the broader [Bioconductor Annotation Resources vignette ](http://bioconductor.org/packages/devel/workflows/vignettes/annotation/inst/doc/Annotation_Resources.html).
 
 # Outputting results to file
 
+A key aspect of our analysis is preserving the relevant datasets for both our records and for downstream applications.
+
 ## Count tables
 
+The most relevant count tables are the raw, filtered count table that we used as the input for our analysis and the rlog normalized count table that we used for our quality control visualizations.
+
+First, we'll setup a new directory for our output tables.
+```{r OutputTableDir}
+dir.create("./OutputTables")
+```
+
+To output the raw counts, we will need to use the `counts` function to access the count table from within its larger `DESeqDataSet` object.
+```{r OutputCountsRaw}
+write.csv(counts(dds, normalized = FALSE), file="./OutputTables/DESeq2_raw_counts.csv")
+```
+
+Then we'll output the rlog count table, using the `assay` function to access the normalized count table from within its larger `DESeqDataSet` object.
+```{r OutputCountsRlog}
+write.csv(assay(rld), file="./OutputTables/DESeq2_rlogNormalized_counts.csv")
+```
+
 ## DE results table
+
+Next we can write out our DE results for the KD and OE comparisons to file. 
+```{r DEResults}
 
 # What can we do with our DE results?
 
@@ -183,11 +228,14 @@ While we are able to annotate our results with the ENSEMBL ids, we should be ver
 
 # Review of Kenny et al results
 
-[Kenny PJ et al, Cell Rep 2014](http://www.ncbi.nlm.nih.gov/pubmed/25464849)
+From the results [reported in the Kenny PJ et al paper](http://www.ncbi.nlm.nih.gov/pubmed/25464849), we identified fewer DE genes than their analysis. From their [RNA-Seq methods](https://ars-els-cdn-com.proxy.lib.umich.edu/content/image/1-s2.0-S2211124714009231-mmc1.pdf), we know that they used a different tool, EdgeR, but they only used a significance threshold to call DE genes. 
 
-comparing the [RNA-Seq methods reported in the paper](https://ars-els-cdn-com.proxy.lib.umich.edu/content/image/1-s2.0-S2211124714009231-mmc1.pdf)
+How many DE genes would we have if we only apply a threshold to our adjusted pvalues?
+```{r StatSigGenes}
+sum(res.KD$padj < 0.05, na.rm = TRUE)
+```
 
-
+If we threshold only on significance, we still identify less DE genes than the 6057 identified in the paper. How should we interpret these differences? Are we in danger of missing relevant genes or, due to DESeq2 stringency, are we better protected against irrelevant genes?
 
 ---
 
@@ -201,9 +249,14 @@ comparing the [RNA-Seq methods reported in the paper](https://ars-els-cdn-com.pr
 
 ```{r WriteOut.RData, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
 #Hidden code block to write out data for knitting
-save.image(file = "RunningData.RData")
+save.image(file = "RunningData_Full.RData")
 ```
 
+# Additional Resources
+* MIDAS Reproduciblity Hub: https://midas.umich.edu/reproducibility-overview/
+* Gene Set Enrichment Resources from Bioconductor: https://bioinformatics-core-shared-training.github.io/cruk-summer-school-2018/RNASeq2018/html/06_Gene_set_testing.nb.html
+* Using HTSeq data with DESeq2: https://angus.readthedocs.io/en/2019/diff-ex-and-viz.html
+* 
 
 ---
 

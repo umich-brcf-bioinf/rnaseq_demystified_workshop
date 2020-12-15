@@ -58,11 +58,11 @@ plotPath = "./Figures/BySamples/"
 Next, we'll look at our distributions of raw and normalized counts. First, we need to set up some tables and labels.
 ```{r RawCountsSetup}
 ## setup for raw counts
-pdata = data.frame(colData(dds))
-mat = as.matrix(assay(dds))
-title = 'Raw counts'
-y_label = 'log2(counts)'
-
+pdata <- data.frame(colData(dds))
+mat <- as.matrix(assay(dds))
+title <- 'Raw counts'
+y_label <- 'log2(counts)'
+Comparison <- "Mov10"
 ```
 
 Then, we'll add the relevant annotations to the count table. 
@@ -145,12 +145,8 @@ The [`pheatmap` function](https://cran.r-project.org/web/packages/pheatmap/pheat
 pdf(file = paste0(plotPath,'Heatmap_TopExp_', Comparison, '.pdf'), onefile = FALSE, width=10, height=20)
 p <- pheatmap(assay(rld)[select,], scale="row",  cluster_rows=TRUE, show_rownames=FALSE, cluster_cols=TRUE, annotation_col=df, fontsize = 7, las = 2, fontsize_row = 7, color = colors, main = '500 Top Expressed Genes Heatmap')
 p
-```
-
-```{r GeneratePrettyHeatmap2, message=FALSE, warning=FALSE}
 dev.off()
 ```
-
 
 Looking at the heatmap, we see that samples within the same treatment group cluster together, with the Mov.KD and Irrel samples on the same parent node, fitting our understanding of the experimental design. We also see clusters of genes that appear to have contrasting patterns between the treatment groups, which is promising for our differential expression comparisons.
 
@@ -187,6 +183,7 @@ colors <- colorRampPalette(brewer.pal(9, 'Blues'))(255)
 
 select <- order(rowVars(assay(rld)), decreasing=TRUE)[1:500]
 df <- data.frame(Group = colData(rld)[,c('condition')], row.names = rownames(colData(dds)))
+
 pdf(file = paste0(plotPath,'Heatmap_TopVar_', Comparison, '.pdf'), onefile = FALSE, width=10, height=20)
 pheatmap(assay(rld)[select,], scale="row",  cluster_rows=TRUE, show_rownames=FALSE, cluster_cols=TRUE, annotation_col=df, fontsize = 7, las = 2, fontsize_row = 7, color = colors, main = '500 Top Variably Expressed Genes Heatmap')
 dev.off()
