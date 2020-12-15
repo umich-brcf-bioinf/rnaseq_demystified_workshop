@@ -62,7 +62,7 @@ Comparison <- "Mov10.KD_vs_Irrel"
 ```
 
 Now we need to [subset our data](https://www.statmethods.net/management/subset.html) to label the datapoints (genes) that pass our thresholds.
-```{r PlotSetup2a}
+```{r PlotSetup2a, message=FALSE, warning=FALSE}
 df$dot <- rep(3, nrow(df))
 df$dot[which(df$padj <= pval & df$log2FoldChange < 0 & abs(df$log2FoldChange) >= log2(fc))] = 2
 df$dot[which(df$padj <= pval & df$log2FoldChange > 0 & abs(df$log2FoldChange) >= log2(fc))] = 1
@@ -78,7 +78,7 @@ df$dot <- factor(df$dot,levels = c(1,2,3), labels = c(paste0('Up: ', sum(df$dot 
 ```
 
 Once we've setup the annotations we need, we can proceed with generating the volcano plot.
-```{r VolcanoPlot, message=FALSE}
+```{r VolcanoPlot, message=FALSE, warning=FALSE}
 pdf(file = paste0(plotPath,'VolcanoPlot_', Comparison, '.pdf'), onefile = FALSE)
 
 p <- ggplot(df, aes(x = log2FoldChange, y = -log10(padj))) + geom_point(aes(color = df$dot), size = 1) + theme_classic() + xlab('Log2 fold-change') + ylab('-Log10 adjusted p-value')
@@ -111,7 +111,7 @@ It can be useful to annotate our results table with additional information to ma
 To generate a general summary of the DE results, we can use the `summary` function to generate a basic summary by DESeq2.
 
 However, we can also use conditional statements to determine the number of genes that pass our thresholds for each comparison, which might be more informative.
-```{r StatSigGenes}
+```{r StatSigGenes2}
 #summary(res.KD)
 sum(res.KD$padj < 0.05 & abs(res.KD$log2FoldChange) >= log2(1.5), na.rm = TRUE)
 sum(res.OE$padj < 0.05 & abs(res.OE$log2FoldChange) >= log2(1.5), na.rm = TRUE)
@@ -131,7 +131,7 @@ head(res.KD_sig)
 For more details about subsetting tables in R, we recommend the [Data Carpentry manipulating and analyzing data module](https://datacarpentry.org/R-ecology-lesson/03-dplyr.html). 
 
 We can also annotate our results to include a column that identifies our significant genes.
-```{r ConditionalSubset, eval=FALSE}
+```{r ConditionalAnno, eval=FALSE}
 res.KD_anno <- res.KD # copy table
 # add a column and assign all genes are non-significance
 res.KD_anno$Call <- rep(FALSE, length(res.KD$baseMean)) 
@@ -142,6 +142,7 @@ res.KD_anno[which(!is.na(res.KD_anno$padj) & res.KD_anno$padj < 0.05 & abs(res.K
 # reorder table to rank significant genes at the top
 res.KD_anno <- res.KD_anno[order(-res.KD_anno$Call),]
 ```
+
 
 </details>
 
@@ -219,12 +220,25 @@ write.csv(assay(rld), file="./OutputTables/DESeq2_rlogNormalized_counts.csv")
 
 ## DE results table
 
-Next we can write out our DE results for the KD and OE comparisons to file. 
-```{r DEResults}
+Next we'll write out our DE results for the KD comparison to file ,since we added additional information to that table. 
+```{r DEResultsOuput}
+write.csv(res.KD_anno, 
+          row.names = FALSE,
+          na = ".",
+          file="./OutputTables/Mov10.KD_vs_Irrel_DESeq2.csv")
+```
+
+For the OE comparsion, we could repeat our annotations or write the DE results directly to file using the `assay` function for the DESeqDataSet object.
 
 # What can we do with our DE results?
 
+Now that we have our DE results, have we address the biological question relevant to the authors of the [original paper](http://www.ncbi.nlm.nih.gov/pubmed/25464849)? On the one hand, yes - we now have two tables of genes that are impacted by change in Mov10 expression. But with two lists of genes alone, it can be difficult to find patterns or understand broader biological impacts.
 
+What if we wanted to find out what genes were signifant in *both* comparisons? The `intersect` function, such as implimented as [part of the dplyr package](https://www.datasciencemadesimple.com/intersect-function-r-using-dplyr-intersection-data-frames/) would be useful to identify shared significant genes. A [venn diagram](https://www.r-graph-gallery.com/14-venn-diagramm.html) could be a way to visualize these overlaps. 
+
+A way to determine possible [broader biological interpretations](https://www.ebi.ac.uk/training-beta/online/courses/functional-genomics-ii-common-technologies-and-data-analysis-methods/biological-interpretation-of-gene-expression-data-2/) from the observed DE results, is functional enrichments. There are many options, such as some included in this [discussion thread](https://www.researchgate.net/post/How_can_I_analyze_a_set_of_DEGs_differentially_expressed_genes_to_obtain_information_from_them). Other common functional enrichments approaches are gene set enrichment analysis, aka [GSEA](http://software.broadinstitute.org/gsea/index.jsp), Database for Annotation, Visualization and Integrated Discovery, aka [DAVID](https://david.ncifcrf.gov/), [Ingenity](https://digitalinsights.qiagen.com/), and [iPathway Guide]
+
+The University of Michigan has license and support for additional tools, such as Cytoscape, so we recommend reaching out to staff with [Taubman Library](https://www.lib.umich.edu/locations-and-hours/taubman-health-sciences-library/research-and-clinical-support) to learn more about resources that might be application toyour research.
 
 # Review of Kenny et al results
 
@@ -235,7 +249,7 @@ How many DE genes would we have if we only apply a threshold to our adjusted pva
 sum(res.KD$padj < 0.05, na.rm = TRUE)
 ```
 
-If we threshold only on significance, we still identify less DE genes than the 6057 identified in the paper. How should we interpret these differences? Are we in danger of missing relevant genes or, due to DESeq2 stringency, are we better protected against irrelevant genes?
+If we threshold only on significance, we still identify less DE genes than the 6057 identified in the paper. How should we interpret these differences? Are we in danger of missing relevant genes or, due to DESeq2's stringency, are we better protected against irrelevant genes? One of the authors of DESeq2, wrote this [blog post that detailed differences between DESeq2 and EdgeR ](https://mikelove.wordpress.com/2016/09/28/deseq2-or-edger/) but this [review of multiple DE tools by Costa-Silva, Domingues, and Martins Lopes](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5739479/) may also be useful for forming your own opinion.
 
 ---
 
@@ -254,9 +268,11 @@ save.image(file = "RunningData_Full.RData")
 
 # Additional Resources
 * MIDAS Reproduciblity Hub: https://midas.umich.edu/reproducibility-overview/
+* ARC resources: https://arc-ts.umich.edu/
 * Gene Set Enrichment Resources from Bioconductor: https://bioinformatics-core-shared-training.github.io/cruk-summer-school-2018/RNASeq2018/html/06_Gene_set_testing.nb.html
 * Using HTSeq data with DESeq2: https://angus.readthedocs.io/en/2019/diff-ex-and-viz.html
-* 
+* Detailed RNA-seq analysis paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6096346/
+* Overview of RNA-seq analysis considerations: https://academic-oup-com.proxy.lib.umich.edu/bfg/article/14/2/130/257370
 
 ---
 
